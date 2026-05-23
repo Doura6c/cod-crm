@@ -25,26 +25,65 @@ const STATUS_TABS = [
   { key: "RETOURNE",   label: "Retourné",      color: "text-rose-600" },
 ];
 
+function getPeriodRange(period: string, from?: string, to?: string): { start?: Date; end?: Date; label: string } {
+  const now = new Date();
+  if (period === "today") {
+    const start = new Date(now); start.setHours(0, 0, 0, 0);
+    return { start, end: now, label: "Aujourd'hui" };
+  }
+  if (period === "week") {
+    const start = new Date(now); start.setDate(now.getDate() - 7); start.setHours(0, 0, 0, 0);
+    return { start, end: now, label: "7 derniers jours" };
+  }
+  if (period === "month") {
+    const start = new Date(now.getFullYear(), now.getMonth(), 1);
+    return { start, end: now, label: "Ce mois" };
+  }
+  if (period === "lastmonth") {
+    const start = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const end = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59);
+    return { start, end, label: "Mois dernier" };
+  }
+  if (period === "custom" && (from || to)) {
+    const start = from ? new Date(from + "T00:00:00") : undefined;
+    const end = to ? new Date(to + "T23:59:59") : undefined;
+    const lbl = `Du ${from || "…"} au ${to || "…"}`;
+    return { start, end, label: lbl };
+  }
+  return { label: "Toutes périodes" };
+}
+
 export default async function ListePage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string; q?: string; agentId?: string; livreurId?: string; city?: string; boutiqueId?: string; }>;
+  searchParams: Promise<{ status?: string; q?: string; agentId?: string; livreurId?: string; city?: string; boutiqueId?: string; period?: string; from?: string; to?: string; }>;
 }) {
   const session = await auth();
   const role = (session?.user as any)?.role;
   const userId = (session?.user as any)?.id;
   if (!can(role, "VIEW_ORDERS")) redirect("/");
 
-  const { status = "all", q = "", agentId = "", livreurId = "", city = "", boutiqueId = "" } = await searchParams;
+  const { status = "all", q = "", agentId = "", livreurId = "", city = "", boutiqueId = "", period = "all", from = "", to = "" } = await searchParams;
 
   const isAgent = role === "AGENT";
 
+  const { start: periodStart, end: periodEnd, label: periodLabel } = getPeriodRange(period, from, to);
+
   const whereBase: Record<string, unknown> = {};
   if (isAgent) whereBase.assignedAgentId = userId;
-  if (status !== "all") whereBase.status = status;
+  if (status !== "all") {
+    // L'onglet PDR doit inclure aussi INJOIGNABLE
+    whereBase.status = status === "PDR" ? { in: ["PDR", "INJOIGNABLE"] } : status;
+  }
   if (boutiqueId) whereBase.boutiqueId = boutiqueId;
-  if (agentId) whereBase.assignedAgentId = agentId;
+  if (agentId && !isAgent) whereBase.assignedAgentId = agentId;
   if (city) whereBase.city = { name: { contains: city } };
+  if (periodStart || periodEnd) {
+    whereBase.createdAt = {
+      ...(periodStart ? { gte: periodStart } : {}),
+      ...(periodEnd ? { lte: periodEnd } : {}),
+    };
+  }
   if (q) {
     (whereBase as any).OR = [
       { code: { contains: q } },
@@ -102,7 +141,7 @@ export default async function ListePage({
   const tauxConfirmation = orders.length > 0 ? Math.round((confirmedCount / orders.length) * 100) : 0;
 
   function buildHref(params: Record<string, string>) {
-    const base = { status, q, agentId, livreurId, city, boutiqueId, ...params };
+    const base = { status, q, agentId, livreurId, city, boutiqueId, period, from, to, ...params };
     const qs = Object.entries(base)
       .filter(([, v]) => v && v !== "all")
       .map(([k, v]) => `${k}=${encodeURIComponent(v)}`)
@@ -110,11 +149,21 @@ export default async function ListePage({
     return `/commandes/liste${qs ? `?${qs}` : ""}`;
   }
 
+  const PERIODS = [
+    { key: "all",       label: "Toutes" },
+    { key: "today",     label: "Aujourd'hui" },
+    { key: "week",      label: "7 jours" },
+    { key: "month",     label: "Ce mois" },
+    { key: "lastmonth", label: "Mois dernier" },
+    { key: "custom",    label: "Personnalisé" },
+  ];
+
   return (
     <div>
       <PageHeader
-        title="Gestion des commandes"
+        title={isAgent ? "Mes commandes" : "Gestion des commandes"}
         badges={[
+          { label: periodLabel, color: "bg-sky-600 text-white" },
           { label: `${orders.length} commandes`, color: "bg-slate-700 text-white" },
           ...(livrésCount > 0 ? [{ label: `${livrésCount} livrées`, color: "bg-emerald-600 text-white" }] : []),
         ]}
@@ -169,6 +218,41 @@ export default async function ListePage({
           </div>
         </div>
 
+        {/* Sélecteur de période (raccourci) */}
+        <div className="bg-white border border-slate-200 rounded-xl p-3 flex flex-wrap items-center gap-2">
+          <span className="text-xs font-semibold text-slate-500 uppercase mr-2 flex items-center gap-1">
+            <Clock className="w-3.5 h-3.5" /> Période :
+          </span>
+          {PERIODS.map((p) => (
+            <Link
+              key={p.key}
+              href={buildHref({ period: p.key, from: "", to: "" })}
+              className={`px-3 py-1.5 rounded-full text-xs font-semibold transition ${
+                period === p.key
+                  ? "bg-slate-800 text-white shadow"
+                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+              }`}
+            >
+              {p.label}
+            </Link>
+          ))}
+          {period === "custom" && (
+            <form method="GET" action="/commandes/liste" className="flex items-center gap-2 ml-auto">
+              <input type="hidden" name="period" value="custom" />
+              <input type="hidden" name="status" value={status} />
+              {q && <input type="hidden" name="q" value={q} />}
+              {boutiqueId && <input type="hidden" name="boutiqueId" value={boutiqueId} />}
+              {agentId && <input type="hidden" name="agentId" value={agentId} />}
+              <input type="date" name="from" defaultValue={from} className="input text-xs py-1" />
+              <span className="text-xs text-slate-400">au</span>
+              <input type="date" name="to" defaultValue={to} className="input text-xs py-1" />
+              <button type="submit" className="bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition">
+                OK
+              </button>
+            </form>
+          )}
+        </div>
+
         {/* Filters */}
         <div className="bg-white border border-slate-200 rounded-xl p-4">
           <div className="flex items-center gap-2 mb-3">
@@ -176,6 +260,9 @@ export default async function ListePage({
             <span className="text-sm font-semibold text-slate-700">Filtres</span>
           </div>
           <form method="GET" action="/commandes/liste" className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+            <input type="hidden" name="period" value={period} />
+            {from && <input type="hidden" name="from" value={from} />}
+            {to && <input type="hidden" name="to" value={to} />}
             <div className="relative col-span-2 md:col-span-1">
               <input
                 name="q"

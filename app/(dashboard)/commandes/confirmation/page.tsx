@@ -24,9 +24,14 @@ export default async function ConfirmationPage({
   // Si l'utilisateur est un AGENT, on filtre par ses commandes affectées
   const agentFilter = isAgent && userId ? { assignedAgentId: userId } : {};
 
+  // L'onglet "PDR" doit inclure les commandes PDR ET INJOIGNABLE
+  const statusFilter = currentStatus === "PDR"
+    ? { status: { in: ["PDR", "INJOIGNABLE"] } }
+    : { status: currentStatus };
+
   const [orders, nouveauCount, reporteCount, pdrCount, boutiques, cities, agents, reportedTotal, pdrTotal] = await Promise.all([
     prisma.order.findMany({
-      where: { status: currentStatus, ...agentFilter },
+      where: { ...statusFilter, ...agentFilter },
       include: {
         boutique: true,
         customer: true,

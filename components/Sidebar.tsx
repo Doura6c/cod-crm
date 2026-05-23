@@ -69,6 +69,7 @@ export function Sidebar({ userName, userRole, counts = {}, notificationCount = 0
       children: [
         { href: "/commandes/confirmation", label: "Confirmation", icon: ClipboardList, badge: counts.confirmation },
         { href: "/commandes/attente", label: "En attente validation", icon: ClipboardList, badge: counts.attente, roles: ["ADMIN", "MANAGER"] },
+        { href: "/commandes/liste", label: "Mes commandes", icon: ClipboardList, roles: ["AGENT"] },
         { href: "/commandes/annule", label: "Annulé-terminé", icon: ClipboardList },
         { href: "/commandes/liste", label: "Commandes", icon: ClipboardList, badge: counts.commandes, roles: ["ADMIN", "MANAGER"] },
       ],
