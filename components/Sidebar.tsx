@@ -19,6 +19,7 @@ import {
   ChevronRight,
   Truck,
   Bell,
+  Trophy,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -75,6 +76,7 @@ export function Sidebar({ userName, userRole, counts = {}, notificationCount = 0
       ],
     },
     { href: "/livraisons", label: "Livraisons", icon: Truck, badge: counts.livraisons, roles: ["ADMIN", "MANAGER", "LIVREUR"] },
+    { href: "/performance", label: "Ma performance", icon: Trophy, roles: ["AGENT", "LIVREUR"] },
     {
       href: "/factures",
       label: "Factures",

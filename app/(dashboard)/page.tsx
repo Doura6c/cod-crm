@@ -4,6 +4,8 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { formatGNF } from "@/lib/utils";
 import { getHmpCommission } from "@/lib/settings";
+import { PeriodFilter } from "@/components/PeriodFilter";
+import { getPeriodRange } from "@/lib/period";
 import {
   TrendingUp, Users, Truck, BarChart2,
   Phone, MapPin, Package, Trophy, Star
@@ -16,13 +18,6 @@ function pct(num: number, den: number) {
   return Math.round((num / den) * 100);
 }
 
-function periodStart(period: string): Date {
-  const d = new Date();
-  if (period === "week") { d.setDate(d.getDate() - 7); d.setHours(0, 0, 0, 0); return d; }
-  if (period === "month") { d.setDate(1); d.setHours(0, 0, 0, 0); return d; }
-  d.setHours(0, 0, 0, 0);
-  return d;
-}
 
 const AGENT_COLORS = [
   "#3b82f6", "#ef4444", "#f59e0b", "#10b981", "#8b5cf6",
@@ -32,15 +27,17 @@ const AGENT_COLORS = [
 export default async function DashboardPage({
   searchParams,
 }: {
-  searchParams: Promise<{ period?: string }>;
+  searchParams: Promise<{ period?: string; from?: string; to?: string; day?: string }>;
 }) {
   const session = await auth();
   const userRole = (session?.user as any)?.role;
   if (userRole === "AGENT") redirect("/commandes/confirmation");
   if (userRole === "LIVREUR") redirect("/livraisons");
 
-  const { period = "month" } = await searchParams;
-  const since = periodStart(period);
+  const { period = "month", from = "", to = "", day = "" } = await searchParams;
+  const { start: periodRangeStart, end: periodRangeEnd, label: periodLabel } = getPeriodRange(period, from, to, day);
+  const since = periodRangeStart ?? new Date(0);
+  const until = periodRangeEnd ?? new Date();
 
   const [
     totalOrders,
@@ -63,20 +60,20 @@ export default async function DashboardPage({
     topCities,
     topProducts,
   ] = await Promise.all([
-    prisma.order.count({ where: { createdAt: { gte: since } } }),
-    prisma.order.count({ where: { status: "NOUVEAU", createdAt: { gte: since } } }),
-    prisma.order.count({ where: { status: "CONFIRME", createdAt: { gte: since } } }),
-    prisma.order.count({ where: { status: "REPORTE", createdAt: { gte: since } } }),
-    prisma.order.count({ where: { status: "PDR", createdAt: { gte: since } } }),
-    prisma.order.count({ where: { status: "INJOIGNABLE", createdAt: { gte: since } } }),
-    prisma.order.count({ where: { status: "ANNULE", createdAt: { gte: since } } }),
-    prisma.order.count({ where: { status: "EN_LIVRAISON", createdAt: { gte: since } } }),
-    prisma.order.count({ where: { status: "LIVRE", createdAt: { gte: since } } }),
-    prisma.order.count({ where: { status: "RETOURNE", createdAt: { gte: since } } }),
-    prisma.order.aggregate({ where: { createdAt: { gte: since } }, _sum: { totalAmount: true } }),
-    prisma.delivery.aggregate({ where: { status: "LIVRE", deliveredAt: { gte: since } }, _sum: { amountCollected: true } }),
+    prisma.order.count({ where: { createdAt: { gte: since, lte: until } } }),
+    prisma.order.count({ where: { status: "NOUVEAU", createdAt: { gte: since, lte: until } } }),
+    prisma.order.count({ where: { status: "CONFIRME", createdAt: { gte: since, lte: until } } }),
+    prisma.order.count({ where: { status: "REPORTE", createdAt: { gte: since, lte: until } } }),
+    prisma.order.count({ where: { status: "PDR", createdAt: { gte: since, lte: until } } }),
+    prisma.order.count({ where: { status: "INJOIGNABLE", createdAt: { gte: since, lte: until } } }),
+    prisma.order.count({ where: { status: "ANNULE", createdAt: { gte: since, lte: until } } }),
+    prisma.order.count({ where: { status: "EN_LIVRAISON", createdAt: { gte: since, lte: until } } }),
+    prisma.order.count({ where: { status: "LIVRE", createdAt: { gte: since, lte: until } } }),
+    prisma.order.count({ where: { status: "RETOURNE", createdAt: { gte: since, lte: until } } }),
+    prisma.order.aggregate({ where: { createdAt: { gte: since, lte: until } }, _sum: { totalAmount: true } }),
+    prisma.delivery.aggregate({ where: { status: "LIVRE", deliveredAt: { gte: since, lte: until } }, _sum: { amountCollected: true } }),
     prisma.callLog.findMany({
-      where: { createdAt: { gte: since } },
+      where: { createdAt: { gte: since, lte: until } },
       include: { agent: { select: { firstName: true, lastName: true, id: true } } },
       orderBy: { createdAt: "desc" },
       take: 40,
@@ -84,18 +81,18 @@ export default async function DashboardPage({
     prisma.user.findMany({ where: { role: { in: ["AGENT", "MANAGER"] }, active: true }, select: { id: true, firstName: true, lastName: true } }),
     prisma.user.findMany({ where: { role: "LIVREUR", active: true }, select: { id: true, firstName: true, lastName: true } }),
     prisma.delivery.findMany({
-      where: { updatedAt: { gte: since } },
+      where: { updatedAt: { gte: since, lte: until } },
       select: { livreurId: true, status: true, amountCollected: true },
     }),
     prisma.callLog.groupBy({
       by: ["agentId", "outcome"],
-      where: { createdAt: { gte: since } },
+      where: { createdAt: { gte: since, lte: until } },
       _count: { id: true },
     }),
     // Top villes : nombre de livraisons LIVRE par ville
     prisma.order.groupBy({
       by: ["cityId"],
-      where: { status: "LIVRE", createdAt: { gte: since }, cityId: { not: null } },
+      where: { status: "LIVRE", createdAt: { gte: since, lte: until }, cityId: { not: null } },
       _count: { id: true },
       _sum: { totalAmount: true },
       orderBy: { _count: { id: "desc" } },
@@ -104,7 +101,7 @@ export default async function DashboardPage({
     // Top produits : somme des quantités vendées (commandes LIVRE)
     prisma.orderItem.groupBy({
       by: ["productId"],
-      where: { order: { status: "LIVRE", createdAt: { gte: since } } },
+      where: { order: { status: "LIVRE", createdAt: { gte: since, lte: until } } },
       _sum: { quantity: true, subtotal: true },
       orderBy: { _sum: { quantity: "desc" } },
       take: 10,
@@ -133,12 +130,6 @@ export default async function DashboardPage({
   const caLivreVal = caLivre._sum.amountCollected ?? 0;
   const confirmedTotal = confirmeCount + enLivraisonCount + livreCount + retourneCount;
   const pdrInj = pdrCount + injoignableCount;
-
-  const PERIODS = [
-    { key: "today", label: "Aujourd'hui" },
-    { key: "week", label: "7 jours" },
-    { key: "month", label: "Ce mois" },
-  ];
 
   // Données pour les barres de progression
   const confStats = [
@@ -196,22 +187,13 @@ export default async function DashboardPage({
       </div>
 
       <div className="p-6 space-y-8">
-        {/* Période + résumé rapide */}
+        {/* Filtre période */}
+        <PeriodFilter basePath="/" period={period} from={from} to={to} day={day} />
+
+        {/* Résumé rapide */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            {PERIODS.map((p) => (
-              <Link
-                key={p.key}
-                href={`/?period=${p.key}`}
-                className={`px-4 py-1.5 rounded-full text-sm font-bold transition ${
-                  period === p.key
-                    ? "bg-slate-900 text-white shadow"
-                    : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
-                }`}
-              >
-                {p.label}
-              </Link>
-            ))}
+          <div className="text-sm text-slate-500 font-medium">
+            📅 <span className="font-semibold text-slate-700">{periodLabel}</span>
           </div>
           <div className="text-xs text-slate-400 font-medium">
             {since.toLocaleDateString("fr-FR")} → {new Date().toLocaleDateString("fr-FR")}

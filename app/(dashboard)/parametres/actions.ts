@@ -26,3 +26,24 @@ export async function saveSettingsAction(formData: FormData): Promise<void> {
   revalidatePath("/parametres");
   revalidatePath("/");
 }
+
+export async function savePrimesAction(formData: FormData): Promise<void> {
+  const session = await auth();
+  const role = (session?.user as any)?.role;
+  if (role !== "ADMIN") redirect("/");
+
+  const agentPrime = formData.get("agent_prime");
+  const livreurPrime = formData.get("livreur_prime");
+
+  if (agentPrime !== null) {
+    const v = parseFloat(String(agentPrime));
+    if (!isNaN(v) && v >= 0) await setSetting("agent_prime", String(Math.round(v)));
+  }
+  if (livreurPrime !== null) {
+    const v = parseFloat(String(livreurPrime));
+    if (!isNaN(v) && v >= 0) await setSetting("livreur_prime", String(Math.round(v)));
+  }
+
+  revalidatePath("/parametres");
+  revalidatePath("/performance");
+}

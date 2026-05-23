@@ -2,10 +2,10 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { can } from "@/lib/rbac";
 import { PageHeader } from "@/components/PageHeader";
-import { getSetting, getHmpCommission } from "@/lib/settings";
+import { getSetting, getHmpCommission, getAgentPrime, getLivreurPrime } from "@/lib/settings";
 import { formatGNF } from "@/lib/utils";
-import { saveSettingsAction } from "./actions";
-import { BadgeDollarSign, Building2, AlertTriangle } from "lucide-react";
+import { saveSettingsAction, savePrimesAction } from "./actions";
+import { BadgeDollarSign, Building2, AlertTriangle, Trophy, Truck } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -13,8 +13,10 @@ export default async function ParametresPage() {
   const session = await auth();
   if (!can((session?.user as any)?.role, "VIEW_SETTINGS")) redirect("/");
 
-  const [hmpCommission, companyName, currency] = await Promise.all([
+  const [hmpCommission, agentPrime, livreurPrime, companyName, currency] = await Promise.all([
     getHmpCommission(),
+    getAgentPrime(),
+    getLivreurPrime(),
     getSetting("company_name", "HelpMeProcess COD"),
     getSetting("currency", "GNF"),
   ]);
@@ -70,6 +72,80 @@ export default async function ParametresPage() {
 
             <button type="submit" className="bg-sky-500 hover:bg-sky-600 text-white font-bold px-6 py-2.5 rounded-xl transition">
               💾 Enregistrer la commission
+            </button>
+          </form>
+        </div>
+
+        {/* Bloc Primes — Agents & Livreurs */}
+        <div className="bg-white border-2 border-emerald-300 rounded-2xl overflow-hidden shadow-sm">
+          <div className="bg-emerald-50 px-6 py-4 border-b border-emerald-200 flex items-center gap-3">
+            <div className="w-9 h-9 bg-emerald-500 rounded-xl flex items-center justify-center">
+              <Trophy className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <div className="font-bold text-emerald-900">Primes équipe</div>
+              <div className="text-xs text-emerald-600">Versées par produit livré — calcul automatique dans la page Performance</div>
+            </div>
+          </div>
+
+          <form action={savePrimesAction} className="px-6 py-5 space-y-5">
+
+            {/* Prime Agent */}
+            <div className="border border-slate-200 rounded-xl p-4 bg-slate-50/50">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-7 h-7 bg-sky-500 rounded-lg flex items-center justify-center">
+                  <Trophy className="w-4 h-4 text-white" />
+                </div>
+                <div className="font-semibold text-slate-800">Agent de confirmation</div>
+              </div>
+              <label className="block text-xs font-semibold text-slate-600 mb-1">
+                Prime par produit livré (GNF)
+              </label>
+              <div className="flex gap-3 items-center">
+                <input
+                  type="number"
+                  name="agent_prime"
+                  defaultValue={agentPrime}
+                  min={0}
+                  step={500}
+                  className="input text-lg font-bold max-w-[200px]"
+                />
+                <span className="text-sm text-slate-500">GNF / produit livré</span>
+              </div>
+              <p className="text-xs text-slate-400 mt-1">
+                Actuellement <strong>{formatGNF(agentPrime)}</strong> — versé à l&apos;agent ayant confirmé la commande, uniquement si elle est livrée.
+              </p>
+            </div>
+
+            {/* Prime Livreur */}
+            <div className="border border-slate-200 rounded-xl p-4 bg-slate-50/50">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-7 h-7 bg-amber-500 rounded-lg flex items-center justify-center">
+                  <Truck className="w-4 h-4 text-white" />
+                </div>
+                <div className="font-semibold text-slate-800">Livreur</div>
+              </div>
+              <label className="block text-xs font-semibold text-slate-600 mb-1">
+                Prime par produit livré (GNF)
+              </label>
+              <div className="flex gap-3 items-center">
+                <input
+                  type="number"
+                  name="livreur_prime"
+                  defaultValue={livreurPrime}
+                  min={0}
+                  step={500}
+                  className="input text-lg font-bold max-w-[200px]"
+                />
+                <span className="text-sm text-slate-500">GNF / produit livré</span>
+              </div>
+              <p className="text-xs text-slate-400 mt-1">
+                Actuellement <strong>{formatGNF(livreurPrime)}</strong> — versé au livreur ayant effectué la livraison.
+              </p>
+            </div>
+
+            <button type="submit" className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-6 py-2.5 rounded-xl transition">
+              💾 Enregistrer les primes
             </button>
           </form>
         </div>
