@@ -125,6 +125,29 @@ export async function assignDeliveryAction(formData: FormData): Promise<void> {
   redirect(`/commandes/${orderId}`);
 }
 
+/**
+ * Réaffecter ou désaffecter une commande à un agent — ADMIN/MANAGER uniquement
+ */
+export async function reassignAgentAction(formData: FormData): Promise<void> {
+  const session = await auth();
+  const role = (session?.user as any)?.role;
+  if (role !== "ADMIN" && role !== "MANAGER") redirect("/");
+
+  const orderId = String(formData.get("orderId") ?? "");
+  const agentId = String(formData.get("agentId") ?? "").trim();
+
+  if (!orderId) return;
+
+  await prisma.order.update({
+    where: { id: orderId },
+    data: { assignedAgentId: agentId || null },
+  });
+
+  revalidatePath(`/commandes/${orderId}`);
+  revalidatePath("/commandes/confirmation");
+  redirect(`/commandes/${orderId}`);
+}
+
 export async function updateOrderStatusAction(formData: FormData): Promise<void> {
   const session = await auth();
   const role = (session?.user as any)?.role;

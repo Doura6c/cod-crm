@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { can } from "@/lib/rbac";
 import { PageHeader } from "@/components/PageHeader";
 import { formatGNF, formatDateTime, statusBadge } from "@/lib/utils";
-import { logCallAction, assignDeliveryAction } from "./actions";
+import { logCallAction, assignDeliveryAction, reassignAgentAction } from "./actions";
 import {
   Phone,
   MapPin,
@@ -44,8 +44,9 @@ export default async function OrderDetailPage({
   const { id } = await params;
 
   const canAssignDelivery = can(userRole, "ASSIGN_DELIVERY");
+  const canReassignAgent = userRole === "ADMIN" || userRole === "MANAGER";
 
-  const [order, livreurs] = await Promise.all([
+  const [order, livreurs, agentsList] = await Promise.all([
     prisma.order.findUnique({
       where: { id },
       include: {
@@ -62,6 +63,9 @@ export default async function OrderDetailPage({
     }),
     canAssignDelivery
       ? prisma.user.findMany({ where: { role: "LIVREUR" }, orderBy: { firstName: "asc" } })
+      : Promise.resolve([]),
+    canReassignAgent
+      ? prisma.user.findMany({ where: { role: "AGENT", active: true }, orderBy: { firstName: "asc" }, select: { id: true, firstName: true, lastName: true } })
       : Promise.resolve([]),
   ]);
 
@@ -273,9 +277,41 @@ export default async function OrderDetailPage({
               <div>
                 <dt className="text-xs text-slate-500">Agent affecté</dt>
                 <dd className="text-slate-800">
-                  {order.assignedAgent ? `${order.assignedAgent.firstName} ${order.assignedAgent.lastName}` : "Non affecté"}
+                  {order.assignedAgent
+                    ? `${order.assignedAgent.firstName} ${order.assignedAgent.lastName}`
+                    : <span className="text-amber-600 font-semibold">Non affecté</span>}
                 </dd>
               </div>
+
+              {/* Réaffecter / désaffecter — ADMIN & MANAGER uniquement */}
+              {canReassignAgent && !["EN_LIVRAISON", "LIVRE", "RETOURNE", "ANNULE"].includes(order.status) && (
+                <div className="pt-3 border-t border-slate-100">
+                  <dt className="text-xs text-slate-500 font-semibold mb-2 flex items-center gap-1">
+                    <User className="w-3 h-3" /> Changer l&apos;agent
+                  </dt>
+                  <form action={reassignAgentAction} className="flex gap-2 items-center">
+                    <input type="hidden" name="orderId" value={order.id} />
+                    <select
+                      name="agentId"
+                      defaultValue={order.assignedAgentId ?? ""}
+                      className="input text-xs py-1.5 flex-1"
+                    >
+                      <option value="">— Désaffecter —</option>
+                      {agentsList.map((a) => (
+                        <option key={a.id} value={a.id}>
+                          {a.firstName} {a.lastName}
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      type="submit"
+                      className="bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition whitespace-nowrap"
+                    >
+                      Valider
+                    </button>
+                  </form>
+                </div>
+              )}
               {order.validatedBy && (
                 <div>
                   <dt className="text-xs text-slate-500">Validée par</dt>
