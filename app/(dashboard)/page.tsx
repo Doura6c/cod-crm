@@ -320,14 +320,20 @@ export default async function DashboardPage({
             <span className="ml-auto text-xs text-slate-400">{period === "today" ? "Aujourd'hui" : period === "week" ? "7 jours" : "Ce mois"}</span>
           </div>
           <div className="divide-y divide-slate-50">
-            {agents.map((a, i) => {
-              const stats = agentCallStats.filter((s) => s.agentId === a.id);
-              const total = stats.reduce((s, x) => s + x._count.id, 0);
-              const confirmed = stats.find((s) => s.outcome === "CONFIRMED")?._count.id ?? 0;
-              const cancelled = stats.find((s) => s.outcome === "CANCELLED")?._count.id ?? 0;
-              const reported = stats.find((s) => s.outcome === "REPORTED")?._count.id ?? 0;
-              const noAnswer = (stats.find((s) => s.outcome === "NO_ANSWER")?._count.id ?? 0)
-                + (stats.find((s) => s.outcome === "INJOIGNABLE")?._count.id ?? 0);
+            {agents
+              .map((a) => {
+                const stats = agentCallStats.filter((s) => s.agentId === a.id);
+                const total = stats.reduce((s, x) => s + x._count.id, 0);
+                const confirmed = stats.find((s) => s.outcome === "CONFIRMED")?._count.id ?? 0;
+                const cancelled = stats.find((s) => s.outcome === "CANCELLED")?._count.id ?? 0;
+                const reported = stats.find((s) => s.outcome === "REPORTED")?._count.id ?? 0;
+                const noAnswer = (stats.find((s) => s.outcome === "NO_ANSWER")?._count.id ?? 0)
+                  + (stats.find((s) => s.outcome === "INJOIGNABLE")?._count.id ?? 0);
+                return { ...a, total, confirmed, cancelled, reported, noAnswer };
+              })
+              .sort((a, b) => b.confirmed - a.confirmed)
+              .map((a, i) => {
+              const { total, confirmed, cancelled, reported, noAnswer } = a;
               const rate = pct(confirmed, total);
               return (
                 <div key={a.id} className="px-6 py-4 flex items-center gap-4">
@@ -398,11 +404,17 @@ export default async function DashboardPage({
               <span className="font-bold text-slate-800">Performance livreurs</span>
             </div>
             <div className="divide-y divide-slate-50">
-              {livreurs.map((l) => {
-                const rows = livreurDeliveries.filter((d) => d.livreurId === l.id);
-                const livre = rows.filter((d) => d.status === "LIVRE").length;
-                const retour = rows.filter((d) => d.status === "RETOURNE").length;
-                const ca = rows.filter((d) => d.status === "LIVRE").reduce((s, d) => s + (d.amountCollected ?? 0), 0);
+              {livreurs
+                .map((l) => {
+                  const rows = livreurDeliveries.filter((d) => d.livreurId === l.id);
+                  const livre = rows.filter((d) => d.status === "LIVRE").length;
+                  const retour = rows.filter((d) => d.status === "RETOURNE").length;
+                  const ca = rows.filter((d) => d.status === "LIVRE").reduce((s, d) => s + (d.amountCollected ?? 0), 0);
+                  return { ...l, livre, retour, ca };
+                })
+                .sort((a, b) => b.livre - a.livre)
+                .map((l) => {
+                const { livre, retour, ca } = l;
                 const rate = pct(livre, livre + retour);
                 return (
                   <div key={l.id} className="px-6 py-4 flex items-center gap-4">
