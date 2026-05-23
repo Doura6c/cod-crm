@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<title>Guide Superviseur — HelpMeProcess COD Manager</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',Arial,sans-serif;font-size:13.5px;color:#1e293b;background:#fff;line-height:1.65;}
+
+/* COVER */
+.cover{
+  width:100%;min-height:100vh;
+  background:linear-gradient(160deg,#0f172a 0%,#0c2a4a 50%,#0369a1 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:60px 40px;page-break-after:always;color:white;
+}
+.cover-logo{width:100px;height:100px;background:white;border-radius:22px;display:flex;align-items:center;justify-content:center;margin:0 auto 32px;font-size:50px;box-shadow:0 12px 40px rgba(0,0,0,0.4);}
+.cover h1{font-size:40px;font-weight:900;letter-spacing:-1px;margin-bottom:6px;}
+.cover h2{font-size:17px;font-weight:300;opacity:.75;margin-bottom:48px;}
+.cover-card{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.18);border-radius:18px;padding:30px 44px;width:100%;max-width:480px;margin-bottom:50px;}
+.cover-card .lbl{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:#7dd3fc;margin-bottom:4px;}
+.cover-card .val{font-size:20px;font-weight:800;margin-bottom:18px;}
+.cover-card .val:last-child{margin-bottom:0;}
+.cover-card .val.url{font-size:15px;font-family:monospace;color:#38bdf8;}
+.cover-tag{display:inline-block;background:rgba(14,165,233,.25);border:1px solid rgba(14,165,233,.4);color:#7dd3fc;font-size:11px;font-weight:700;padding:6px 22px;border-radius:100px;letter-spacing:1px;text-transform:uppercase;margin-bottom:50px;}
+.cover-footer{font-size:11px;opacity:.35;margin-top:auto;}
+
+/* PAGE BREAK */
+.pb{page-break-before:always;}
+
+/* LAYOUT */
+.page{padding:52px 56px 44px;}
+
+/* CHAPTER HEADER */
+.chap-header{display:flex;align-items:center;gap:18px;margin-bottom:32px;padding-bottom:18px;border-bottom:3px solid #e2e8f0;}
+.chap-num{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.chap-title{font-size:24px;font-weight:900;color:#0f172a;}
+.chap-sub{font-size:13px;color:#64748b;margin-top:3px;}
+
+/* SECTION TITLE */
+h2{font-size:17px;font-weight:800;color:#0f172a;margin:28px 0 12px;padding-left:12px;border-left:4px solid #0ea5e9;}
+h3{font-size:14px;font-weight:700;color:#1e293b;margin:20px 0 8px;}
+h4{font-size:13px;font-weight:700;color:#334155;margin:14px 0 6px;}
+p{color:#475569;margin-bottom:10px;}
+ul,ol{padding-left:22px;margin-bottom:12px;}
+li{margin-bottom:6px;color:#475569;}
+strong{color:#1e293b;}
+
+/* STEP BY STEP */
+.steps{margin:14px 0 20px;}
+.step{display:flex;gap:14px;margin-bottom:12px;align-items:flex-start;}
+.snum{min-width:30px;height:30px;border-radius:50%;background:#0ea5e9;color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.scontent{flex:1;}
+.scontent b{display:block;font-size:13.5px;color:#0f172a;margin-bottom:3px;}
+.scontent span{font-size:12.5px;color:#64748b;}
+.scontent .note{display:inline-block;margin-top:5px;font-size:11.5px;background:#f0f9ff;border:1px solid #bae6fd;color:#0369a1;border-radius:6px;padding:4px 10px;}
+
+/* ACTION BOX */
+.action-box{border:2px solid #e2e8f0;border-radius:12px;overflow:hidden;margin-bottom:20px;}
+.action-header{padding:12px 18px;font-weight:800;font-size:13.5px;display:flex;align-items:center;gap:8px;}
+.action-body{padding:14px 18px;}
+.action-box.blue .action-header{background:#eff6ff;color:#1e40af;border-bottom:2px solid #bfdbfe;}
+.action-box.green .action-header{background:#f0fdf4;color:#166534;border-bottom:2px solid #bbf7d0;}
+.action-box.amber .action-header{background:#fffbeb;color:#92400e;border-bottom:2px solid #fde68a;}
+.action-box.red .action-header{background:#fef2f2;color:#991b1b;border-bottom:2px solid #fecaca;}
+.action-box.purple .action-header{background:#faf5ff;color:#6b21a8;border-bottom:2px solid #e9d5ff;}
+.action-box.sky .action-header{background:#f0f9ff;color:#0369a1;border-bottom:2px solid #bae6fd;}
+
+/* CALLOUT */
+.tip{display:flex;gap:10px;background:#f0fdf4;border-left:4px solid #22c55e;padding:12px 14px;border-radius:0 8px 8px 0;margin:14px 0;font-size:12.5px;color:#166534;}
+.warn{display:flex;gap:10px;background:#fffbeb;border-left:4px solid #f59e0b;padding:12px 14px;border-radius:0 8px 8px 0;margin:14px 0;font-size:12.5px;color:#92400e;}
+.info{display:flex;gap:10px;background:#eff6ff;border-left:4px solid #3b82f6;padding:12px 14px;border-radius:0 8px 8px 0;margin:14px 0;font-size:12.5px;color:#1d4ed8;}
+
+/* BADGE */
+.b{display:inline-block;font-size:10px;font-weight:800;padding:2px 9px;border-radius:100px;margin:1px;}
+.b-slate{background:#f1f5f9;color:#475569;}
+.b-blue{background:#dbeafe;color:#1d4ed8;}
+.b-green{background:#dcfce7;color:#166534;}
+.b-amber{background:#fef3c7;color:#92400e;}
+.b-red{background:#fee2e2;color:#991b1b;}
+.b-purple{background:#f3e8ff;color:#6b21a8;}
+.b-sky{background:#e0f2fe;color:#0369a1;}
+.b-orange{background:#fff7ed;color:#c2410c;}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:12.5px;}
+thead tr{background:#0f172a;}
+th{color:white;padding:9px 14px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.3px;}
+td{padding:9px 14px;border-bottom:1px solid #f1f5f9;vertical-align:top;}
+tr:nth-child(even) td{background:#fafafa;}
+
+/* SCREEN MOCK */
+.screen{background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;padding:16px 18px;margin:12px 0;font-size:12px;}
+.screen .bar{background:#e2e8f0;border-radius:6px;padding:6px 12px;font-family:monospace;font-size:11px;color:#64748b;margin-bottom:10px;}
+.screen .row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #f1f5f9;}
+.screen .row:last-child{border-bottom:none;}
+.screen .btn{display:inline-block;background:#0ea5e9;color:white;font-size:10px;font-weight:700;padding:4px 10px;border-radius:6px;}
+.screen .btn-g{background:#22c55e;}
+.screen .btn-r{background:#ef4444;}
+.screen .btn-a{background:#f59e0b;}
+
+/* FLOW */
+.flow{display:flex;flex-wrap:wrap;align-items:center;gap:2px;margin:16px 0;}
+.fstep{background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:8px;padding:8px 13px;font-size:11.5px;font-weight:700;color:#1e293b;text-align:center;}
+.farrow{color:#94a3b8;font-size:16px;padding:0 4px;}
+.fstep.active{background:#0ea5e9;color:white;border-color:#0ea5e9;}
+.fstep.end-ok{background:#22c55e;color:white;border-color:#22c55e;}
+.fstep.end-bad{background:#ef4444;color:white;border-color:#ef4444;}
+
+/* CREDS */
+.creds{background:#0f172a;color:#e2e8f0;border-radius:12px;padding:22px 28px;margin:16px 0;}
+.creds .cl{font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:3px;}
+.creds .cv{font-size:16px;font-weight:800;color:#38bdf8;margin-bottom:16px;}
+.creds .cv:last-child{margin-bottom:0;}
+.creds .cv.mono{font-family:monospace;}
+
+/* SUMMARY BOX */
+.summary{background:linear-gradient(135deg,#0f172a,#1e3a5f);color:white;border-radius:14px;padding:24px 28px;margin:24px 0;}
+.summary h3{color:#7dd3fc;font-size:12px;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;}
+.summary ul{padding-left:18px;}
+.summary li{color:#cbd5e1;margin-bottom:5px;font-size:13px;}
+
+/* PRINT */
+@media print{
+  body{font-size:12.5px;}
+  .cover{min-height:100vh;}
+  .page{padding:42px 50px 38px;}
+  a{color:inherit;text-decoration:none;}
+}
+@page{margin:0;size:A4;}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════
+     COUVERTURE
+══════════════════════════════════ -->
+<div class="cover">
+  <div class="cover-logo">📦</div>
+  <h1>HelpMeProcess</h1>
+  <h2>COD Manager — Plateforme de gestion Cash on Delivery</h2>
+  <div class="cover-tag">Manuel d'utilisation — Superviseur</div>
+
+  <div class="cover-card">
+    <div class="lbl">Destinataire</div>
+    <div class="val">Celestin Loua — Superviseur</div>
+    <div class="lbl">Accès plateforme</div>
+    <div class="val url">cod-crm-zeta.vercel.app</div>
+    <div class="lbl">Email de connexion</div>
+    <div class="val">superviseur@codcrm.gn</div>
+    <div class="lbl">Mot de passe initial</div>
+    <div class="val">password123</div>
+  </div>
+  <div class="cover-footer">HelpMeProcess © 2026 · Document confidentiel · Ne pas diffuser</div>
+</div>
+
+
+<!-- ══════════════════════════════════
+     CHAPITRE 1 — CONNEXION
+══════════════════════════════════ -->
+<div class="page pb">
+  <div class="chap-header">
+    <div class="chap-num" style="background:#dbeafe;">🔐</div>
+    <div>
+      <div class="chap-title">Chapitre 1 — Se connecter à la plateforme</div>
+      <div class="chap-sub">Accès, première connexion, navigation de base</div>
+    </div>
+  </div>
+
+  <h2>1.1 — Accéder à la plateforme</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="snum">1</div>
+      <div class="scontent">
+        <b>Ouvrir votre navigateur web</b>
+        <span>Utilisez de préférence <strong>Google Chrome</strong> ou <strong>Safari</strong>. Fonctionne aussi sur tablette et téléphone.</span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="snum">2</div>
+      <div class="scontent">
+        <b>Taper l'adresse dans la barre du navigateur</b>
+        <span><strong>https://cod-crm-zeta.vercel.app</strong></span>
+        <span class="note">💡 Conseil : ajoutez cette adresse en favori (⭐) pour y accéder en un clic chaque matin.</span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="snum">3</div>
+      <div class="scontent">
+        <b>Sur la page de connexion, entrer vos identifiants</b>
+        <span>Email : <strong>superviseur@codcrm.gn</strong> · Mot de passe : <strong>password123</strong></span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="snum">4</div>
+      <div class="scontent">
+        <b>Cliquer sur "Se connecter"</b>
+        <span>Vous êtes redirigé automatiquement vers le tableau de bord.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="warn">⚠️ <span>Si la page affiche "Identifiants incorrects", vérifiez que vous avez bien copié l'email sans espaces. Contactez l'admin si le problème persiste.</span></div>
+
+  <h2>1.2 — L'interface principale</h2>
+  <p>L'interface est divisée en deux parties :</p>
+  <div class="screen">
+    <div class="bar">https://cod-crm-zeta.vercel.app/</div>
+    <div class="row"><strong>📌 Barre latérale gauche (sidebar)</strong><span>Menu de navigation — accès à tous les modules</span></div>
+    <div class="row"><strong>📄 Zone centrale (contenu)</strong><span>Affiche les données du module sélectionné</span></div>
+    <div class="row"><strong>👤 Profil en bas à gauche</strong><span>Votre nom, rôle et bouton Déconnexion</span></div>
+  </div>
+
+  <h2>1.3 — Se déconnecter</h2>
+  <p>En bas de la barre latérale gauche → cliquer sur <strong>"Déconnexion"</strong>. Vous êtes renvoyé à la page de connexion.</p>
+
+  <div class="tip">✅ <span>Déconnectez-vous toujours si vous partagez votre ordinateur avec quelqu'un d'autre.</span></div>
+</div>
+
+
+<!-- ══════════════════════════════════
+     CHAPITRE 2 — STATISTIQUES
+══════════════════════════════════ -->
+<div class="page pb">
+  <div class="chap-header">
+    <div class="chap-num" style="background:#fef9c3;">📊</div>
+    <div>
+      <div class="chap-title">Chapitre 2 — Tableau de bord Statistiques</div>
+      <div class="chap-sub">Votre page d'accueil — surveiller la performance en temps réel</div>
+    </div>
+  </div>
+
+  <p>Dès la connexion, vous arrivez sur le tableau de bord. C'est votre vue d'ensemble quotidienne. <strong>Consultez-le chaque matin</strong>.</p>
+
+  <h2>2.1 — Les indicateurs principaux</h2>
+  <table>
+    <thead><tr><th>Indicateur</th><th>Ce qu'il mesure</th><th>Bonne valeur</th></tr></thead>
+    <tr><td><strong>Total commandes</strong></td><td>Commandes reçues sur la période</td><td>Dépend de votre volume</td></tr>
+    <tr><td><strong>Taux de confirmation</strong></td><td>% de commandes confirmées sur total traitées</td><td>> 60%</td></tr>
+    <tr><td><strong>Taux de livraison</strong></td><td>% de commandes livrées sur confirmées</td><td>> 75%</td></tr>
+    <tr><td><strong>CA encaissé</strong></td><td>Montant total collecté à la livraison (GNF)</td><td>—</td></tr>
+    <tr><td><strong>En attente validation</strong></td><td>Commandes confirmées par agent, pas encore affectées à un livreur</td><td>= 0 à la fin de journée</td></tr>
+    <tr><td><strong>Stock alertes</strong></td><td>Produits avec stock < seuil d'alerte</td><td>= 0</td></tr>
+  </table>
+
+  <h2>2.2 — Filtrer par période</h2>
+  <p>En haut de la page, cliquez sur un bouton pour changer la période d'affichage :</p>
+  <table>
+    <thead><tr><th>Bouton</th><th>Période couverte</th></tr></thead>
+    <tr><td><span class="b b-slate">Toutes</span></td><td>Toutes les données depuis le début</td></tr>
+    <tr><td><span class="b b-blue">Aujourd'hui</span></td><td>Données de la journée en cours uniquement</td></tr>
+    <tr><td><span class="b b-blue">Hier</span></td><td>Données de la journée précédente</td></tr>
+    <tr><td><span class="b b-blue">7 jours</span></td><td>Les 7 derniers jours glissants</td></tr>
+    <tr><td><span class="b b-blue">Ce mois</span></td><td>Du 1er au jour actuel du mois courant</td></tr>
+    <tr><td><span class="b b-blue">Mois dernier</span></td><td>Le mois civil précédent complet</td></tr>
+    <tr><td><span class="b b-purple">Jour précis</span></td><td>Un seul jour au choix — sélectionner la date via le calendrier</td></tr>
+    <tr><td><span class="b b-purple">Personnalisé</span></td><td>Plage de dates libre — saisir Date début et Date fin</td></tr>
+  </table>
+
+  <div class="tip">✅ <span>Utilisez <strong>"Ce mois"</strong> pour votre revue hebdomadaire, et <strong>"Hier"</strong> chaque matin pour vérifier la performance de la veille.</span></div>
+</div>
+
+
+<!-- ══════════════════════════════════
+     CHAPITRE 3 — COMMANDES (VUE LISTE)
+══════════════════════════════════ -->
+<div class="page pb">
+  <div class="chap-header">
+    <div class="chap-num" style="background:#fce7f3;">📋</div>
+    <div>
+      <div class="chap-title">Chapitre 3 — Gérer les Commandes</div>
+      <div class="chap-sub">Suivre, filtrer, affecter et superviser toutes les commandes</div>
+    </div>
+  </div>
+
+  <p>Dans le menu gauche, <strong>"Commandes"</strong> contient 4 sous-pages. Cliquez sur la flèche pour les voir.</p>
+
+  <h2>3.1 — Sous-page "Confirmation"</h2>
+  <p>C'est la page principale des agents. En tant que superviseur, vous la consultez pour surveiller l'avancement du traitement des commandes.</p>
+
+  <div class="action-box blue">
+    <div class="action-header">👁️ Ce que vous voyez sur cette page</div>
+    <div class="action-body">
+      <ul>
+        <li>Toutes les commandes en cours de confirmation, classées du plus récent au plus ancien</li>
+        <li>Des <strong>onglets de statut</strong> en haut pour filtrer : Nouveau · PDR · Reporté · Confirmé · Injoignable · Annulé</li>
+        <li>Pour chaque commande : code, client, produits, montant, agent affecté, statut, date</li>
+        <li>Un <strong>filtre par agent</strong> pour voir uniquement les commandes d'un agent précis</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Comment utiliser les filtres :</h3>
+  <div class="steps">
+    <div class="step">
+      <div class="snum">1</div>
+      <div class="scontent">
+        <b>Filtrer par statut</b>
+        <span>Cliquez sur un onglet (ex: "Confirmé") pour n'afficher que ces commandes.</span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="snum">2</div>
+      <div class="scontent">
+        <b>Filtrer par agent</b>
+        <span>Utilisez la liste déroulante "Tous les agents" pour sélectionner un agent précis et voir uniquement ses commandes.</span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="snum">3</div>
+      <div class="scontent">
+        <b>Ouvrir une commande</b>
+        <span>Cliquez sur le <strong>code de la commande</strong> (ex: CMD-230526-XXXXX) pour ouvrir la fiche détaillée.</span>
+      </div>
+    </div>
+  </div>
+
+  <h2>3.2 — Sous-page "En attente validation" ⭐ LA PLUS IMPORTANTE</h2>
+  <p>Cette page liste les commandes <strong>confirmées par un agent</strong> mais pas encore envoyées en livraison. <strong>C'est votre principale action quotidienne.</strong></p>
+
+  <div class="action-box green">
+    <div class="action-header">✅ Comment affecter une commande confirmée à un livreur</div>
+    <div class="action-body">
+      <div class="steps">
+        <div class="step">
+          <div class="snum">1</div>
+          <div class="scontent">
+            <b>Aller dans Commandes → En attente validation</b>
+            <span>Vous voyez la liste des commandes confirmées en attente.</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">2</div>
+          <div class="scontent">
+            <b>Cliquer sur le code d'une commande</b>
+            <span>La fiche détaillée s'ouvre.</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">3</div>
+          <div class="scontent">
+            <b>Dans la colonne droite, repérer le bloc vert "Affecter à un livreur"</b>
+            <span>Ce bloc n'apparaît que pour les commandes au statut CONFIRMÉ.</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">4</div>
+          <div class="scontent">
+            <b>Sélectionner le livreur dans la liste déroulante</b>
+            <span>Tous les livreurs actifs apparaissent. Choisissez celui qui couvre la zone de livraison.</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">5</div>
+          <div class="scontent">
+            <b>Ajouter des instructions si nécessaire (optionnel)</b>
+            <span>Ex : "Livrer avant 12h", "Appeler avant de partir", "Demander M. Konaté".</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">6</div>
+          <div class="scontent">
+            <b>Cliquer sur "Envoyer en livraison"</b>
+            <span>La commande passe automatiquement au statut <span class="b b-sky">EN_LIVRAISON</span> et apparaît chez le livreur.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>3.3 — Sous-page "Commandes" (liste complète)</h2>
+  <p>Vue exhaustive de toutes les commandes avec filtres avancés. Utilisez-la pour les audits et recherches.</p>
+  <ul>
+    <li>Filtrez par <strong>période</strong> (aujourd'hui, semaine, mois...)</li>
+    <li>Filtrez par <strong>statut</strong> via les onglets en haut</li>
+    <li>Filtrez par <strong>agent</strong> via la liste déroulante</li>
+  </ul>
+
+  <h2>3.4 — Sous-page "Annulé-terminé"</h2>
+  <p>Archive des commandes annulées et retournées. Utile pour analyser les raisons d'échec et calculer le taux de retour.</p>
+</div>
+
+
+<!-- ══════════════════════════════════
+     CHAPITRE 4 — FICHE COMMANDE
+══════════════════════════════════ -->
+<div class="page pb">
+  <div class="chap-header">
+    <div class="chap-num" style="background:#e0f2fe;">🔎</div>
+    <div>
+      <div class="chap-title">Chapitre 4 — La fiche détaillée d'une commande</div>
+      <div class="chap-sub">Toutes les actions possibles depuis la fiche commande</div>
+    </div>
+  </div>
+
+  <p>Cliquez sur n'importe quelle commande pour ouvrir sa fiche. Elle est divisée en <strong>deux colonnes</strong> :</p>
+  <ul>
+    <li><strong>Colonne gauche (grande)</strong> : Infos client, produits, script confirmation, historique appels</li>
+    <li><strong>Colonne droite (petite)</strong> : Actions, informations, livraison</li>
+  </ul>
+
+  <h2>4.1 — Réaffecter une commande à un autre agent</h2>
+  <p>Si un agent est absent, a fait une erreur, ou si vous souhaitez rééquilibrer la charge de travail.</p>
+
+  <div class="action-box purple">
+    <div class="action-header">🔄 Changer l'agent affecté à une commande</div>
+    <div class="action-body">
+      <div class="steps">
+        <div class="step">
+          <div class="snum">1</div>
+          <div class="scontent">
+            <b>Ouvrir la fiche de la commande</b>
+            <span>Cliquez sur le code commande depuis n'importe quelle liste.</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">2</div>
+          <div class="scontent">
+            <b>Colonne droite → bloc "Informations" → section "Changer l'agent"</b>
+            <span>Un menu déroulant affiche tous les agents actifs.</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">3</div>
+          <div class="scontent">
+            <b>Sélectionner le nouvel agent</b>
+            <span>Ou choisir "— Désaffecter —" pour retirer l'agent sans en affecter un autre.</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">4</div>
+          <div class="scontent">
+            <b>Cliquer sur "Valider"</b>
+            <span>La commande est immédiatement visible dans la liste du nouvel agent.</span>
+          </div>
+        </div>
+      </div>
+      <div class="warn" style="margin-top:8px;">⚠️ <span>Cette action n'est pas disponible pour les commandes déjà en livraison, livrées, retournées ou annulées.</span></div>
+    </div>
+  </div>
+
+  <h2>4.2 — Modifier les frais de livraison</h2>
+  <p>Par défaut, la livraison est <strong>gratuite</strong> pour le client (prise en charge par HelpMeProcess). Pour les clients en province ou zones éloignées, vous pouvez la rendre payante.</p>
+
+  <div class="action-box amber">
+    <div class="action-header">💰 Basculer entre "Livraison gratuite" et "Payante par le client"</div>
+    <div class="action-body">
+      <div class="steps">
+        <div class="step">
+          <div class="snum">1</div>
+          <div class="scontent">
+            <b>Ouvrir la fiche de la commande</b>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">2</div>
+          <div class="scontent">
+            <b>Colonne droite → bloc "Frais de livraison"</b>
+            <span>Vous voyez le statut actuel : <strong style="color:#166534;">✅ Gratuit</strong> ou <strong style="color:#92400e;">💰 Payant</strong></span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">3</div>
+          <div class="scontent">
+            <b>Cliquer sur "Mettre payant"</b>
+            <span>Les frais de livraison de la ville du client s'appliquent. Le total de la commande se recalcule automatiquement.</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">4</div>
+          <div class="scontent">
+            <b>Pour annuler, cliquer sur "Remettre gratuit"</b>
+            <span>Les frais reviennent à 0 et le total est corrigé.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>4.3 — Consulter l'historique des appels</h2>
+  <p>Dans la colonne gauche, le bloc <strong>"Historique des appels"</strong> montre tous les appels passés par les agents avec : date, heure, résultat et notes. Utile pour auditer le travail d'un agent.</p>
+
+  <h2>4.4 — Ajouter une note ou un appel</h2>
+  <div class="action-box sky">
+    <div class="action-header">📝 Enregistrer un appel ou une note depuis la fiche</div>
+    <div class="action-body">
+      <div class="steps">
+        <div class="step">
+          <div class="snum">1</div>
+          <div class="scontent">
+            <b>Dans le bloc "Historique des appels", remplir le formulaire</b>
+            <span>Sélectionner le résultat de l'appel dans la liste déroulante.</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">2</div>
+          <div class="scontent">
+            <b>Ajouter une note (optionnel)</b>
+            <span>Ex : "Client confirme mais veut la livraison samedi matin uniquement".</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">3</div>
+          <div class="scontent">
+            <b>Cliquer sur "Enregistrer l'appel"</b>
+            <span>La note est sauvegardée avec votre nom et l'heure automatiquement.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>4.5 — Voir la raison d'un retour non livré</h2>
+  <p>Quand une commande est au statut <span class="b b-red">RETOURNÉ</span>, un <strong>bloc rouge</strong> apparaît dans la colonne droite avec :</p>
+  <ul>
+    <li>La raison du retour saisie par le livreur</li>
+    <li>La date et heure du retour</li>
+  </ul>
+  <p>Si le livreur n'a pas saisi de raison, le message "Aucune raison saisie" s'affiche — contactez le livreur directement.</p>
+</div>
+
+
+<!-- ══════════════════════════════════
+     CHAPITRE 5 — LIVRAISONS
+══════════════════════════════════ -->
+<div class="page pb">
+  <div class="chap-header">
+    <div class="chap-num" style="background:#dcfce7;">🚚</div>
+    <div>
+      <div class="chap-title">Chapitre 5 — Gérer les Livraisons</div>
+      <div class="chap-sub">Suivi en temps réel des livraisons, validation et retours</div>
+    </div>
+  </div>
+
+  <p>La page <strong>Livraisons</strong> (icône camion dans le menu) liste toutes les commandes actuellement assignées à un livreur.</p>
+
+  <h2>5.1 — Ce que vous voyez sur la page Livraisons</h2>
+  <div class="screen">
+    <div class="bar">https://cod-crm-zeta.vercel.app/livraisons</div>
+    <div class="row"><strong>Code commande</strong><span>Lien cliquable vers la fiche complète</span></div>
+    <div class="row"><strong>Client + Ville</strong><span>Destinataire de la livraison</span></div>
+    <div class="row"><strong>Livreur assigné</strong><span>Nom du livreur responsable</span></div>
+    <div class="row"><strong>Montant à collecter</strong><span>Montant COD que le livreur doit récupérer</span></div>
+    <div class="row"><strong>Statut</strong><span>ASSIGNED · LIVRE · RETOURNE</span></div>
+    <div class="row"><strong>Date affectation</strong><span>Quand la livraison a été assignée</span></div>
+    <div class="row"><strong>Actions</strong><span><span class="btn btn-g">Livré ✅</span> <span class="btn btn-r">Retour ❌</span></span></div>
+  </div>
+
+  <h2>5.2 — Marquer une commande comme "Livrée"</h2>
+  <div class="action-box green">
+    <div class="action-header">✅ Valider une livraison réussie</div>
+    <div class="action-body">
+      <div class="steps">
+        <div class="step">
+          <div class="snum">1</div>
+          <div class="scontent">
+            <b>Aller sur la page Livraisons</b>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">2</div>
+          <div class="scontent">
+            <b>Trouver la commande concernée</b>
+            <span>Vous pouvez filtrer par livreur ou par statut.</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">3</div>
+          <div class="scontent">
+            <b>Cliquer sur le bouton vert "Livré ✅"</b>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">4</div>
+          <div class="scontent">
+            <b>Confirmer le montant collecté</b>
+            <span>Le montant est pré-rempli avec le total de la commande. Modifiez-le si le livreur a collecté un montant différent.</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">5</div>
+          <div class="scontent">
+            <b>Valider</b>
+            <span>La commande passe en statut <span class="b b-green">LIVRÉ</span>. La facture COD est générée automatiquement. Le stock est définitivement sorti.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>5.3 — Marquer une commande comme "Retour non livré"</h2>
+  <div class="action-box red">
+    <div class="action-header">❌ Enregistrer un retour non livré</div>
+    <div class="action-body">
+      <div class="steps">
+        <div class="step">
+          <div class="snum">1</div>
+          <div class="scontent">
+            <b>Trouver la commande sur la page Livraisons</b>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">2</div>
+          <div class="scontent">
+            <b>Cliquer sur le bouton rouge "Retour ❌"</b>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">3</div>
+          <div class="scontent">
+            <b>Saisir la raison du retour</b>
+            <span>Ex : "Client absent", "Adresse introuvable", "Client a refusé à la porte", "Numéro incorrect".</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">4</div>
+          <div class="scontent">
+            <b>Confirmer</b>
+            <span>La commande passe en <span class="b b-red">RETOURNÉ</span>. Le stock est automatiquement restitué. La raison est visible dans la fiche commande.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>5.4 — Modifier un montant collecté après livraison</h2>
+  <p>Si le montant réel collecté par le livreur est différent du montant prévu (ex : remise accordée, article manquant) :</p>
+  <div class="action-box amber">
+    <div class="action-header">✏️ Corriger le montant collecté</div>
+    <div class="action-body">
+      <div class="steps">
+        <div class="step">
+          <div class="snum">1</div>
+          <div class="scontent">
+            <b>Sur la page Livraisons, trouver la livraison livrée</b>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">2</div>
+          <div class="scontent">
+            <b>Cliquer sur l'icône de modification du montant</b>
+            <span>Un champ s'affiche pour entrer le montant réel.</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">3</div>
+          <div class="scontent">
+            <b>Entrer le montant réel + la raison</b>
+            <span>Ex : "Remise accordée car produit légèrement endommagé". Cette modification est notifiée à l'administrateur.</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">4</div>
+          <div class="scontent">
+            <b>Enregistrer</b>
+            <span>La modification est tracée avec votre nom, la date et la raison.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════
+     CHAPITRE 6 — ÉQUIPE
+══════════════════════════════════ -->
+<div class="page pb">
+  <div class="chap-header">
+    <div class="chap-num" style="background:#fce7f3;">👥</div>
+    <div>
+      <div class="chap-title">Chapitre 6 — Gérer l'Équipe</div>
+      <div class="chap-sub">Créer, modifier et gérer les agents et livreurs</div>
+    </div>
+  </div>
+
+  <p>La page <strong>Équipe</strong> liste tous les membres actifs. Vous pouvez créer, modifier ou désactiver des agents et livreurs.</p>
+
+  <h2>6.1 — Créer un nouvel agent de confirmation</h2>
+  <div class="action-box blue">
+    <div class="action-header">➕ Ajouter un nouvel agent</div>
+    <div class="action-body">
+      <div class="steps">
+        <div class="step">
+          <div class="snum">1</div>
+          <div class="scontent">
+            <b>Aller dans le menu Équipe</b>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">2</div>
+          <div class="scontent">
+            <b>Cliquer sur le bouton "Ajouter un membre" (en haut à droite)</b>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">3</div>
+          <div class="scontent">
+            <b>Remplir le formulaire</b>
+            <span>Prénom · Nom · Email (sera son identifiant) · Téléphone · Rôle : choisir <strong>AGENT</strong></span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">4</div>
+          <div class="scontent">
+            <b>Définir un mot de passe temporaire</b>
+            <span>Ex : <em>prenom2026</em>. Communiquez-le à l'agent en privé par téléphone ou WhatsApp.</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">5</div>
+          <div class="scontent">
+            <b>Cliquer sur "Créer"</b>
+            <span>L'agent peut maintenant se connecter et voir les commandes qui lui seront affectées.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>6.2 — Créer un nouveau livreur</h2>
+  <p>Même processus que pour un agent, mais sélectionner le rôle <strong>LIVREUR</strong>. Le livreur n'aura accès qu'à ses propres livraisons.</p>
+
+  <h2>6.3 — Les différents rôles</h2>
+  <table>
+    <thead><tr><th>Rôle</th><th>Accès</th><th>Qui peut créer ce rôle</th></tr></thead>
+    <tr><td><span class="b b-purple">ADMIN</span></td><td>Accès complet à tout</td><td>Admin uniquement</td></tr>
+    <tr><td><span class="b b-blue">MANAGER</span></td><td>Supervision — tous modules sauf paramètres système</td><td>Admin uniquement</td></tr>
+    <tr><td><span class="b b-green">AGENT</span></td><td>Confirmation des commandes + ses propres commandes</td><td>Admin ou Superviseur</td></tr>
+    <tr><td><span class="b b-amber">LIVREUR</span></td><td>Ses livraisons assignées uniquement</td><td>Admin ou Superviseur</td></tr>
+  </table>
+
+  <h2>6.4 — Désactiver un membre</h2>
+  <p>Si un agent quitte l'équipe ou est en congé, ouvrez sa fiche dans Équipe → cliquez sur <strong>"Désactiver"</strong>. Il ne pourra plus se connecter. Ses commandes restent dans l'historique.</p>
+
+  <div class="warn">⚠️ <span>Ne supprimez jamais un membre. Désactivez-le uniquement. Supprimer effacerait tout son historique de travail.</span></div>
+
+  <h2>6.5 — Voir la performance d'un agent</h2>
+  <p>Depuis la page Équipe, cliquez sur le nom d'un agent pour voir sa fiche de performance : nombre d'appels, taux de confirmation, commandes confirmées livrées et prime calculée.</p>
+</div>
+
+
+<!-- ══════════════════════════════════
+     CHAPITRE 7 — CLIENTS & PRODUITS
+══════════════════════════════════ -->
+<div class="page pb">
+  <div class="chap-header">
+    <div class="chap-num" style="background:#ede9fe;">📦</div>
+    <div>
+      <div class="chap-title">Chapitre 7 — Clients & Produits/Stock</div>
+      <div class="chap-sub">Base clients et gestion du catalogue produits</div>
+    </div>
+  </div>
+
+  <h2>7.1 — Module Clients</h2>
+  <p>La page <strong>Clients</strong> est la base de données de tous les acheteurs. Elle se remplit automatiquement à chaque nouvelle commande.</p>
+
+  <h3>Ce que vous pouvez faire :</h3>
+  <ul>
+    <li>Rechercher un client par nom ou téléphone</li>
+    <li>Voir toutes les commandes passées d'un client</li>
+    <li>Voir l'adresse, ville, commune et téléphones enregistrés</li>
+    <li>Modifier les informations d'un client si une erreur a été saisie</li>
+  </ul>
+
+  <div class="action-box sky">
+    <div class="action-header">🔍 Rechercher un client</div>
+    <div class="action-body">
+      <div class="steps">
+        <div class="step">
+          <div class="snum">1</div>
+          <div class="scontent">
+            <b>Aller dans Clients (menu gauche)</b>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">2</div>
+          <div class="scontent">
+            <b>Utiliser la barre de recherche en haut</b>
+            <span>Tapez le nom ou le numéro de téléphone du client.</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">3</div>
+          <div class="scontent">
+            <b>Cliquer sur le client pour voir sa fiche complète</b>
+            <span>Vous y trouvez toutes ses commandes passées et ses informations.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>7.2 — Module Produits & Stock</h2>
+  <p>La page <strong>Produits et Stock</strong> liste tous les articles du catalogue avec leurs niveaux de stock actuels.</p>
+
+  <h3>Indicateurs de stock :</h3>
+  <table>
+    <thead><tr><th>Badge</th><th>Signification</th><th>Action recommandée</th></tr></thead>
+    <tr><td><span class="b b-green">Stock OK</span></td><td>Stock au-dessus du seuil d'alerte</td><td>Rien à faire</td></tr>
+    <tr><td><span class="b b-amber">Stock faible</span></td><td>Stock entre 1 et le seuil d'alerte</td><td>Prévoir un réapprovisionnement</td></tr>
+    <tr><td><span class="b b-red">Rupture</span></td><td>Stock = 0</td><td>Bloquer les commandes de ce produit, réapprovisionner</td></tr>
+  </table>
+
+  <div class="action-box amber">
+    <div class="action-header">📦 Ajuster le stock manuellement (réception, inventaire)</div>
+    <div class="action-body">
+      <div class="steps">
+        <div class="step">
+          <div class="snum">1</div>
+          <div class="scontent">
+            <b>Cliquer sur un produit</b>
+            <span>Ouvre la fiche produit détaillée.</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">2</div>
+          <div class="scontent">
+            <b>Cliquer sur "Ajuster le stock"</b>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">3</div>
+          <div class="scontent">
+            <b>Entrer la quantité à ajouter (+) ou retirer (-)</b>
+            <span>Ex: +50 pour une réception de marchandise, -5 pour une casse.</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">4</div>
+          <div class="scontent">
+            <b>Entrer la raison</b>
+            <span>Ex : "Réception stock 23/05", "Inventaire physique", "Casse transport".</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">5</div>
+          <div class="scontent">
+            <b>Valider</b>
+            <span>Le stock est mis à jour et le mouvement est enregistré dans l'historique.</span>
+          </div>
+        </div>
+      </div>
+      <div class="info" style="margin-top:8px;">ℹ️ <span>Le stock se décremente automatiquement à chaque commande confirmée, et se restitue automatiquement à chaque retour.</span></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════
+     CHAPITRE 8 — FACTURES
+══════════════════════════════════ -->
+<div class="page pb">
+  <div class="chap-header">
+    <div class="chap-num" style="background:#f0fdf4;">🧾</div>
+    <div>
+      <div class="chap-title">Chapitre 8 — Factures & Dépenses</div>
+      <div class="chap-sub">Gérer la facturation COD, marchands et les dépenses</div>
+    </div>
+  </div>
+
+  <h2>8.1 — Factures COD (clients)</h2>
+  <p>Une facture COD est générée <strong>automatiquement</strong> à chaque livraison réussie. Elle représente le montant collecté auprès du client.</p>
+  <ul>
+    <li>Pour consulter : aller dans <strong>Factures → Factures COD</strong></li>
+    <li>Cliquer sur une facture pour la voir en détail</li>
+    <li>Bouton d'impression disponible sur chaque facture</li>
+  </ul>
+
+  <h2>8.2 — Factures marchands</h2>
+  <p>C'est le relevé périodique envoyé aux boutiques partenaires. Il calcule ce que HelpMeProcess doit reverser au marchand après déduction de la commission.</p>
+
+  <p><strong>Formule :</strong> <em>Total produits livrés − Commission HMP = Net à reverser au marchand</em></p>
+
+  <div class="action-box green">
+    <div class="action-header">🏪 Générer une facture marchand</div>
+    <div class="action-body">
+      <div class="steps">
+        <div class="step">
+          <div class="snum">1</div>
+          <div class="scontent">
+            <b>Aller dans Factures → Factures marchands</b>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">2</div>
+          <div class="scontent">
+            <b>Cliquer sur "Générer une facture"</b>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">3</div>
+          <div class="scontent">
+            <b>Choisir la boutique concernée</b>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">4</div>
+          <div class="scontent">
+            <b>Sélectionner la période (début → fin)</b>
+            <span>Généralement du 1er au dernier jour du mois écoulé.</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">5</div>
+          <div class="scontent">
+            <b>Vérifier le récapitulatif</b>
+            <span>Nombre de commandes livrées, total brut, commission, net marchand.</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">6</div>
+          <div class="scontent">
+            <b>Cliquer sur "Générer" puis "Imprimer"</b>
+            <span>Sur Mac : Cmd+P → "Enregistrer en PDF". Envoyez le PDF au marchand par WhatsApp ou email.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>8.3 — Dépenses</h2>
+  <p>Enregistrez toutes les dépenses opérationnelles de l'entreprise.</p>
+
+  <div class="action-box sky">
+    <div class="action-header">💸 Saisir une dépense</div>
+    <div class="action-body">
+      <div class="steps">
+        <div class="step">
+          <div class="snum">1</div>
+          <div class="scontent">
+            <b>Aller dans Factures → Dépenses</b>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">2</div>
+          <div class="scontent">
+            <b>Cliquer sur "Nouvelle dépense"</b>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">3</div>
+          <div class="scontent">
+            <b>Remplir : catégorie, description, montant, date, bénéficiaire</b>
+            <span>Catégories : SALAIRE · LOYER · TRANSPORT · MARKETING · AUTRE</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">4</div>
+          <div class="scontent">
+            <b>Enregistrer</b>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════
+     CHAPITRE 9 — BOUTIQUES & LIVRAISON
+══════════════════════════════════ -->
+<div class="page pb">
+  <div class="chap-header">
+    <div class="chap-num" style="background:#e0f2fe;">🏪</div>
+    <div>
+      <div class="chap-title">Chapitre 9 — Boutiques & Paramètres de Livraison</div>
+      <div class="chap-sub">Gérer les partenaires et configurer les zones de livraison</div>
+    </div>
+  </div>
+
+  <h2>9.1 — Module Boutiques</h2>
+  <p>Chaque boutique partenaire qui utilise HelpMeProcess pour gérer ses commandes COD est listée ici.</p>
+
+  <h3>Informations disponibles par boutique :</h3>
+  <ul>
+    <li>Nom de la boutique et du vendeur, téléphone, email, site web</li>
+    <li>Clé webhook (utilisée pour connecter la boutique en ligne)</li>
+    <li>Statistiques : total commandes, CA, taux de livraison</li>
+    <li>Liste des commandes de cette boutique</li>
+  </ul>
+
+  <div class="action-box blue">
+    <div class="action-header">➕ Créer une nouvelle boutique partenaire</div>
+    <div class="action-body">
+      <div class="steps">
+        <div class="step">
+          <div class="snum">1</div>
+          <div class="scontent"><b>Aller dans Boutiques → "Nouvelle boutique"</b></div>
+        </div>
+        <div class="step">
+          <div class="snum">2</div>
+          <div class="scontent">
+            <b>Remplir le formulaire</b>
+            <span>Nom boutique · Nom vendeur · Téléphone · Email · Site web (optionnel)</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">3</div>
+          <div class="scontent">
+            <b>Créer</b>
+            <span>Une clé webhook unique est générée automatiquement. Donnez-la au vendeur pour connecter son site.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Page d'intégration :</h3>
+  <p>Depuis la fiche boutique → cliquer sur <strong>"Intégration"</strong> → copier le code JavaScript → le coller sur le site du vendeur. Chaque achat sur son site créera automatiquement une commande dans le CRM.</p>
+
+  <h2>9.2 — Paramètres de livraison (Villes)</h2>
+  <p>Cette page configure les zones de livraison avec leurs frais et délais. Ces frais s'appliquent <em>uniquement</em> quand vous basculez une commande en mode "Payant par le client".</p>
+
+  <div class="action-box amber">
+    <div class="action-header">🏍️ Ajouter ou modifier une ville</div>
+    <div class="action-body">
+      <div class="steps">
+        <div class="step">
+          <div class="snum">1</div>
+          <div class="scontent"><b>Aller dans "Paramètres Livraison"</b></div>
+        </div>
+        <div class="step">
+          <div class="snum">2</div>
+          <div class="scontent">
+            <b>Cliquer sur "Ajouter une ville" ou sur une ville existante pour la modifier</b>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">3</div>
+          <div class="scontent">
+            <b>Renseigner : Nom ville · Frais de livraison (GNF) · Délai estimé (jours)</b>
+            <span>Ex : Conakry · 15 000 GNF · 1 jour</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="snum">4</div>
+          <div class="scontent"><b>Enregistrer</b></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════
+     CHAPITRE 10 — CYCLE DE VIE
+══════════════════════════════════ -->
+<div class="page pb">
+  <div class="chap-header">
+    <div class="chap-num" style="background:#f3e8ff;">🔄</div>
+    <div>
+      <div class="chap-title">Chapitre 10 — Cycle de vie complet d'une commande</div>
+      <div class="chap-sub">De la réception à la livraison finale — votre rôle à chaque étape</div>
+    </div>
+  </div>
+
+  <h2>10.1 — Flux normal (commande livrée avec succès)</h2>
+  <div class="flow">
+    <div class="fstep">📥<br/>Réception</div><div class="farrow">→</div>
+    <div class="fstep">👤<br/>Affectation agent</div><div class="farrow">→</div>
+    <div class="fstep">📞<br/>Appel agent</div><div class="farrow">→</div>
+    <div class="fstep active">✅<br/>CONFIRMÉ</div><div class="farrow">→</div>
+    <div class="fstep active">🚚<br/>Vous affectez<br/>livreur</div><div class="farrow">→</div>
+    <div class="fstep">🏍️<br/>EN LIVRAISON</div><div class="farrow">→</div>
+    <div class="fstep end-ok">🎉<br/>LIVRÉ</div>
+  </div>
+
+  <p>Les étapes <strong>surlignées en bleu</strong> sont celles où vous intervenez directement.</p>
+
+  <h2>10.2 — Tableau de référence : qui fait quoi</h2>
+  <table>
+    <thead><tr><th>Étape</th><th>Acteur</th><th>Action</th><th>Statut résultant</th></tr></thead>
+    <tr><td>Commande reçue</td><td>Système (webhook)</td><td>Création automatique</td><td><span class="b b-slate">NOUVEAU</span></td></tr>
+    <tr><td>Affectation agent</td><td><strong>Vous (ou admin)</strong></td><td>Assigner depuis la liste</td><td><span class="b b-slate">NOUVEAU</span></td></tr>
+    <tr><td>Appel client</td><td>Agent</td><td>Appeler, noter le résultat</td><td><span class="b b-purple">REPORTÉ</span> / <span class="b b-orange">INJOIGNABLE</span> / <span class="b b-slate">PDR</span></td></tr>
+    <tr><td>Confirmation</td><td>Agent</td><td>Client confirme → valider</td><td><span class="b b-blue">CONFIRMÉ</span></td></tr>
+    <tr><td>Affectation livreur</td><td><strong>Vous ⭐</strong></td><td>Choisir livreur + valider</td><td><span class="b b-sky">EN_LIVRAISON</span></td></tr>
+    <tr><td>Livraison réussie</td><td>Livreur (ou vous)</td><td>Marquer "Livré"</td><td><span class="b b-green">LIVRÉ</span></td></tr>
+    <tr><td>Retour</td><td>Livreur (ou vous)</td><td>Marquer "Retour" + raison</td><td><span class="b b-red">RETOURNÉ</span></td></tr>
+    <tr><td>Annulation</td><td>Agent / Vous</td><td>Marquer annulé</td><td><span class="b b-red">ANNULÉ</span></td></tr>
+  </table>
+
+  <h2>10.3 — Votre routine quotidienne recommandée</h2>
+  <div class="summary">
+    <h3>🌅 Matin (8h-9h)</h3>
+    <ul>
+      <li>Consulter les <strong>Statistiques</strong> → filtre "Hier" pour voir la performance de la veille</li>
+      <li>Vérifier la page <strong>"En attente validation"</strong> → affecter les commandes confirmées à des livreurs</li>
+      <li>Vérifier les <strong>alertes stock</strong> dans les statistiques</li>
+    </ul>
+  </div>
+  <div class="summary">
+    <h3>🌞 En journée</h3>
+    <ul>
+      <li>Surveiller la page <strong>Livraisons</strong> → vérifier que les livreurs progressent</li>
+      <li>Consulter la page <strong>Confirmation</strong> → superviser les agents (commandes bloquées ?)</li>
+      <li>Réaffecter si un agent est absent ou en difficulté</li>
+    </ul>
+  </div>
+  <div class="summary">
+    <h3>🌙 Soir (18h-19h)</h3>
+    <ul>
+      <li>Valider les dernières livraisons de la journée</li>
+      <li>Vérifier les retours et noter les raisons</li>
+      <li>S'assurer que la liste "En attente validation" est vide</li>
+    </ul>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════
+     CHAPITRE 11 — FAQ & PROBLÈMES
+══════════════════════════════════ -->
+<div class="page pb">
+  <div class="chap-header">
+    <div class="chap-num" style="background:#fef9c3;">❓</div>
+    <div>
+      <div class="chap-title">Chapitre 11 — Résolution des problèmes courants</div>
+      <div class="chap-sub">Questions fréquentes et solutions immédiates</div>
+    </div>
+  </div>
+
+  <div class="action-box blue">
+    <div class="action-header">❓ Un agent ne voit pas une commande qui lui a été affectée</div>
+    <div class="action-body">
+      <p><strong>Cause probable :</strong> La commande est peut-être sur un autre onglet de statut (PDR, Reporté...).<br/>
+      <strong>Solution :</strong> Demandez à l'agent de cliquer sur l'onglet "PDR" ou "Reporté" dans sa page Confirmation. Ou vérifiez vous-même depuis votre vue superviseur.</p>
+    </div>
+  </div>
+
+  <div class="action-box amber">
+    <div class="action-header">❓ Je veux changer l'agent d'une commande déjà confirmée</div>
+    <div class="action-body">
+      <p><strong>Possible</strong> si la commande n'est pas encore en livraison.<br/>
+      <strong>Solution :</strong> Ouvrir la fiche commande → colonne droite → "Changer l'agent" → sélectionner le nouvel agent → Valider.</p>
+    </div>
+  </div>
+
+  <div class="action-box green">
+    <div class="action-header">❓ Le livreur dit qu'il n'a pas reçu la livraison dans son appli</div>
+    <div class="action-body">
+      <p><strong>Vérifier :</strong> La commande est bien au statut <span class="b b-sky">EN_LIVRAISON</span> ? Le livreur est le bon ?<br/>
+      <strong>Solution :</strong> Demandez-lui d'actualiser sa page (F5). Si toujours absent, vérifiez que vous avez bien sélectionné son nom lors de l'affectation.</p>
+    </div>
+  </div>
+
+  <div class="action-box purple">
+    <div class="action-header">❓ Une commande est bloquée depuis plusieurs jours sans avancement</div>
+    <div class="action-body">
+      <p><strong>Cause :</strong> Agent n'a pas eu le temps, oubli, ou client injoignable.<br/>
+      <strong>Solution :</strong> Ouvrir la commande → voir l'historique des appels → si aucun appel récent, rappeler l'agent. Vous pouvez réaffecter la commande à un autre agent.</p>
+    </div>
+  </div>
+
+  <div class="action-box sky">
+    <div class="action-header">❓ Le stock d'un produit affiche 0 mais on a du stock physique</div>
+    <div class="action-body">
+      <p><strong>Cause :</strong> Décalage entre stock physique et stock système (retours non enregistrés, réception non saisie).<br/>
+      <strong>Solution :</strong> Produits & Stock → cliquer sur le produit → "Ajuster le stock" → entrer la quantité réelle avec la raison "Inventaire physique".</p>
+    </div>
+  </div>
+
+  <div class="action-box red">
+    <div class="action-header">❓ Je n'arrive pas à me connecter (page blanche ou erreur)</div>
+    <div class="action-body">
+      <ol>
+        <li>Vider le cache du navigateur : Cmd+Shift+R (Mac) ou Ctrl+Shift+R (Windows)</li>
+        <li>Essayer dans un onglet navigation privée (Cmd+Shift+N)</li>
+        <li>Essayer avec Google Chrome si vous êtes sur un autre navigateur</li>
+        <li>Contacter l'admin si le problème persiste</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- CONTACTS -->
+  <div style="margin-top:36px;background:linear-gradient(135deg,#0f172a,#0c2a4a);border-radius:16px;padding:30px 36px;color:white;text-align:center;">
+    <div style="font-size:28px;margin-bottom:12px;">📞</div>
+    <div style="font-size:18px;font-weight:800;margin-bottom:6px;">Besoin d'aide ?</div>
+    <div style="font-size:13px;color:#94a3b8;margin-bottom:20px;">Contactez l'administrateur HelpMeProcess</div>
+    <div style="font-size:16px;font-weight:700;color:#38bdf8;margin-bottom:6px;">admin@codcrm.gn</div>
+    <div style="font-size:13px;color:#64748b;">Mentionnez votre nom, la commande concernée et une capture d'écran si possible</div>
+    <div style="margin-top:24px;padding-top:20px;border-top:1px solid rgba(255,255,255,.1);font-size:11px;color:#475569;">
+      HelpMeProcess COD Manager · Guide Superviseur v1.0 · Mai 2026 · Document confidentiel
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

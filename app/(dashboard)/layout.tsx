@@ -20,6 +20,8 @@ export default async function DashboardLayout({
   const isAgentOnly = userRole === "AGENT";
   const isLivreur = userRole === "LIVREUR";
 
+  const currentUser = userId ? await prisma.user.findUnique({ where: { id: userId }, select: { avatarUrl: true } }) : null;
+
   const [confirmCount, attenteCount, totalCount, livraisonCount, notifCount] = await Promise.all([
     prisma.order.count({
       where: {
@@ -50,6 +52,7 @@ export default async function DashboardLayout({
         <Sidebar
           userName={session.user.name || "Utilisateur"}
           userRole={userRole}
+          avatarUrl={currentUser?.avatarUrl}
           counts={{ confirmation: confirmCount, attente: attenteCount, commandes: totalCount, livraisons: livraisonCount }}
           notificationCount={notifCount}
         />

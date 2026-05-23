@@ -25,6 +25,7 @@ import {
 interface SidebarProps {
   userName: string;
   userRole?: string;
+  avatarUrl?: string | null;
   counts?: { confirmation?: number; attente?: number; commandes?: number; livraisons?: number };
   notificationCount?: number;
 }
@@ -50,7 +51,7 @@ type NavItem = {
   roles?: string[]; // si défini, seuls ces rôles peuvent voir cet item
 };
 
-export function Sidebar({ userName, userRole, counts = {}, notificationCount = 0 }: SidebarProps) {
+export function Sidebar({ userName, userRole, avatarUrl, counts = {}, notificationCount = 0 }: SidebarProps) {
   const pathname = usePathname();
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({
     commandes: true,
@@ -190,15 +191,23 @@ export function Sidebar({ userName, userRole, counts = {}, notificationCount = 0
       </nav>
 
       <div className="border-t border-white/10 p-4">
-        <div className="flex items-center gap-3 mb-3">
-          <div className="w-9 h-9 bg-sky-500 rounded-full flex items-center justify-center font-bold text-sm">
-            {userName.charAt(0).toUpperCase()}
+        <Link href="/profil" className="flex items-center gap-3 mb-3 hover:bg-white/5 rounded-xl p-2 -mx-2 transition group">
+          <div className="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-white/20 group-hover:ring-sky-400 transition">
+            {avatarUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={avatarUrl} alt={userName} className="w-full h-full object-cover" />
+            ) : (
+              <div className="w-full h-full bg-sky-500 flex items-center justify-center font-bold text-sm text-white">
+                {userName.charAt(0).toUpperCase()}
+              </div>
+            )}
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-sm font-semibold truncate">{userName}</div>
+            <div className="text-sm font-semibold truncate group-hover:text-sky-300 transition">{userName}</div>
             <div className="text-xs text-blue-200">{userRole ? ROLE_LABEL[userRole] ?? userRole : "Utilisateur"}</div>
           </div>
-        </div>
+          <span className="text-white/30 text-xs group-hover:text-sky-400 transition">✏️</span>
+        </Link>
         <button
           onClick={() => signOut({ callbackUrl: "/login" })}
           className="w-full flex items-center gap-2 px-3 py-2 text-sm text-blue-100 hover:text-white hover:bg-white/10 rounded transition"
