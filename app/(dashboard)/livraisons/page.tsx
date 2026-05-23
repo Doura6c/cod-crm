@@ -4,8 +4,10 @@ import { redirect } from "next/navigation";
 import { can } from "@/lib/rbac";
 import { PageHeader } from "@/components/PageHeader";
 import { formatGNF } from "@/lib/utils";
+import { getHmpCommission } from "@/lib/settings";
 import { updateDeliveryStatusAction } from "./actions";
 import { ReturnButton } from "./ReturnButton";
+import { EditAmountForm } from "./EditAmountForm";
 import {
   MapPin, Phone, Package, CheckCircle, Truck, Clock,
   TrendingUp, RotateCcw, AlertTriangle, Info,
@@ -34,6 +36,9 @@ export default async function LivraisonsPage() {
   const isLivreur = role === "LIVREUR";
   const isSupervisor = role === "ADMIN" || role === "MANAGER";
   const canValidateDelivery = isLivreur || isSupervisor;
+  const canEditAmount = isSupervisor;
+
+  const hmpCommission = await getHmpCommission();
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -191,8 +196,9 @@ export default async function LivraisonsPage() {
                     <th className="px-4 py-3 text-left">Client</th>
                     <th className="px-4 py-3 text-left">Ville</th>
                     {!isLivreur && <th className="px-4 py-3 text-left">Livreur</th>}
-                    <th className="px-4 py-3 text-right">Montant prévu</th>
-                    <th className="px-4 py-3 text-right">Encaissé réel</th>
+                    <th className="px-4 py-3 text-right">Prix prévu</th>
+                    <th className="px-4 py-3 text-right">Encaissé validé</th>
+                    <th className="px-4 py-3 text-right">Net marchand</th>
                     <th className="px-4 py-3 text-center">Statut</th>
                   </tr>
                 </thead>
@@ -218,18 +224,31 @@ export default async function LivraisonsPage() {
                             {d.livreur ? `${d.livreur.firstName} ${d.livreur.lastName}` : "—"}
                           </td>
                         )}
-                        <td className="px-4 py-3 text-right font-semibold text-slate-700">
+                        <td className="px-4 py-3 text-right font-semibold text-slate-500 text-xs">
                           {formatGNF(d.order.totalAmount)}
                         </td>
                         <td className="px-4 py-3 text-right">
-                          {d.amountCollected != null ? (
+                          {d.status === "LIVRE" && canEditAmount ? (
+                            <EditAmountForm
+                              deliveryId={d.id}
+                              currentAmount={d.amountCollected ?? d.order.totalAmount}
+                              originalAmount={d.originalAmount}
+                              editNote={d.amountEditNote}
+                              editedAt={d.amountEditedAt}
+                            />
+                          ) : d.amountCollected != null ? (
+                            <span className="font-bold text-emerald-700">{formatGNF(d.amountCollected)}</span>
+                          ) : (
+                            <span className="text-slate-300 text-xs">—</span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3 text-right">
+                          {d.status === "LIVRE" && d.amountCollected != null ? (
                             <div>
-                              <span className="font-bold text-emerald-700">{formatGNF(d.amountCollected)}</span>
-                              {diff !== 0 && (
-                                <div className={`text-xs font-semibold ${diff > 0 ? "text-emerald-500" : "text-red-500"}`}>
-                                  {diff > 0 ? "+" : ""}{formatGNF(diff)}
-                                </div>
-                              )}
+                              <span className="font-black text-emerald-700 text-sm">
+                                {formatGNF(Math.max(0, (d.amountCollected - d.order.deliveryFee) - hmpCommission))}
+                              </span>
+                              <div className="text-xs text-red-400">−{formatGNF(hmpCommission)} HMP</div>
                             </div>
                           ) : (
                             <span className="text-slate-300 text-xs">—</span>

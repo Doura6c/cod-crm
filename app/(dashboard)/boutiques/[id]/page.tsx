@@ -11,10 +11,9 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { generateMerchantInvoicesAction } from "@/app/(dashboard)/factures/marchands/actions";
+import { getHmpCommission } from "@/lib/settings";
 
 export const dynamic = "force-dynamic";
-
-const HMP_FEE = 70_000;
 
 export default async function BoutiqueProductionPage({
   params,
@@ -51,6 +50,8 @@ export default async function BoutiqueProductionPage({
     start = new Date(now.getFullYear(), now.getMonth(), 1);
     periodLabel = `Mois en cours`;
   }
+
+  const HMP_FEE = await getHmpCommission();
 
   const [orders, deliveries, merchantInvoices] = await Promise.all([
     prisma.order.findMany({

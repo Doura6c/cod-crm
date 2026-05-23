@@ -6,8 +6,6 @@ import { can } from "@/lib/rbac";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
-const HMP_FEE = 70_000;
-
 export async function updateDeliveryStatusAction(formData: FormData): Promise<void> {
   const session = await auth();
   const role = (session?.user as any)?.role;

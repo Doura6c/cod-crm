@@ -28,10 +28,12 @@ export type AggregateDelivery = {
 
 export type DeliveryAvgAggregateOutputType = {
   amountCollected: number | null
+  originalAmount: number | null
 }
 
 export type DeliverySumAggregateOutputType = {
   amountCollected: number | null
+  originalAmount: number | null
 }
 
 export type DeliveryMinAggregateOutputType = {
@@ -44,6 +46,10 @@ export type DeliveryMinAggregateOutputType = {
   pickedUpAt: Date | null
   deliveredAt: Date | null
   amountCollected: number | null
+  originalAmount: number | null
+  amountEditNote: string | null
+  amountEditedById: string | null
+  amountEditedAt: Date | null
   failureReason: string | null
   notes: string | null
   createdAt: Date | null
@@ -60,6 +66,10 @@ export type DeliveryMaxAggregateOutputType = {
   pickedUpAt: Date | null
   deliveredAt: Date | null
   amountCollected: number | null
+  originalAmount: number | null
+  amountEditNote: string | null
+  amountEditedById: string | null
+  amountEditedAt: Date | null
   failureReason: string | null
   notes: string | null
   createdAt: Date | null
@@ -76,6 +86,10 @@ export type DeliveryCountAggregateOutputType = {
   pickedUpAt: number
   deliveredAt: number
   amountCollected: number
+  originalAmount: number
+  amountEditNote: number
+  amountEditedById: number
+  amountEditedAt: number
   failureReason: number
   notes: number
   createdAt: number
@@ -86,10 +100,12 @@ export type DeliveryCountAggregateOutputType = {
 
 export type DeliveryAvgAggregateInputType = {
   amountCollected?: true
+  originalAmount?: true
 }
 
 export type DeliverySumAggregateInputType = {
   amountCollected?: true
+  originalAmount?: true
 }
 
 export type DeliveryMinAggregateInputType = {
@@ -102,6 +118,10 @@ export type DeliveryMinAggregateInputType = {
   pickedUpAt?: true
   deliveredAt?: true
   amountCollected?: true
+  originalAmount?: true
+  amountEditNote?: true
+  amountEditedById?: true
+  amountEditedAt?: true
   failureReason?: true
   notes?: true
   createdAt?: true
@@ -118,6 +138,10 @@ export type DeliveryMaxAggregateInputType = {
   pickedUpAt?: true
   deliveredAt?: true
   amountCollected?: true
+  originalAmount?: true
+  amountEditNote?: true
+  amountEditedById?: true
+  amountEditedAt?: true
   failureReason?: true
   notes?: true
   createdAt?: true
@@ -134,6 +158,10 @@ export type DeliveryCountAggregateInputType = {
   pickedUpAt?: true
   deliveredAt?: true
   amountCollected?: true
+  originalAmount?: true
+  amountEditNote?: true
+  amountEditedById?: true
+  amountEditedAt?: true
   failureReason?: true
   notes?: true
   createdAt?: true
@@ -237,6 +265,10 @@ export type DeliveryGroupByOutputType = {
   pickedUpAt: Date | null
   deliveredAt: Date | null
   amountCollected: number | null
+  originalAmount: number | null
+  amountEditNote: string | null
+  amountEditedById: string | null
+  amountEditedAt: Date | null
   failureReason: string | null
   notes: string | null
   createdAt: Date
@@ -276,6 +308,10 @@ export type DeliveryWhereInput = {
   pickedUpAt?: Prisma.DateTimeNullableFilter<"Delivery"> | Date | string | null
   deliveredAt?: Prisma.DateTimeNullableFilter<"Delivery"> | Date | string | null
   amountCollected?: Prisma.FloatNullableFilter<"Delivery"> | number | null
+  originalAmount?: Prisma.FloatNullableFilter<"Delivery"> | number | null
+  amountEditNote?: Prisma.StringNullableFilter<"Delivery"> | string | null
+  amountEditedById?: Prisma.StringNullableFilter<"Delivery"> | string | null
+  amountEditedAt?: Prisma.DateTimeNullableFilter<"Delivery"> | Date | string | null
   failureReason?: Prisma.StringNullableFilter<"Delivery"> | string | null
   notes?: Prisma.StringNullableFilter<"Delivery"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Delivery"> | Date | string
@@ -295,6 +331,10 @@ export type DeliveryOrderByWithRelationInput = {
   pickedUpAt?: Prisma.SortOrderInput | Prisma.SortOrder
   deliveredAt?: Prisma.SortOrderInput | Prisma.SortOrder
   amountCollected?: Prisma.SortOrderInput | Prisma.SortOrder
+  originalAmount?: Prisma.SortOrderInput | Prisma.SortOrder
+  amountEditNote?: Prisma.SortOrderInput | Prisma.SortOrder
+  amountEditedById?: Prisma.SortOrderInput | Prisma.SortOrder
+  amountEditedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   failureReason?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -317,6 +357,10 @@ export type DeliveryWhereUniqueInput = Prisma.AtLeast<{
   pickedUpAt?: Prisma.DateTimeNullableFilter<"Delivery"> | Date | string | null
   deliveredAt?: Prisma.DateTimeNullableFilter<"Delivery"> | Date | string | null
   amountCollected?: Prisma.FloatNullableFilter<"Delivery"> | number | null
+  originalAmount?: Prisma.FloatNullableFilter<"Delivery"> | number | null
+  amountEditNote?: Prisma.StringNullableFilter<"Delivery"> | string | null
+  amountEditedById?: Prisma.StringNullableFilter<"Delivery"> | string | null
+  amountEditedAt?: Prisma.DateTimeNullableFilter<"Delivery"> | Date | string | null
   failureReason?: Prisma.StringNullableFilter<"Delivery"> | string | null
   notes?: Prisma.StringNullableFilter<"Delivery"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Delivery"> | Date | string
@@ -336,6 +380,10 @@ export type DeliveryOrderByWithAggregationInput = {
   pickedUpAt?: Prisma.SortOrderInput | Prisma.SortOrder
   deliveredAt?: Prisma.SortOrderInput | Prisma.SortOrder
   amountCollected?: Prisma.SortOrderInput | Prisma.SortOrder
+  originalAmount?: Prisma.SortOrderInput | Prisma.SortOrder
+  amountEditNote?: Prisma.SortOrderInput | Prisma.SortOrder
+  amountEditedById?: Prisma.SortOrderInput | Prisma.SortOrder
+  amountEditedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   failureReason?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -360,6 +408,10 @@ export type DeliveryScalarWhereWithAggregatesInput = {
   pickedUpAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Delivery"> | Date | string | null
   deliveredAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Delivery"> | Date | string | null
   amountCollected?: Prisma.FloatNullableWithAggregatesFilter<"Delivery"> | number | null
+  originalAmount?: Prisma.FloatNullableWithAggregatesFilter<"Delivery"> | number | null
+  amountEditNote?: Prisma.StringNullableWithAggregatesFilter<"Delivery"> | string | null
+  amountEditedById?: Prisma.StringNullableWithAggregatesFilter<"Delivery"> | string | null
+  amountEditedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Delivery"> | Date | string | null
   failureReason?: Prisma.StringNullableWithAggregatesFilter<"Delivery"> | string | null
   notes?: Prisma.StringNullableWithAggregatesFilter<"Delivery"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Delivery"> | Date | string
@@ -373,6 +425,10 @@ export type DeliveryCreateInput = {
   pickedUpAt?: Date | string | null
   deliveredAt?: Date | string | null
   amountCollected?: number | null
+  originalAmount?: number | null
+  amountEditNote?: string | null
+  amountEditedById?: string | null
+  amountEditedAt?: Date | string | null
   failureReason?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -392,6 +448,10 @@ export type DeliveryUncheckedCreateInput = {
   pickedUpAt?: Date | string | null
   deliveredAt?: Date | string | null
   amountCollected?: number | null
+  originalAmount?: number | null
+  amountEditNote?: string | null
+  amountEditedById?: string | null
+  amountEditedAt?: Date | string | null
   failureReason?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -405,6 +465,10 @@ export type DeliveryUpdateInput = {
   pickedUpAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   amountCollected?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  originalAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  amountEditNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountEditedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountEditedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -424,6 +488,10 @@ export type DeliveryUncheckedUpdateInput = {
   pickedUpAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   amountCollected?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  originalAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  amountEditNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountEditedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountEditedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -440,6 +508,10 @@ export type DeliveryCreateManyInput = {
   pickedUpAt?: Date | string | null
   deliveredAt?: Date | string | null
   amountCollected?: number | null
+  originalAmount?: number | null
+  amountEditNote?: string | null
+  amountEditedById?: string | null
+  amountEditedAt?: Date | string | null
   failureReason?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -453,6 +525,10 @@ export type DeliveryUpdateManyMutationInput = {
   pickedUpAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   amountCollected?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  originalAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  amountEditNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountEditedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountEditedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -469,6 +545,10 @@ export type DeliveryUncheckedUpdateManyInput = {
   pickedUpAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   amountCollected?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  originalAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  amountEditNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountEditedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountEditedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -500,6 +580,10 @@ export type DeliveryCountOrderByAggregateInput = {
   pickedUpAt?: Prisma.SortOrder
   deliveredAt?: Prisma.SortOrder
   amountCollected?: Prisma.SortOrder
+  originalAmount?: Prisma.SortOrder
+  amountEditNote?: Prisma.SortOrder
+  amountEditedById?: Prisma.SortOrder
+  amountEditedAt?: Prisma.SortOrder
   failureReason?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -508,6 +592,7 @@ export type DeliveryCountOrderByAggregateInput = {
 
 export type DeliveryAvgOrderByAggregateInput = {
   amountCollected?: Prisma.SortOrder
+  originalAmount?: Prisma.SortOrder
 }
 
 export type DeliveryMaxOrderByAggregateInput = {
@@ -520,6 +605,10 @@ export type DeliveryMaxOrderByAggregateInput = {
   pickedUpAt?: Prisma.SortOrder
   deliveredAt?: Prisma.SortOrder
   amountCollected?: Prisma.SortOrder
+  originalAmount?: Prisma.SortOrder
+  amountEditNote?: Prisma.SortOrder
+  amountEditedById?: Prisma.SortOrder
+  amountEditedAt?: Prisma.SortOrder
   failureReason?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -536,6 +625,10 @@ export type DeliveryMinOrderByAggregateInput = {
   pickedUpAt?: Prisma.SortOrder
   deliveredAt?: Prisma.SortOrder
   amountCollected?: Prisma.SortOrder
+  originalAmount?: Prisma.SortOrder
+  amountEditNote?: Prisma.SortOrder
+  amountEditedById?: Prisma.SortOrder
+  amountEditedAt?: Prisma.SortOrder
   failureReason?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -544,6 +637,7 @@ export type DeliveryMinOrderByAggregateInput = {
 
 export type DeliverySumOrderByAggregateInput = {
   amountCollected?: Prisma.SortOrder
+  originalAmount?: Prisma.SortOrder
 }
 
 export type DeliveryCreateNestedManyWithoutLivreurInput = {
@@ -669,6 +763,10 @@ export type DeliveryCreateWithoutLivreurInput = {
   pickedUpAt?: Date | string | null
   deliveredAt?: Date | string | null
   amountCollected?: number | null
+  originalAmount?: number | null
+  amountEditNote?: string | null
+  amountEditedById?: string | null
+  amountEditedAt?: Date | string | null
   failureReason?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -686,6 +784,10 @@ export type DeliveryUncheckedCreateWithoutLivreurInput = {
   pickedUpAt?: Date | string | null
   deliveredAt?: Date | string | null
   amountCollected?: number | null
+  originalAmount?: number | null
+  amountEditNote?: string | null
+  amountEditedById?: string | null
+  amountEditedAt?: Date | string | null
   failureReason?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -730,6 +832,10 @@ export type DeliveryScalarWhereInput = {
   pickedUpAt?: Prisma.DateTimeNullableFilter<"Delivery"> | Date | string | null
   deliveredAt?: Prisma.DateTimeNullableFilter<"Delivery"> | Date | string | null
   amountCollected?: Prisma.FloatNullableFilter<"Delivery"> | number | null
+  originalAmount?: Prisma.FloatNullableFilter<"Delivery"> | number | null
+  amountEditNote?: Prisma.StringNullableFilter<"Delivery"> | string | null
+  amountEditedById?: Prisma.StringNullableFilter<"Delivery"> | string | null
+  amountEditedAt?: Prisma.DateTimeNullableFilter<"Delivery"> | Date | string | null
   failureReason?: Prisma.StringNullableFilter<"Delivery"> | string | null
   notes?: Prisma.StringNullableFilter<"Delivery"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Delivery"> | Date | string
@@ -743,6 +849,10 @@ export type DeliveryCreateWithoutCityInput = {
   pickedUpAt?: Date | string | null
   deliveredAt?: Date | string | null
   amountCollected?: number | null
+  originalAmount?: number | null
+  amountEditNote?: string | null
+  amountEditedById?: string | null
+  amountEditedAt?: Date | string | null
   failureReason?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -760,6 +870,10 @@ export type DeliveryUncheckedCreateWithoutCityInput = {
   pickedUpAt?: Date | string | null
   deliveredAt?: Date | string | null
   amountCollected?: number | null
+  originalAmount?: number | null
+  amountEditNote?: string | null
+  amountEditedById?: string | null
+  amountEditedAt?: Date | string | null
   failureReason?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -798,6 +912,10 @@ export type DeliveryCreateWithoutOrderInput = {
   pickedUpAt?: Date | string | null
   deliveredAt?: Date | string | null
   amountCollected?: number | null
+  originalAmount?: number | null
+  amountEditNote?: string | null
+  amountEditedById?: string | null
+  amountEditedAt?: Date | string | null
   failureReason?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -815,6 +933,10 @@ export type DeliveryUncheckedCreateWithoutOrderInput = {
   pickedUpAt?: Date | string | null
   deliveredAt?: Date | string | null
   amountCollected?: number | null
+  originalAmount?: number | null
+  amountEditNote?: string | null
+  amountEditedById?: string | null
+  amountEditedAt?: Date | string | null
   failureReason?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -844,6 +966,10 @@ export type DeliveryUpdateWithoutOrderInput = {
   pickedUpAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   amountCollected?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  originalAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  amountEditNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountEditedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountEditedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -861,6 +987,10 @@ export type DeliveryUncheckedUpdateWithoutOrderInput = {
   pickedUpAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   amountCollected?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  originalAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  amountEditNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountEditedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountEditedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -876,6 +1006,10 @@ export type DeliveryCreateManyLivreurInput = {
   pickedUpAt?: Date | string | null
   deliveredAt?: Date | string | null
   amountCollected?: number | null
+  originalAmount?: number | null
+  amountEditNote?: string | null
+  amountEditedById?: string | null
+  amountEditedAt?: Date | string | null
   failureReason?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -889,6 +1023,10 @@ export type DeliveryUpdateWithoutLivreurInput = {
   pickedUpAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   amountCollected?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  originalAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  amountEditNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountEditedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountEditedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -906,6 +1044,10 @@ export type DeliveryUncheckedUpdateWithoutLivreurInput = {
   pickedUpAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   amountCollected?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  originalAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  amountEditNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountEditedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountEditedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -921,6 +1063,10 @@ export type DeliveryUncheckedUpdateManyWithoutLivreurInput = {
   pickedUpAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   amountCollected?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  originalAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  amountEditNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountEditedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountEditedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -936,6 +1082,10 @@ export type DeliveryCreateManyCityInput = {
   pickedUpAt?: Date | string | null
   deliveredAt?: Date | string | null
   amountCollected?: number | null
+  originalAmount?: number | null
+  amountEditNote?: string | null
+  amountEditedById?: string | null
+  amountEditedAt?: Date | string | null
   failureReason?: string | null
   notes?: string | null
   createdAt?: Date | string
@@ -949,6 +1099,10 @@ export type DeliveryUpdateWithoutCityInput = {
   pickedUpAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   amountCollected?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  originalAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  amountEditNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountEditedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountEditedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -966,6 +1120,10 @@ export type DeliveryUncheckedUpdateWithoutCityInput = {
   pickedUpAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   amountCollected?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  originalAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  amountEditNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountEditedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountEditedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -981,6 +1139,10 @@ export type DeliveryUncheckedUpdateManyWithoutCityInput = {
   pickedUpAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   amountCollected?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  originalAmount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  amountEditNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountEditedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountEditedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -999,6 +1161,10 @@ export type DeliverySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   pickedUpAt?: boolean
   deliveredAt?: boolean
   amountCollected?: boolean
+  originalAmount?: boolean
+  amountEditNote?: boolean
+  amountEditedById?: boolean
+  amountEditedAt?: boolean
   failureReason?: boolean
   notes?: boolean
   createdAt?: boolean
@@ -1018,6 +1184,10 @@ export type DeliverySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   pickedUpAt?: boolean
   deliveredAt?: boolean
   amountCollected?: boolean
+  originalAmount?: boolean
+  amountEditNote?: boolean
+  amountEditedById?: boolean
+  amountEditedAt?: boolean
   failureReason?: boolean
   notes?: boolean
   createdAt?: boolean
@@ -1037,6 +1207,10 @@ export type DeliverySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   pickedUpAt?: boolean
   deliveredAt?: boolean
   amountCollected?: boolean
+  originalAmount?: boolean
+  amountEditNote?: boolean
+  amountEditedById?: boolean
+  amountEditedAt?: boolean
   failureReason?: boolean
   notes?: boolean
   createdAt?: boolean
@@ -1056,13 +1230,17 @@ export type DeliverySelectScalar = {
   pickedUpAt?: boolean
   deliveredAt?: boolean
   amountCollected?: boolean
+  originalAmount?: boolean
+  amountEditNote?: boolean
+  amountEditedById?: boolean
+  amountEditedAt?: boolean
   failureReason?: boolean
   notes?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type DeliveryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "orderId" | "livreurId" | "cityId" | "status" | "scheduledAt" | "pickedUpAt" | "deliveredAt" | "amountCollected" | "failureReason" | "notes" | "createdAt" | "updatedAt", ExtArgs["result"]["delivery"]>
+export type DeliveryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "orderId" | "livreurId" | "cityId" | "status" | "scheduledAt" | "pickedUpAt" | "deliveredAt" | "amountCollected" | "originalAmount" | "amountEditNote" | "amountEditedById" | "amountEditedAt" | "failureReason" | "notes" | "createdAt" | "updatedAt", ExtArgs["result"]["delivery"]>
 export type DeliveryInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   order?: boolean | Prisma.OrderDefaultArgs<ExtArgs>
   livreur?: boolean | Prisma.Delivery$livreurArgs<ExtArgs>
@@ -1096,6 +1274,10 @@ export type $DeliveryPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     pickedUpAt: Date | null
     deliveredAt: Date | null
     amountCollected: number | null
+    originalAmount: number | null
+    amountEditNote: string | null
+    amountEditedById: string | null
+    amountEditedAt: Date | null
     failureReason: string | null
     notes: string | null
     createdAt: Date
@@ -1535,6 +1717,10 @@ export interface DeliveryFieldRefs {
   readonly pickedUpAt: Prisma.FieldRef<"Delivery", 'DateTime'>
   readonly deliveredAt: Prisma.FieldRef<"Delivery", 'DateTime'>
   readonly amountCollected: Prisma.FieldRef<"Delivery", 'Float'>
+  readonly originalAmount: Prisma.FieldRef<"Delivery", 'Float'>
+  readonly amountEditNote: Prisma.FieldRef<"Delivery", 'String'>
+  readonly amountEditedById: Prisma.FieldRef<"Delivery", 'String'>
+  readonly amountEditedAt: Prisma.FieldRef<"Delivery", 'DateTime'>
   readonly failureReason: Prisma.FieldRef<"Delivery", 'String'>
   readonly notes: Prisma.FieldRef<"Delivery", 'String'>
   readonly createdAt: Prisma.FieldRef<"Delivery", 'DateTime'>

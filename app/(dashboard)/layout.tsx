@@ -20,7 +20,7 @@ export default async function DashboardLayout({
   const isAgentOnly = userRole === "AGENT";
   const isLivreur = userRole === "LIVREUR";
 
-  const [confirmCount, attenteCount, totalCount, livraisonCount] = await Promise.all([
+  const [confirmCount, attenteCount, totalCount, livraisonCount, notifCount] = await Promise.all([
     prisma.order.count({
       where: {
         status: "NOUVEAU",
@@ -39,6 +39,9 @@ export default async function DashboardLayout({
           },
         })
       : Promise.resolve(0),
+    userRole === "ADMIN"
+      ? prisma.notification.count({ where: { readAt: null } })
+      : Promise.resolve(0),
   ]);
 
   return (
@@ -48,6 +51,7 @@ export default async function DashboardLayout({
           userName={session.user.name || "Utilisateur"}
           userRole={userRole}
           counts={{ confirmation: confirmCount, attente: attenteCount, commandes: totalCount, livraisons: livraisonCount }}
+          notificationCount={notifCount}
         />
         <div className="flex-1 ml-64 flex flex-col min-h-screen">
           <main className="flex-1 overflow-auto">{children}</main>

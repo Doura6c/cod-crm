@@ -18,12 +18,14 @@ import {
   ChevronDown,
   ChevronRight,
   Truck,
+  Bell,
 } from "lucide-react";
 
 interface SidebarProps {
   userName: string;
   userRole?: string;
   counts?: { confirmation?: number; attente?: number; commandes?: number; livraisons?: number };
+  notificationCount?: number;
 }
 
 const ROLE_LABEL: Record<string, string> = {
@@ -47,7 +49,7 @@ type NavItem = {
   roles?: string[]; // si défini, seuls ces rôles peuvent voir cet item
 };
 
-export function Sidebar({ userName, userRole, counts = {} }: SidebarProps) {
+export function Sidebar({ userName, userRole, counts = {}, notificationCount = 0 }: SidebarProps) {
   const pathname = usePathname();
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({
     commandes: true,
@@ -84,6 +86,7 @@ export function Sidebar({ userName, userRole, counts = {} }: SidebarProps) {
       ],
     },
     { href: "/boutiques", label: "Boutiques", icon: FileText, roles: ["ADMIN", "MANAGER"] },
+    { href: "/notifications", label: "Notifications", icon: Bell, badge: notificationCount || undefined, roles: ["ADMIN"] },
     { href: "/parametres", label: "Paramètres", icon: Settings, roles: ["ADMIN"] },
   ];
 

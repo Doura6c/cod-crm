@@ -5,8 +5,7 @@ import { auth } from "@/auth";
 import { can } from "@/lib/rbac";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-
-const HMP_FEE = 70_000;
+import { getHmpCommission } from "@/lib/settings";
 const PERIOD_DAYS = 2; // facture générée toutes les N jours
 
 function makeRef(): string {
@@ -24,6 +23,7 @@ export async function generateMerchantInvoicesAction(): Promise<void> {
   const role = (session?.user as any)?.role;
   if (!can(role, "VIEW_BOUTIQUES")) redirect("/");
 
+  const HMP_FEE = await getHmpCommission();
   const boutiques = await prisma.boutique.findMany({ select: { id: true } });
 
   for (const boutique of boutiques) {

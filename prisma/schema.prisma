@@ -194,9 +194,13 @@ model Delivery {
   pickedUpAt      DateTime?
   deliveredAt     DateTime?
 
-  amountCollected Float?
-  failureReason   String?
-  notes           String?
+  amountCollected   Float?
+  originalAmount    Float?   // montant initial avant modification
+  amountEditNote    String?  // raison de la modification
+  amountEditedById  String?  // admin/superviseur ayant modifié
+  amountEditedAt    DateTime?
+  failureReason     String?
+  notes             String?
 
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -255,6 +259,17 @@ model Expense {
   notes       String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+// ============ NOTIFICATIONS ADMIN ============
+model Notification {
+  id        String   @id @default(cuid())
+  type      String   // AMOUNT_EDITED, etc.
+  title     String
+  message   String
+  data      String?  // JSON optionnel
+  readAt    DateTime?
+  createdAt DateTime @default(now())
 }
 
 // ============ PARAMETRES ============

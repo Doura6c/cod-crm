@@ -142,19 +142,24 @@ export default async function MerchantInvoicesPage({
 
         {/* Filtres + Tabs */}
         <div className="flex flex-wrap items-center gap-3">
-          <select
-            value={boutiqueId}
-            className="input text-sm"
-            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-              window.location.href = buildHref({ boutiqueId: e.target.value });
-            }}
-          >
-            <option value="">Toutes les boutiques</option>
-            {boutiques.map((b) => (
-              <option key={b.id} value={b.id}>{b.name}</option>
-            ))}
-          </select>
+          {/* Filtre boutique via formulaire */}
+          <form method="GET" action="/factures/marchands" className="flex items-center gap-2">
+            <input type="hidden" name="status" value={status} />
+            <select name="boutiqueId" defaultValue={boutiqueId} className="input text-sm">
+              <option value="">Toutes les boutiques</option>
+              {boutiques.map((b) => (
+                <option key={b.id} value={b.id}>{b.name}</option>
+              ))}
+            </select>
+            <button type="submit" className="bg-slate-700 hover:bg-slate-800 text-white text-xs font-semibold px-3 py-2 rounded-lg transition">
+              OK
+            </button>
+            {boutiqueId && (
+              <Link href={buildHref({ boutiqueId: "" })} className="text-xs text-slate-400 hover:text-slate-600">✕</Link>
+            )}
+          </form>
 
+          {/* Onglets statut */}
           {["all", "EN_ATTENTE", "PAYEE", "ANNULEE"].map((s) => (
             <Link
               key={s}

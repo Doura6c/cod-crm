@@ -7,10 +7,9 @@ import { formatGNF, formatDate } from "@/lib/utils";
 import { ArrowLeft, Printer } from "lucide-react";
 import Link from "next/link";
 import { ReglementPrint } from "./ReglementPrint";
+import { getHmpCommission } from "@/lib/settings";
 
 export const dynamic = "force-dynamic";
-
-const HMP_FEE = 70_000; // frais COD par commande livrée
 
 function getPeriodRange(period: string): { start: Date; end: Date; label: string } {
   const now = new Date();
@@ -50,6 +49,8 @@ export default async function ReglementPage({
 
   const boutique = await prisma.boutique.findUnique({ where: { id } });
   if (!boutique) notFound();
+
+  const HMP_FEE = await getHmpCommission();
 
   const orders = await prisma.order.findMany({
     where: {
@@ -152,6 +153,7 @@ export default async function ReglementPage({
             <ReglementPrint
               boutique={{ name: boutique.name, sellerName: boutique.sellerName }}
               period={label}
+              hmpFee={HMP_FEE}
               orders={orders.map((o) => ({
                 code: o.code,
                 customerName: o.customer.fullName,

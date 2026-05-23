@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
-
-const HMP_FEE = 70_000;
+import { getHmpCommission } from "@/lib/settings";
 
 function fmt(n: number) {
   return Math.round(n).toLocaleString("fr-FR") + " GNF";
@@ -16,6 +15,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   const session = await auth();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  const HMP_FEE = await getHmpCommission();
   const { id } = await params;
 
   const invoice = await prisma.merchantInvoice.findUnique({

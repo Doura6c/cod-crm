@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { formatGNF } from "@/lib/utils";
+import { getHmpCommission } from "@/lib/settings";
 import {
   TrendingUp, Users, Truck, BarChart2,
   Phone, MapPin, Package, Trophy, Star
@@ -126,7 +127,8 @@ export default async function DashboardPage({
   const maxCityCount = topCities[0]?._count.id ?? 1;
   const maxProductQty = topProducts[0]?._sum.quantity ?? 1;
 
-  const fraisHMP = livreCount * 70000;
+  const hmpCommission = await getHmpCommission();
+  const fraisHMP = livreCount * hmpCommission;
   const caTotalVal = caTotal._sum.totalAmount ?? 0;
   const caLivreVal = caLivre._sum.amountCollected ?? 0;
   const confirmedTotal = confirmeCount + enLivraisonCount + livreCount + retourneCount;

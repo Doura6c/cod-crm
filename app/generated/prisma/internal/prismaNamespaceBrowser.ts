@@ -64,6 +64,7 @@ export const ModelName = {
   Invoice: 'Invoice',
   MerchantInvoice: 'MerchantInvoice',
   Expense: 'Expense',
+  Notification: 'Notification',
   Setting: 'Setting'
 } as const
 
@@ -233,6 +234,10 @@ export const DeliveryScalarFieldEnum = {
   pickedUpAt: 'pickedUpAt',
   deliveredAt: 'deliveredAt',
   amountCollected: 'amountCollected',
+  originalAmount: 'originalAmount',
+  amountEditNote: 'amountEditNote',
+  amountEditedById: 'amountEditedById',
+  amountEditedAt: 'amountEditedAt',
   failureReason: 'failureReason',
   notes: 'notes',
   createdAt: 'createdAt',
@@ -297,6 +302,19 @@ export const ExpenseScalarFieldEnum = {
 } as const
 
 export type ExpenseScalarFieldEnum = (typeof ExpenseScalarFieldEnum)[keyof typeof ExpenseScalarFieldEnum]
+
+
+export const NotificationScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  title: 'title',
+  message: 'message',
+  data: 'data',
+  readAt: 'readAt',
+  createdAt: 'createdAt'
+} as const
+
+export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
 
 
 export const SettingScalarFieldEnum = {

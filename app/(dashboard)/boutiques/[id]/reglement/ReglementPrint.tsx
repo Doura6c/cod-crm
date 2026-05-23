@@ -25,11 +25,13 @@ export function ReglementPrint({
   period,
   orders,
   summary,
+  hmpFee = 70000,
 }: {
   boutique: { name: string; sellerName: string };
   period: string;
   orders: Order[];
   summary: Summary;
+  hmpFee?: number;
 }) {
   function print() {
     const win = window.open("", "_blank");
@@ -37,7 +39,7 @@ export function ReglementPrint({
 
     const rows = orders.map((o) => {
       const prodAmount = o.totalAmount - o.deliveryFee;
-      const net = prodAmount - 70000;
+      const net = prodAmount - hmpFee;
       const date = o.deliveredAt ? new Date(o.deliveredAt).toLocaleDateString("fr-FR") : "—";
       return `
         <tr>
@@ -45,7 +47,7 @@ export function ReglementPrint({
           <td>${o.customerName}<br/><small>${o.city}</small></td>
           <td>${o.items.map((it) => `${it.name} ×${it.qty}`).join("<br/>")}</td>
           <td style="text-align:right">${Math.round(prodAmount).toLocaleString("fr-FR")} GNF</td>
-          <td style="text-align:right;color:#dc2626">−70 000 GNF</td>
+          <td style="text-align:right;color:#dc2626">−${Math.round(hmpFee).toLocaleString("fr-FR")} GNF</td>
           <td style="text-align:right;font-weight:700;color:#059669">${Math.max(0, Math.round(net)).toLocaleString("fr-FR")} GNF</td>
           <td style="text-align:center">${date}</td>
         </tr>`;
@@ -102,7 +104,7 @@ export function ReglementPrint({
         <div class="kpi kpi-frais">
           <div class="kpi-label">Frais HelpMeProcess</div>
           <div class="kpi-value">−${Math.round(summary.fraisHMP).toLocaleString("fr-FR")} GNF</div>
-          <div style="font-size:11px;color:#94a3b8;margin-top:2px">70 000 × ${orders.length}</div>
+          <div style="font-size:11px;color:#94a3b8;margin-top:2px">${Math.round(hmpFee).toLocaleString("fr-FR")} × ${orders.length}</div>
         </div>
         <div class="kpi kpi-virer">
           <div class="kpi-label">À virer au marchand</div>

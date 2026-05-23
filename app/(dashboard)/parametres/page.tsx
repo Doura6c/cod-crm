@@ -1,35 +1,106 @@
+import { redirect } from "next/navigation";
+import { auth } from "@/auth";
+import { can } from "@/lib/rbac";
 import { PageHeader } from "@/components/PageHeader";
+import { getSetting, getHmpCommission } from "@/lib/settings";
+import { formatGNF } from "@/lib/utils";
+import { saveSettingsAction } from "./actions";
+import { BadgeDollarSign, Building2, AlertTriangle } from "lucide-react";
 
-export default function ParametresPage() {
+export const dynamic = "force-dynamic";
+
+export default async function ParametresPage() {
+  const session = await auth();
+  if (!can((session?.user as any)?.role, "VIEW_SETTINGS")) redirect("/");
+
+  const [hmpCommission, companyName, currency] = await Promise.all([
+    getHmpCommission(),
+    getSetting("company_name", "HelpMeProcess COD"),
+    getSetting("currency", "GNF"),
+  ]);
+
   return (
     <div>
       <PageHeader title="Paramètres" />
-      <div className="p-6">
-        <div className="bg-white border border-slate-200 rounded-lg p-6 max-w-2xl">
-          <h2 className="text-lg font-semibold mb-4">Paramètres généraux</h2>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Nom de l&apos;entreprise</label>
-              <input className="input" defaultValue="HelpMeProcess COD" />
+      <div className="p-6 max-w-2xl space-y-6">
+
+        {/* Commission HMP */}
+        <div className="bg-white border-2 border-sky-300 rounded-2xl overflow-hidden shadow-sm">
+          <div className="bg-sky-50 px-6 py-4 border-b border-sky-200 flex items-center gap-3">
+            <div className="w-9 h-9 bg-sky-500 rounded-xl flex items-center justify-center">
+              <BadgeDollarSign className="w-5 h-5 text-white" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Devise</label>
-              <select className="input">
-                <option>GNF — Franc guinéen</option>
-                <option>XOF — Franc CFA</option>
-                <option>EUR — Euro</option>
-                <option>USD — Dollar</option>
+              <div className="font-bold text-sky-900">Commission HelpMeProcess</div>
+              <div className="text-xs text-sky-600">Déduite du prix de vente après chaque livraison — se met à jour partout</div>
+            </div>
+          </div>
+
+          <form action={saveSettingsAction} className="px-6 py-5 space-y-4">
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
+              <AlertTriangle className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
+              <div className="text-sm text-amber-800">
+                <strong>Valeur actuelle :</strong> {formatGNF(hmpCommission)} / commande livrée.<br />
+                Ce montant est déduit du tarif de vente validé. C&apos;est la rémunération HelpMeProcess (confirmation + livraison).
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
+                Montant de la commission (GNF)
+              </label>
+              <div className="flex gap-3 items-center">
+                <input
+                  type="number"
+                  name="hmp_commission"
+                  defaultValue={hmpCommission}
+                  min={0}
+                  step={1000}
+                  className="input text-lg font-bold max-w-[200px]"
+                />
+                <span className="text-sm text-slate-500">GNF / commande livrée</span>
+              </div>
+              <p className="text-xs text-slate-400 mt-1">
+                Ex : prix vente validé 500 000 GNF → net marchand = 500 000 − {formatGNF(hmpCommission)} = {formatGNF(500000 - hmpCommission)} GNF
+              </p>
+            </div>
+
+            <input type="hidden" name="company_name" value={companyName} />
+            <input type="hidden" name="currency" value={currency} />
+
+            <button type="submit" className="bg-sky-500 hover:bg-sky-600 text-white font-bold px-6 py-2.5 rounded-xl transition">
+              💾 Enregistrer la commission
+            </button>
+          </form>
+        </div>
+
+        {/* Infos entreprise */}
+        <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
+          <div className="px-6 py-4 border-b border-slate-100 flex items-center gap-2">
+            <Building2 className="w-4 h-4 text-slate-500" />
+            <span className="font-semibold text-slate-800">Informations entreprise</span>
+          </div>
+          <form action={saveSettingsAction} className="px-6 py-5 space-y-4">
+            <input type="hidden" name="hmp_commission" value={hmpCommission} />
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-1">Nom de l&apos;entreprise</label>
+              <input name="company_name" className="input" defaultValue={companyName} />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-1">Devise</label>
+              <select name="currency" className="input" defaultValue={currency}>
+                <option value="GNF">GNF — Franc guinéen</option>
+                <option value="XOF">XOF — Franc CFA</option>
+                <option value="EUR">EUR — Euro</option>
+                <option value="USD">USD — Dollar</option>
               </select>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Fuseau horaire</label>
-              <input className="input" defaultValue="Africa/Conakry" />
-            </div>
-            <button className="bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded font-medium">
+            <button type="submit" className="bg-slate-700 hover:bg-slate-800 text-white font-semibold px-5 py-2 rounded-lg transition">
               Enregistrer
             </button>
-          </div>
+          </form>
         </div>
+
       </div>
     </div>
   );

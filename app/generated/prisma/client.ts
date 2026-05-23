@@ -107,6 +107,11 @@ export type MerchantInvoice = Prisma.MerchantInvoiceModel
  */
 export type Expense = Prisma.ExpenseModel
 /**
+ * Model Notification
+ * 
+ */
+export type Notification = Prisma.NotificationModel
+/**
  * Model Setting
  * 
  */
