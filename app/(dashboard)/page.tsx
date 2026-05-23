@@ -4,8 +4,8 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { formatGNF } from "@/lib/utils";
 import {
-  TrendingUp, Users, Truck, BarChart2, CheckCircle,
-  XCircle, Clock, Phone, RefreshCw
+  TrendingUp, Users, Truck, BarChart2,
+  Phone, MapPin, Package, Trophy, Star
 } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -59,6 +59,8 @@ export default async function DashboardPage({
     livreurs,
     livreurDeliveries,
     agentCallStats,
+    topCities,
+    topProducts,
   ] = await Promise.all([
     prisma.order.count({ where: { createdAt: { gte: since } } }),
     prisma.order.count({ where: { status: "NOUVEAU", createdAt: { gte: since } } }),
@@ -89,7 +91,40 @@ export default async function DashboardPage({
       where: { createdAt: { gte: since } },
       _count: { id: true },
     }),
+    // Top villes : nombre de livraisons LIVRE par ville
+    prisma.order.groupBy({
+      by: ["cityId"],
+      where: { status: "LIVRE", createdAt: { gte: since }, cityId: { not: null } },
+      _count: { id: true },
+      _sum: { totalAmount: true },
+      orderBy: { _count: { id: "desc" } },
+      take: 10,
+    }),
+    // Top produits : somme des quantités vendées (commandes LIVRE)
+    prisma.orderItem.groupBy({
+      by: ["productId"],
+      where: { order: { status: "LIVRE", createdAt: { gte: since } } },
+      _sum: { quantity: true, subtotal: true },
+      orderBy: { _sum: { quantity: "desc" } },
+      take: 10,
+    }),
   ]);
+
+  // Résoudre les noms de villes et produits
+  const cityIds = topCities.map((c) => c.cityId).filter(Boolean) as string[];
+  const productIds = topProducts.map((p) => p.productId);
+
+  const [cityNames, productNames] = await Promise.all([
+    prisma.city.findMany({ where: { id: { in: cityIds } }, select: { id: true, name: true } }),
+    prisma.product.findMany({ where: { id: { in: productIds } }, select: { id: true, name: true, sku: true, imageUrl: true } }),
+  ]);
+
+  const cityMap = Object.fromEntries(cityNames.map((c) => [c.id, c.name]));
+  const productMap = Object.fromEntries(productNames.map((p) => [p.id, p]));
+
+  // Totaux pour les barres de progression des tops
+  const maxCityCount = topCities[0]?._count.id ?? 1;
+  const maxProductQty = topProducts[0]?._sum.quantity ?? 1;
 
   const fraisHMP = livreCount * 70000;
   const caTotalVal = caTotal._sum.totalAmount ?? 0;
@@ -427,6 +462,126 @@ export default async function DashboardPage({
             </div>
           </div>
         )}
+
+        {/* ────── TOP VILLES + TOP ARTICLES ────── */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+          {/* TOP VILLES */}
+          <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+            <div className="px-6 py-4 border-b border-slate-100 flex items-center gap-2">
+              <div className="w-7 h-7 bg-rose-100 rounded-lg flex items-center justify-center">
+                <MapPin className="w-3.5 h-3.5 text-rose-600" />
+              </div>
+              <span className="font-bold text-slate-800">Top villes — livraisons</span>
+              <span className="ml-auto text-xs text-slate-400">{livreCount} livrées</span>
+            </div>
+
+            {topCities.length === 0 ? (
+              <div className="px-6 py-8 text-center text-slate-400 text-sm">
+                Aucune donnée sur cette période.
+              </div>
+            ) : (
+              <div className="px-6 py-4 space-y-3">
+                {topCities.map((c, i) => {
+                  const cityName = cityMap[c.cityId ?? ""] ?? "Inconnue";
+                  const count = c._count.id;
+                  const ca = c._sum.totalAmount ?? 0;
+                  const barWidth = Math.round((count / maxCityCount) * 100);
+                  const MEDALS = ["🥇", "🥈", "🥉"];
+                  return (
+                    <div key={c.cityId ?? i}>
+                      <div className="flex items-center justify-between mb-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-base w-6 text-center">
+                            {i < 3 ? MEDALS[i] : <span className="text-xs font-bold text-slate-400">#{i + 1}</span>}
+                          </span>
+                          <span className="text-sm font-semibold text-slate-800">{cityName}</span>
+                        </div>
+                        <div className="text-right">
+                          <span className="text-sm font-black text-slate-700">{count}</span>
+                          <span className="text-xs text-slate-400 ml-1">livraisons</span>
+                          <div className="text-xs text-emerald-600 font-medium">{formatGNF(ca)}</div>
+                        </div>
+                      </div>
+                      <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full rounded-full ${
+                            i === 0 ? "bg-rose-500" :
+                            i === 1 ? "bg-orange-400" :
+                            i === 2 ? "bg-amber-400" :
+                            "bg-slate-300"
+                          }`}
+                          style={{ width: `${barWidth}%` }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* TOP ARTICLES */}
+          <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+            <div className="px-6 py-4 border-b border-slate-100 flex items-center gap-2">
+              <div className="w-7 h-7 bg-violet-100 rounded-lg flex items-center justify-center">
+                <Trophy className="w-3.5 h-3.5 text-violet-600" />
+              </div>
+              <span className="font-bold text-slate-800">Top articles vendus</span>
+              <span className="ml-auto text-xs text-slate-400">commandes livrées</span>
+            </div>
+
+            {topProducts.length === 0 ? (
+              <div className="px-6 py-8 text-center text-slate-400 text-sm">
+                Aucune donnée sur cette période.
+              </div>
+            ) : (
+              <div className="px-6 py-4 space-y-3">
+                {topProducts.map((p, i) => {
+                  const product = productMap[p.productId];
+                  const qty = p._sum.quantity ?? 0;
+                  const ca = p._sum.subtotal ?? 0;
+                  const barWidth = Math.round((qty / (maxProductQty as number)) * 100);
+                  const MEDALS = ["🥇", "🥈", "🥉"];
+                  const BAR_COLORS = [
+                    "bg-violet-500", "bg-purple-400", "bg-indigo-400",
+                    "bg-sky-400", "bg-blue-300",
+                  ];
+                  return (
+                    <div key={p.productId}>
+                      <div className="flex items-center justify-between mb-1">
+                        <div className="flex items-center gap-2 min-w-0 flex-1 pr-3">
+                          <span className="text-base w-6 text-center flex-shrink-0">
+                            {i < 3 ? MEDALS[i] : <span className="text-xs font-bold text-slate-400">#{i + 1}</span>}
+                          </span>
+                          <div className="min-w-0">
+                            <div className="text-sm font-semibold text-slate-800 truncate">
+                              {product?.name ?? "Produit inconnu"}
+                            </div>
+                            {product?.sku && (
+                              <div className="text-xs text-slate-400 font-mono">{product.sku}</div>
+                            )}
+                          </div>
+                        </div>
+                        <div className="text-right flex-shrink-0">
+                          <span className="text-sm font-black text-slate-700">{qty}</span>
+                          <span className="text-xs text-slate-400 ml-1">unités</span>
+                          <div className="text-xs text-violet-600 font-medium">{formatGNF(ca)}</div>
+                        </div>
+                      </div>
+                      <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full rounded-full ${BAR_COLORS[i] ?? "bg-slate-300"}`}
+                          style={{ width: `${barWidth}%` }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
 
         {/* ────── HISTORIQUE D'ACTIVITÉS ────── */}
         <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
