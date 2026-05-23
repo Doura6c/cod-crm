@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { PageHeader } from "@/components/PageHeader";
-import { Plus, Globe, Key as KeyIcon, Power, Settings2 } from "lucide-react";
+import { Plus, Globe, Key as KeyIcon, Power, Settings2, Receipt } from "lucide-react";
 import { can } from "@/lib/rbac";
 
 export const dynamic = "force-dynamic";
@@ -84,7 +84,12 @@ export default async function BoutiquesPage() {
                     {b.orders.filter((o) => o.status === "LIVRE").length}
                   </div>
                 </div>
-                <button className="ml-auto text-slate-400 hover:text-red-600"><Power className="w-4 h-4" /></button>
+                <Link
+                  href={`/boutiques/${b.id}/reglement`}
+                  className="ml-auto inline-flex items-center gap-1 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition"
+                >
+                  <Receipt className="w-3.5 h-3.5" /> Règlement
+                </Link>
               </div>
             </div>
           ))}
