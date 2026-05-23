@@ -395,6 +395,7 @@ export const ModelName = {
   CallLog: 'CallLog',
   Delivery: 'Delivery',
   Invoice: 'Invoice',
+  MerchantInvoice: 'MerchantInvoice',
   Expense: 'Expense',
   Setting: 'Setting'
 } as const
@@ -412,7 +413,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "boutique" | "customer" | "city" | "product" | "stockMovement" | "order" | "orderItem" | "callLog" | "delivery" | "invoice" | "expense" | "setting"
+    modelProps: "user" | "boutique" | "customer" | "city" | "product" | "stockMovement" | "order" | "orderItem" | "callLog" | "delivery" | "invoice" | "merchantInvoice" | "expense" | "setting"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1230,6 +1231,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    MerchantInvoice: {
+      payload: Prisma.$MerchantInvoicePayload<ExtArgs>
+      fields: Prisma.MerchantInvoiceFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MerchantInvoiceFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MerchantInvoicePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MerchantInvoiceFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MerchantInvoicePayload>
+        }
+        findFirst: {
+          args: Prisma.MerchantInvoiceFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MerchantInvoicePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MerchantInvoiceFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MerchantInvoicePayload>
+        }
+        findMany: {
+          args: Prisma.MerchantInvoiceFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MerchantInvoicePayload>[]
+        }
+        create: {
+          args: Prisma.MerchantInvoiceCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MerchantInvoicePayload>
+        }
+        createMany: {
+          args: Prisma.MerchantInvoiceCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MerchantInvoiceCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MerchantInvoicePayload>[]
+        }
+        delete: {
+          args: Prisma.MerchantInvoiceDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MerchantInvoicePayload>
+        }
+        update: {
+          args: Prisma.MerchantInvoiceUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MerchantInvoicePayload>
+        }
+        deleteMany: {
+          args: Prisma.MerchantInvoiceDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MerchantInvoiceUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MerchantInvoiceUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MerchantInvoicePayload>[]
+        }
+        upsert: {
+          args: Prisma.MerchantInvoiceUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MerchantInvoicePayload>
+        }
+        aggregate: {
+          args: Prisma.MerchantInvoiceAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMerchantInvoice>
+        }
+        groupBy: {
+          args: Prisma.MerchantInvoiceGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MerchantInvoiceGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MerchantInvoiceCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MerchantInvoiceCountAggregateOutputType> | number
+        }
+      }
+    }
     Expense: {
       payload: Prisma.$ExpensePayload<ExtArgs>
       fields: Prisma.ExpenseFieldRefs
@@ -1595,6 +1670,28 @@ export const InvoiceScalarFieldEnum = {
 export type InvoiceScalarFieldEnum = (typeof InvoiceScalarFieldEnum)[keyof typeof InvoiceScalarFieldEnum]
 
 
+export const MerchantInvoiceScalarFieldEnum = {
+  id: 'id',
+  reference: 'reference',
+  boutiqueId: 'boutiqueId',
+  periodStart: 'periodStart',
+  periodEnd: 'periodEnd',
+  orderCount: 'orderCount',
+  productCount: 'productCount',
+  totalGross: 'totalGross',
+  totalProducts: 'totalProducts',
+  fraisHMP: 'fraisHMP',
+  netMarchand: 'netMarchand',
+  status: 'status',
+  paidAt: 'paidAt',
+  note: 'note',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MerchantInvoiceScalarFieldEnum = (typeof MerchantInvoiceScalarFieldEnum)[keyof typeof MerchantInvoiceScalarFieldEnum]
+
+
 export const ExpenseScalarFieldEnum = {
   id: 'id',
   reference: 'reference',
@@ -1797,6 +1894,7 @@ export type GlobalOmitConfig = {
   callLog?: Prisma.CallLogOmit
   delivery?: Prisma.DeliveryOmit
   invoice?: Prisma.InvoiceOmit
+  merchantInvoice?: Prisma.MerchantInvoiceOmit
   expense?: Prisma.ExpenseOmit
   setting?: Prisma.SettingOmit
 }

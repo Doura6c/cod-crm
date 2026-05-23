@@ -3,12 +3,16 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { formatGNF } from "@/lib/utils";
+import {
+  TrendingUp, Users, Truck, BarChart2, CheckCircle,
+  XCircle, Clock, Phone, RefreshCw
+} from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
 function pct(num: number, den: number) {
-  if (!den) return "0%";
-  return Math.round((num / den) * 100) + "%";
+  if (!den) return 0;
+  return Math.round((num / den) * 100);
 }
 
 function periodStart(period: string): Date {
@@ -18,6 +22,11 @@ function periodStart(period: string): Date {
   d.setHours(0, 0, 0, 0);
   return d;
 }
+
+const AGENT_COLORS = [
+  "#3b82f6", "#ef4444", "#f59e0b", "#10b981", "#8b5cf6",
+  "#ec4899", "#06b6d4", "#f97316", "#84cc16", "#6366f1",
+];
 
 export default async function DashboardPage({
   searchParams,
@@ -46,7 +55,6 @@ export default async function DashboardPage({
     caTotal,
     caLivre,
     callLogs,
-    recentOrders,
     agents,
     livreurs,
     livreurDeliveries,
@@ -68,13 +76,7 @@ export default async function DashboardPage({
       where: { createdAt: { gte: since } },
       include: { agent: { select: { firstName: true, lastName: true, id: true } } },
       orderBy: { createdAt: "desc" },
-      take: 50,
-    }),
-    prisma.order.findMany({
-      where: { createdAt: { gte: since } },
-      include: { customer: true, boutique: true },
-      orderBy: { createdAt: "desc" },
-      take: 10,
+      take: 40,
     }),
     prisma.user.findMany({ where: { role: { in: ["AGENT", "MANAGER"] }, active: true }, select: { id: true, firstName: true, lastName: true } }),
     prisma.user.findMany({ where: { role: "LIVREUR", active: true }, select: { id: true, firstName: true, lastName: true } }),
@@ -92,13 +94,8 @@ export default async function DashboardPage({
   const fraisHMP = livreCount * 70000;
   const caTotalVal = caTotal._sum.totalAmount ?? 0;
   const caLivreVal = caLivre._sum.amountCollected ?? 0;
-  const caVerse = caLivreVal;
-  const caNonVerse = caTotalVal - caLivreVal;
-  const profitNet = fraisHMP;
-
   const confirmedTotal = confirmeCount + enLivraisonCount + livreCount + retourneCount;
   const pdrInj = pdrCount + injoignableCount;
-  const livraisonTotal = livreCount + retourneCount + enLivraisonCount;
 
   const PERIODS = [
     { key: "today", label: "Aujourd'hui" },
@@ -106,241 +103,382 @@ export default async function DashboardPage({
     { key: "month", label: "Ce mois" },
   ];
 
-  const COLORS = ["#3b82f6","#ef4444","#f59e0b","#10b981","#8b5cf6","#ec4899","#06b6d4","#f97316","#84cc16","#6366f1","#14b8a6"];
+  // Données pour les barres de progression
+  const confStats = [
+    { label: "Confirmés",         count: confirmedTotal, total: totalOrders, color: "bg-emerald-500", text: "text-emerald-700" },
+    { label: "Nouveau",           count: nouveauCount,   total: totalOrders, color: "bg-slate-400",   text: "text-slate-600" },
+    { label: "Reporté",           count: reporteCount,   total: totalOrders, color: "bg-sky-500",     text: "text-sky-700" },
+    { label: "PDR/Injoignable",   count: pdrInj,         total: totalOrders, color: "bg-amber-500",   text: "text-amber-700" },
+    { label: "Annulé",            count: annuleCount,    total: totalOrders, color: "bg-red-500",     text: "text-red-700" },
+  ];
+
+  const livStats = [
+    { label: "Livré",             count: livreCount,      total: confirmedTotal, color: "bg-emerald-500", text: "text-emerald-700" },
+    { label: "En livraison",      count: enLivraisonCount,total: confirmedTotal, color: "bg-sky-500",     text: "text-sky-700" },
+    { label: "Retourné",          count: retourneCount,   total: confirmedTotal, color: "bg-red-400",     text: "text-red-600" },
+    { label: "PDR/Injoignable",   count: pdrInj,          total: confirmedTotal, color: "bg-amber-500",   text: "text-amber-700" },
+  ];
+
+  const outcomeLabel: Record<string, string> = {
+    CONFIRMED: "Confirmé", CANCELLED: "Annulé", REPORTED: "Reporté",
+    NO_ANSWER: "Pas de réponse", BUSY: "Occupé", INJOIGNABLE: "Injoignable", ANSWERED: "Répondu",
+  };
+  const outcomeColor: Record<string, string> = {
+    CONFIRMED: "bg-emerald-100 text-emerald-700",
+    CANCELLED: "bg-red-100 text-red-700",
+    REPORTED: "bg-sky-100 text-sky-700",
+    NO_ANSWER: "bg-amber-100 text-amber-700",
+    BUSY: "bg-orange-100 text-orange-700",
+    INJOIGNABLE: "bg-slate-200 text-slate-600",
+    ANSWERED: "bg-blue-100 text-blue-700",
+  };
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* Header agents */}
-      <div className="bg-white border-b border-slate-200 px-6 py-3 flex items-center gap-4 flex-wrap">
+      {/* Top bar : agents connectés */}
+      <div className="bg-white border-b border-slate-200 px-6 py-2.5 flex items-center gap-4 flex-wrap">
+        <span className="text-xs text-slate-400 font-semibold uppercase tracking-wide">Équipe</span>
         {agents.map((a, i) => (
           <div key={a.id} className="flex items-center gap-1.5">
-            <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: COLORS[i % COLORS.length] }} />
+            <div
+              className="w-2.5 h-2.5 rounded-full ring-2 ring-white shadow-sm"
+              style={{ backgroundColor: AGENT_COLORS[i % AGENT_COLORS.length] }}
+            />
             <span className="text-xs text-slate-600 font-medium">{a.firstName} {a.lastName}</span>
           </div>
         ))}
+        {livreurs.length > 0 && (
+          <>
+            <span className="text-slate-200">|</span>
+            <Truck className="w-3.5 h-3.5 text-slate-400" />
+            {livreurs.map((l) => (
+              <span key={l.id} className="text-xs text-slate-500">{l.firstName} {l.lastName}</span>
+            ))}
+          </>
+        )}
       </div>
 
-      <div className="p-6 space-y-6">
-        {/* Filtres période */}
-        <div className="bg-white border border-slate-200 rounded-lg p-4 flex items-center gap-3 flex-wrap">
-          <span className="text-xs text-slate-500 font-semibold uppercase">Période</span>
-          {PERIODS.map((p) => (
-            <Link key={p.key} href={`/?period=${p.key}`}
-              className={`px-4 py-1.5 rounded-full text-sm font-semibold transition ${period === p.key ? "bg-slate-800 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
-              {p.label}
-            </Link>
-          ))}
-          <span className="text-xs text-slate-400 ml-auto">
-            {since.toLocaleDateString("fr-FR")} — {new Date().toLocaleDateString("fr-FR")}
-          </span>
+      <div className="p-6 space-y-8">
+        {/* Période + résumé rapide */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            {PERIODS.map((p) => (
+              <Link
+                key={p.key}
+                href={`/?period=${p.key}`}
+                className={`px-4 py-1.5 rounded-full text-sm font-bold transition ${
+                  period === p.key
+                    ? "bg-slate-900 text-white shadow"
+                    : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
+                }`}
+              >
+                {p.label}
+              </Link>
+            ))}
+          </div>
+          <div className="text-xs text-slate-400 font-medium">
+            {since.toLocaleDateString("fr-FR")} → {new Date().toLocaleDateString("fr-FR")}
+          </div>
         </div>
 
-        {/* TAUX DE CONFIRMATION */}
+        {/* ────── TAUX DE CONFIRMATION ────── */}
+        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+          <div className="flex items-center justify-between mb-5">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center">
+                <Phone className="w-4 h-4 text-emerald-600" />
+              </div>
+              <div>
+                <div className="font-bold text-slate-800">Taux de confirmation</div>
+                <div className="text-xs text-slate-400">{totalOrders} commandes reçues</div>
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="text-3xl font-black text-emerald-600">{pct(confirmedTotal, totalOrders)}%</div>
+              <div className="text-xs text-slate-400">{confirmedTotal} confirmées</div>
+            </div>
+          </div>
+
+          {/* Barre globale */}
+          <div className="h-3 bg-slate-100 rounded-full overflow-hidden mb-5">
+            <div
+              className="h-full bg-emerald-500 rounded-full transition-all"
+              style={{ width: `${pct(confirmedTotal, totalOrders)}%` }}
+            />
+          </div>
+
+          {/* Stats par statut */}
+          <div className="space-y-3">
+            {confStats.map((s) => {
+              const p = pct(s.count, s.total);
+              return (
+                <div key={s.label} className="flex items-center gap-3">
+                  <div className="w-28 text-xs text-slate-500 font-medium text-right">{s.label}</div>
+                  <div className="flex-1 h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full rounded-full ${s.color}`}
+                      style={{ width: `${p}%` }}
+                    />
+                  </div>
+                  <div className={`w-10 text-right text-xs font-bold ${s.text}`}>{p}%</div>
+                  <div className="w-8 text-right text-xs text-slate-400">{s.count}</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* ────── TAUX DE LIVRAISON ────── */}
+        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+          <div className="flex items-center justify-between mb-5">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-sky-100 rounded-lg flex items-center justify-center">
+                <Truck className="w-4 h-4 text-sky-600" />
+              </div>
+              <div>
+                <div className="font-bold text-slate-800">Taux de livraison</div>
+                <div className="text-xs text-slate-400">{confirmedTotal} commandes confirmées</div>
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="text-3xl font-black text-sky-600">{pct(livreCount, confirmedTotal)}%</div>
+              <div className="text-xs text-slate-400">{livreCount} livrées</div>
+            </div>
+          </div>
+
+          <div className="h-3 bg-slate-100 rounded-full overflow-hidden mb-5">
+            <div
+              className="h-full bg-sky-500 rounded-full"
+              style={{ width: `${pct(livreCount, confirmedTotal)}%` }}
+            />
+          </div>
+
+          <div className="space-y-3">
+            {livStats.map((s) => {
+              const p = pct(s.count, s.total);
+              return (
+                <div key={s.label} className="flex items-center gap-3">
+                  <div className="w-28 text-xs text-slate-500 font-medium text-right">{s.label}</div>
+                  <div className="flex-1 h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                    <div className={`h-full rounded-full ${s.color}`} style={{ width: `${p}%` }} />
+                  </div>
+                  <div className={`w-10 text-right text-xs font-bold ${s.text}`}>{p}%</div>
+                  <div className="w-8 text-right text-xs text-slate-400">{s.count}</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* ────── MÉTRIQUES FINANCIÈRES ────── */}
         <div>
-          <div className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Taux de confirmation</div>
-          <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
+          <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+            <TrendingUp className="w-3.5 h-3.5" /> Finances
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { label: "Tous", count: totalOrders, pct: "100%", color: "border-slate-800", bar: "bg-slate-800" },
-              { label: "Nouveau", count: nouveauCount, pct: pct(nouveauCount, totalOrders), color: "border-slate-400", bar: "bg-slate-400" },
-              { label: "Confirmé", count: confirmedTotal, pct: pct(confirmedTotal, totalOrders), color: "border-emerald-500", bar: "bg-emerald-500" },
-              { label: "Reporté", count: reporteCount, pct: pct(reporteCount, totalOrders), color: "border-sky-500", bar: "bg-sky-500" },
-              { label: "PDR & Injoignable", count: pdrInj, pct: pct(pdrInj, totalOrders), color: "border-amber-500", bar: "bg-amber-500" },
-              { label: "Annulé", count: annuleCount, pct: pct(annuleCount, totalOrders), color: "border-red-500", bar: "bg-red-500" },
-            ].map((stat) => (
-              <div key={stat.label} className={`bg-white border-t-4 ${stat.color} rounded-lg p-4 text-center shadow-sm`}>
-                <div className="text-2xl font-black text-slate-800">{stat.pct}</div>
-                <div className="text-xs text-slate-500 mt-1">{stat.label}</div>
-                <div className="text-xs font-semibold text-slate-700 mt-0.5">{stat.count} commandes</div>
-                <div className={`h-1 rounded-full mt-2 ${stat.bar}`} style={{ width: "100%" }} />
+              { label: "Chiffre d'affaires",   value: formatGNF(caTotalVal),     sub: `${totalOrders} commandes`, color: "border-sky-400",    bg: "" },
+              { label: "CA encaissé (livré)",   value: formatGNF(caLivreVal),     sub: `${livreCount} livrées`,   color: "border-emerald-500", bg: "bg-emerald-50" },
+              { label: "CA non versé",          value: formatGNF(Math.max(0, caTotalVal - caLivreVal)), sub: "En attente", color: "border-amber-400", bg: "bg-amber-50" },
+              { label: "Revenus HMP",           value: formatGNF(fraisHMP),       sub: `70k × ${livreCount}`, color: "border-violet-500", bg: "bg-violet-50" },
+            ].map((m) => (
+              <div key={m.label} className={`${m.bg || "bg-white"} border border-slate-200 border-t-4 ${m.color} rounded-xl p-4 shadow-sm`}>
+                <div className="text-xs text-slate-500 font-semibold uppercase mb-2">{m.label}</div>
+                <div className="text-lg font-black text-slate-800">{m.value}</div>
+                <div className="text-xs text-slate-400 mt-1">{m.sub}</div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* TAUX DE LIVRAISON */}
-        <div>
-          <div className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Taux de livraison</div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-            {[
-              { label: "Tous", count: confirmedTotal, pct: "100%", color: "border-slate-800", bar: "bg-slate-800" },
-              { label: "Livré", count: livreCount, pct: pct(livreCount, confirmedTotal), color: "border-emerald-500", bar: "bg-emerald-500" },
-              { label: "En livraison", count: enLivraisonCount, pct: pct(enLivraisonCount, confirmedTotal), color: "border-sky-400", bar: "bg-sky-400" },
-              { label: "PDR & Injoignable", count: pdrInj, pct: pct(pdrInj, confirmedTotal), color: "border-amber-500", bar: "bg-amber-500" },
-              { label: "Retourné", count: retourneCount, pct: pct(retourneCount, confirmedTotal), color: "border-red-400", bar: "bg-red-400" },
-              { label: "Annulé", count: annuleCount, pct: pct(annuleCount, confirmedTotal), color: "border-red-600", bar: "bg-red-600" },
-            ].map((stat) => (
-              <div key={stat.label} className={`bg-white border-t-4 ${stat.color} rounded-lg p-4 text-center shadow-sm`}>
-                <div className="text-2xl font-black text-slate-800">{stat.pct}</div>
-                <div className="text-xs text-slate-500 mt-1">{stat.label}</div>
-                <div className="text-xs font-semibold text-slate-700 mt-0.5">{stat.count} commandes</div>
-                <div className={`h-1 rounded-full mt-2 ${stat.bar}`} />
+        {/* ────── PERFORMANCE AGENTS ────── */}
+        <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+          <div className="px-6 py-4 border-b border-slate-100 flex items-center gap-2">
+            <div className="w-7 h-7 bg-indigo-100 rounded-lg flex items-center justify-center">
+              <Users className="w-3.5 h-3.5 text-indigo-600" />
+            </div>
+            <span className="font-bold text-slate-800">Performance agents</span>
+            <span className="ml-auto text-xs text-slate-400">{period === "today" ? "Aujourd'hui" : period === "week" ? "7 jours" : "Ce mois"}</span>
+          </div>
+          <div className="divide-y divide-slate-50">
+            {agents.map((a, i) => {
+              const stats = agentCallStats.filter((s) => s.agentId === a.id);
+              const total = stats.reduce((s, x) => s + x._count.id, 0);
+              const confirmed = stats.find((s) => s.outcome === "CONFIRMED")?._count.id ?? 0;
+              const cancelled = stats.find((s) => s.outcome === "CANCELLED")?._count.id ?? 0;
+              const reported = stats.find((s) => s.outcome === "REPORTED")?._count.id ?? 0;
+              const noAnswer = (stats.find((s) => s.outcome === "NO_ANSWER")?._count.id ?? 0)
+                + (stats.find((s) => s.outcome === "INJOIGNABLE")?._count.id ?? 0);
+              const rate = pct(confirmed, total);
+              return (
+                <div key={a.id} className="px-6 py-4 flex items-center gap-4">
+                  {/* Agent name + color dot */}
+                  <div className="flex items-center gap-2.5 w-36 flex-shrink-0">
+                    <div
+                      className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-black shadow-sm"
+                      style={{ backgroundColor: AGENT_COLORS[i % AGENT_COLORS.length] }}
+                    >
+                      {a.firstName[0]}{a.lastName[0]}
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-slate-700">{a.firstName}</div>
+                      <div className="text-xs text-slate-400">{a.lastName}</div>
+                    </div>
+                  </div>
+
+                  {/* Stats chips */}
+                  <div className="flex items-center gap-2 flex-1 flex-wrap">
+                    <span className="text-xs font-semibold text-slate-500 bg-slate-100 px-2 py-1 rounded-lg">
+                      📞 {total} appels
+                    </span>
+                    <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-lg">
+                      ✓ {confirmed} confirmés
+                    </span>
+                    <span className="text-xs font-semibold text-amber-700 bg-amber-50 px-2 py-1 rounded-lg">
+                      ↩ {reported} reportés
+                    </span>
+                    <span className="text-xs font-semibold text-red-600 bg-red-50 px-2 py-1 rounded-lg">
+                      ✕ {cancelled} annulés
+                    </span>
+                    <span className="text-xs font-semibold text-slate-500 bg-slate-50 px-2 py-1 rounded-lg">
+                      🔇 {noAnswer} injoignables
+                    </span>
+                  </div>
+
+                  {/* Taux + barre */}
+                  <div className="w-28 flex-shrink-0">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs text-slate-400">Taux</span>
+                      <span className={`text-sm font-black ${rate >= 30 ? "text-emerald-600" : rate >= 15 ? "text-amber-600" : "text-red-500"}`}>
+                        {rate}%
+                      </span>
+                    </div>
+                    <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full rounded-full ${rate >= 30 ? "bg-emerald-500" : rate >= 15 ? "bg-amber-500" : "bg-red-400"}`}
+                        style={{ width: `${Math.min(100, rate)}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+            {agents.length === 0 && (
+              <div className="px-6 py-8 text-center text-slate-400 text-sm">Aucun agent actif.</div>
+            )}
+          </div>
+        </div>
+
+        {/* ────── PERFORMANCE LIVREURS ────── */}
+        {livreurs.length > 0 && (
+          <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+            <div className="px-6 py-4 border-b border-slate-100 flex items-center gap-2">
+              <div className="w-7 h-7 bg-sky-100 rounded-lg flex items-center justify-center">
+                <Truck className="w-3.5 h-3.5 text-sky-600" />
               </div>
-            ))}
+              <span className="font-bold text-slate-800">Performance livreurs</span>
+            </div>
+            <div className="divide-y divide-slate-50">
+              {livreurs.map((l) => {
+                const rows = livreurDeliveries.filter((d) => d.livreurId === l.id);
+                const livre = rows.filter((d) => d.status === "LIVRE").length;
+                const retour = rows.filter((d) => d.status === "RETOURNE").length;
+                const ca = rows.filter((d) => d.status === "LIVRE").reduce((s, d) => s + (d.amountCollected ?? 0), 0);
+                const rate = pct(livre, livre + retour);
+                return (
+                  <div key={l.id} className="px-6 py-4 flex items-center gap-4">
+                    <div className="flex items-center gap-2.5 w-36 flex-shrink-0">
+                      <div className="w-8 h-8 bg-sky-500 rounded-full flex items-center justify-center text-white text-xs font-black">
+                        {l.firstName[0]}{l.lastName[0]}
+                      </div>
+                      <div>
+                        <div className="text-xs font-bold text-slate-700">{l.firstName}</div>
+                        <div className="text-xs text-slate-400">{l.lastName}</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 flex-1 flex-wrap">
+                      <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-lg">
+                        ✓ {livre} livrées
+                      </span>
+                      <span className="text-xs font-semibold text-red-600 bg-red-50 px-2 py-1 rounded-lg">
+                        ↩ {retour} retours
+                      </span>
+                      <span className="text-xs font-semibold text-sky-700 bg-sky-50 px-2 py-1 rounded-lg">
+                        💰 {formatGNF(ca)}
+                      </span>
+                    </div>
+                    <div className="w-28 flex-shrink-0">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-xs text-slate-400">Taux</span>
+                        <span className={`text-sm font-black ${rate >= 80 ? "text-emerald-600" : rate >= 60 ? "text-amber-600" : "text-red-500"}`}>
+                          {rate}%
+                        </span>
+                      </div>
+                      <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full rounded-full ${rate >= 80 ? "bg-emerald-500" : rate >= 60 ? "bg-amber-500" : "bg-red-400"}`}
+                          style={{ width: `${Math.min(100, rate)}%` }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
 
-        {/* MÉTRIQUES FINANCIÈRES */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {[
-            { label: "Total Chiffre d'affaire", value: formatGNF(caTotalVal), sub: `${totalOrders} commandes (100%)`, color: "border-sky-500" },
-            { label: "Total CA versé", value: formatGNF(caVerse), sub: `${livreCount} commandes livrées`, color: "border-emerald-500" },
-            { label: "Total CA non versé", value: formatGNF(caNonVerse), sub: `${totalOrders - livreCount} commandes`, color: "border-amber-500" },
-            { label: "Frais de livraison (HMP)", value: formatGNF(fraisHMP), sub: `70 000 × ${livreCount} livrées`, color: "border-violet-500" },
-          ].map((m) => (
-            <div key={m.label} className={`bg-white border-t-4 ${m.color} rounded-lg p-4 shadow-sm`}>
-              <div className="text-xs text-slate-500 mb-1">{m.label}</div>
-              <div className="text-lg font-black text-slate-800">{m.value}</div>
-              <div className="text-xs text-slate-400 mt-1">{m.sub}</div>
+        {/* ────── HISTORIQUE D'ACTIVITÉS ────── */}
+        <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+          <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 bg-slate-100 rounded-lg flex items-center justify-center">
+                <BarChart2 className="w-3.5 h-3.5 text-slate-500" />
+              </div>
+              <span className="font-bold text-slate-800">Historique d&apos;activités</span>
             </div>
-          ))}
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-          {[
-            { label: "Bénéfices livraison", value: formatGNF(fraisHMP), sub: `${livreCount} commandes`, color: "border-emerald-400" },
-            { label: "Dépenses et charges", value: "0 GNF", sub: "Charges", color: "border-slate-300" },
-            { label: "Profit net", value: formatGNF(profitNet), sub: "Gains", color: "border-emerald-600" },
-          ].map((m) => (
-            <div key={m.label} className={`bg-white border-t-4 ${m.color} rounded-lg p-4 shadow-sm`}>
-              <div className="text-xs text-slate-500 mb-1">{m.label}</div>
-              <div className="text-lg font-black text-slate-800">{m.value}</div>
-              <div className="text-xs text-slate-400 mt-1">{m.sub}</div>
-            </div>
-          ))}
-        </div>
-
-        {/* PERFORMANCE AGENTS */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
-            <div className="px-5 py-3 border-b border-slate-200 bg-slate-50">
-              <h2 className="font-bold text-slate-700 text-sm uppercase tracking-wide">Performance agents</h2>
-            </div>
-            <table className="w-full text-sm">
-              <thead className="bg-slate-50 text-xs text-slate-500 uppercase">
-                <tr>
-                  <th className="px-4 py-2 text-left">Agent</th>
-                  <th className="px-4 py-2 text-center">Appels</th>
-                  <th className="px-4 py-2 text-center">Confirmés</th>
-                  <th className="px-4 py-2 text-center">Annulés</th>
-                  <th className="px-4 py-2 text-center">Taux</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {agents.map((a, i) => {
-                  const agentStats = agentCallStats.filter((s) => s.agentId === a.id);
-                  const total = agentStats.reduce((s, x) => s + x._count.id, 0);
-                  const confirmed = agentStats.find((s) => s.outcome === "CONFIRMED")?._count.id ?? 0;
-                  const cancelled = agentStats.find((s) => s.outcome === "CANCELLED")?._count.id ?? 0;
-                  return (
-                    <tr key={a.id} className="hover:bg-slate-50">
-                      <td className="px-4 py-2.5">
-                        <div className="flex items-center gap-2">
-                          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS[i % COLORS.length] }} />
-                          <span className="font-medium text-slate-700">{a.firstName} {a.lastName}</span>
-                        </div>
-                      </td>
-                      <td className="px-4 py-2.5 text-center text-slate-600">{total}</td>
-                      <td className="px-4 py-2.5 text-center"><span className="bg-emerald-100 text-emerald-700 font-bold text-xs px-2 py-0.5 rounded-full">{confirmed}</span></td>
-                      <td className="px-4 py-2.5 text-center"><span className="bg-red-100 text-red-600 font-bold text-xs px-2 py-0.5 rounded-full">{cancelled}</span></td>
-                      <td className="px-4 py-2.5 text-center text-xs font-semibold text-slate-600">{pct(confirmed, total)}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-
-          {/* PERFORMANCE LIVREURS */}
-          <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
-            <div className="px-5 py-3 border-b border-slate-200 bg-slate-50">
-              <h2 className="font-bold text-slate-700 text-sm uppercase tracking-wide">Performance livreurs</h2>
-            </div>
-            <table className="w-full text-sm">
-              <thead className="bg-slate-50 text-xs text-slate-500 uppercase">
-                <tr>
-                  <th className="px-4 py-2 text-left">Livreur</th>
-                  <th className="px-4 py-2 text-center">Livrées</th>
-                  <th className="px-4 py-2 text-center">Retours</th>
-                  <th className="px-4 py-2 text-right">CA collecté</th>
-                  <th className="px-4 py-2 text-center">Taux</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {livreurs.map((l) => {
-                  const rows = livreurDeliveries.filter((d) => d.livreurId === l.id);
-                  const livre = rows.filter((d) => d.status === "LIVRE").length;
-                  const retour = rows.filter((d) => d.status === "RETOURNE").length;
-                  const ca = rows.filter((d) => d.status === "LIVRE").reduce((s, d) => s + (d.amountCollected ?? 0), 0);
-                  return (
-                    <tr key={l.id} className="hover:bg-slate-50">
-                      <td className="px-4 py-2.5 font-medium text-slate-700">{l.firstName} {l.lastName}</td>
-                      <td className="px-4 py-2.5 text-center"><span className="bg-emerald-100 text-emerald-700 font-bold text-xs px-2 py-0.5 rounded-full">{livre}</span></td>
-                      <td className="px-4 py-2.5 text-center"><span className="bg-red-100 text-red-600 font-bold text-xs px-2 py-0.5 rounded-full">{retour}</span></td>
-                      <td className="px-4 py-2.5 text-right text-xs font-semibold">{formatGNF(ca)}</td>
-                      <td className="px-4 py-2.5 text-center text-xs font-semibold text-slate-600">{pct(livre, livre + retour)}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        {/* HISTORIQUE D'ACTIVITÉS */}
-        <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
-          <div className="px-5 py-3 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
-            <h2 className="font-bold text-slate-700 text-sm uppercase tracking-wide">Historique d&apos;activités des agents</h2>
-            <span className="text-xs text-slate-400">{callLogs.length} activités</span>
+            <span className="text-xs text-slate-400">{callLogs.length} entrées</span>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-slate-50 text-xs text-slate-500 uppercase font-semibold">
+              <thead className="bg-slate-50 text-xs text-slate-400 uppercase font-semibold">
                 <tr>
-                  <th className="px-4 py-2 text-left">Date</th>
-                  <th className="px-4 py-2 text-left">Agent</th>
-                  <th className="px-4 py-2 text-left">Action</th>
-                  <th className="px-4 py-2 text-left">Note</th>
+                  <th className="px-5 py-3 text-left">Date & heure</th>
+                  <th className="px-5 py-3 text-left">Agent</th>
+                  <th className="px-5 py-3 text-left">Résultat</th>
+                  <th className="px-5 py-3 text-left">Note</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
-                {callLogs.map((log) => {
-                  const outcomeStyles: Record<string, string> = {
-                    CONFIRMED: "bg-emerald-100 text-emerald-700",
-                    CANCELLED: "bg-red-100 text-red-700",
-                    REPORTED: "bg-sky-100 text-sky-700",
-                    NO_ANSWER: "bg-amber-100 text-amber-700",
-                    BUSY: "bg-orange-100 text-orange-700",
-                    INJOIGNABLE: "bg-slate-200 text-slate-700",
-                    ANSWERED: "bg-blue-100 text-blue-700",
-                  };
-                  const outcomeLabels: Record<string, string> = {
-                    CONFIRMED: "✓ Confirmé",
-                    CANCELLED: "✗ Annulé",
-                    REPORTED: "↩ Reporté",
-                    NO_ANSWER: "Pas de réponse",
-                    BUSY: "Occupé",
-                    INJOIGNABLE: "Injoignable",
-                    ANSWERED: "Répondu",
-                  };
-                  return (
-                    <tr key={log.id} className="hover:bg-slate-50">
-                      <td className="px-4 py-2.5 text-xs text-slate-500 whitespace-nowrap">
-                        {new Date(log.createdAt).toLocaleString("fr-FR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}
-                      </td>
-                      <td className="px-4 py-2.5">
-                        <span className="font-medium text-slate-700">{log.agent.firstName} {log.agent.lastName}</span>
-                      </td>
-                      <td className="px-4 py-2.5">
-                        <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${outcomeStyles[log.outcome] ?? "bg-slate-100 text-slate-600"}`}>
-                          {outcomeLabels[log.outcome] ?? log.outcome}
-                        </span>
-                      </td>
-                      <td className="px-4 py-2.5 text-xs text-slate-500 max-w-xs truncate">{log.note ?? "—"}</td>
-                    </tr>
-                  );
-                })}
+              <tbody className="divide-y divide-slate-50">
+                {callLogs.map((log) => (
+                  <tr key={log.id} className="hover:bg-slate-50/80">
+                    <td className="px-5 py-3 text-xs text-slate-400 whitespace-nowrap">
+                      {new Date(log.createdAt).toLocaleString("fr-FR", {
+                        day: "2-digit", month: "2-digit",
+                        hour: "2-digit", minute: "2-digit",
+                      })}
+                    </td>
+                    <td className="px-5 py-3">
+                      <span className="text-xs font-semibold text-slate-700">
+                        {log.agent.firstName} {log.agent.lastName}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3">
+                      <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${outcomeColor[log.outcome] ?? "bg-slate-100 text-slate-500"}`}>
+                        {outcomeLabel[log.outcome] ?? log.outcome}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3 text-xs text-slate-400 max-w-xs truncate">
+                      {log.note || "—"}
+                    </td>
+                  </tr>
+                ))}
                 {callLogs.length === 0 && (
-                  <tr><td colSpan={4} className="px-4 py-8 text-center text-slate-400">Aucune activité enregistrée</td></tr>
+                  <tr>
+                    <td colSpan={4} className="px-5 py-8 text-center text-slate-400">
+                      Aucune activité sur cette période.
+                    </td>
+                  </tr>
                 )}
               </tbody>
             </table>

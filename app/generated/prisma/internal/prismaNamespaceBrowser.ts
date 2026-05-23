@@ -62,6 +62,7 @@ export const ModelName = {
   CallLog: 'CallLog',
   Delivery: 'Delivery',
   Invoice: 'Invoice',
+  MerchantInvoice: 'MerchantInvoice',
   Expense: 'Expense',
   Setting: 'Setting'
 } as const
@@ -258,6 +259,28 @@ export const InvoiceScalarFieldEnum = {
 } as const
 
 export type InvoiceScalarFieldEnum = (typeof InvoiceScalarFieldEnum)[keyof typeof InvoiceScalarFieldEnum]
+
+
+export const MerchantInvoiceScalarFieldEnum = {
+  id: 'id',
+  reference: 'reference',
+  boutiqueId: 'boutiqueId',
+  periodStart: 'periodStart',
+  periodEnd: 'periodEnd',
+  orderCount: 'orderCount',
+  productCount: 'productCount',
+  totalGross: 'totalGross',
+  totalProducts: 'totalProducts',
+  fraisHMP: 'fraisHMP',
+  netMarchand: 'netMarchand',
+  status: 'status',
+  paidAt: 'paidAt',
+  note: 'note',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MerchantInvoiceScalarFieldEnum = (typeof MerchantInvoiceScalarFieldEnum)[keyof typeof MerchantInvoiceScalarFieldEnum]
 
 
 export const ExpenseScalarFieldEnum = {

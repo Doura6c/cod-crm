@@ -41,8 +41,9 @@ model Boutique {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  orders   Order[]
-  products Product[]
+  orders           Order[]
+  products         Product[]
+  merchantInvoices MerchantInvoice[]
 }
 
 // ============ CLIENTS FINAUX (acheteurs) ============
@@ -220,6 +221,27 @@ model Invoice {
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+// ============ FACTURES MARCHANDS (periodiques, pour le commerçant) ============
+model MerchantInvoice {
+  id           String   @id @default(cuid())
+  reference    String   @unique // FACM-YYYYMMDD-XXXXX
+  boutiqueId   String
+  boutique     Boutique @relation(fields: [boutiqueId], references: [id])
+  periodStart  DateTime
+  periodEnd    DateTime
+  orderCount   Int      @default(0)
+  productCount Int      @default(0)
+  totalGross   Float    @default(0) // total collecté (produits + livraison) au tarif validé
+  totalProducts Float   @default(0) // total produits seuls (sans frais livraison)
+  fraisHMP     Float    @default(0) // 70000 × orderCount
+  netMarchand  Float    @default(0) // totalProducts - fraisHMP
+  status       String   @default("EN_ATTENTE") // EN_ATTENTE, PAYEE, ANNULEE
+  paidAt       DateTime?
+  note         String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 model Expense {

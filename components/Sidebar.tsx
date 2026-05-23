@@ -41,7 +41,7 @@ function hasAccess(role: string | undefined, allowed: string[]): boolean {
 type NavItem = {
   href: string;
   label: string;
-  icon: any;
+  icon?: any;
   badge?: number;
   children?: NavItem[];
   roles?: string[]; // si défini, seuls ces rôles peuvent voir cet item
@@ -72,7 +72,17 @@ export function Sidebar({ userName, userRole, counts = {} }: SidebarProps) {
       ],
     },
     { href: "/livraisons", label: "Livraisons", icon: Truck, badge: counts.livraisons, roles: ["ADMIN", "MANAGER", "LIVREUR"] },
-    { href: "/factures", label: "Factures et Dépenses", icon: Receipt, roles: ["ADMIN", "MANAGER"] },
+    {
+      href: "/factures",
+      label: "Factures",
+      icon: Receipt,
+      roles: ["ADMIN", "MANAGER"],
+      children: [
+        { href: "/factures", label: "Factures COD (clients)" },
+        { href: "/factures/marchands", label: "Factures marchands" },
+        { href: "/depenses", label: "Dépenses" },
+      ],
+    },
     { href: "/boutiques", label: "Boutiques", icon: FileText, roles: ["ADMIN", "MANAGER"] },
     { href: "/parametres", label: "Paramètres", icon: Settings, roles: ["ADMIN"] },
   ];

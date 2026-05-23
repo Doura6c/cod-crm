@@ -6,6 +6,8 @@ import { can } from "@/lib/rbac";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
+const HMP_FEE = 70_000;
+
 export async function updateDeliveryStatusAction(formData: FormData): Promise<void> {
   const session = await auth();
   const role = (session?.user as any)?.role;
@@ -16,6 +18,8 @@ export async function updateDeliveryStatusAction(formData: FormData): Promise<vo
   const orderId = String(formData.get("orderId") ?? "");
   const newStatus = String(formData.get("status") ?? ""); // LIVRE | RETOURNE
   const failureReason = String(formData.get("failureReason") ?? "").trim() || null;
+  const actualAmountRaw = formData.get("actualAmount");
+  const actualAmount = actualAmountRaw ? parseFloat(String(actualAmountRaw)) : null;
 
   if (!["LIVRE", "RETOURNE"].includes(newStatus)) redirect(`/livraisons`);
 
@@ -28,13 +32,19 @@ export async function updateDeliveryStatusAction(formData: FormData): Promise<vo
   // Livreur ne peut mettre à jour que ses propres livraisons
   if (role === "LIVREUR" && delivery.livreurId !== userId) redirect("/livraisons");
 
+  // Montant collecté : utiliser le tarif saisi ou le montant de la commande
+  const amountCollected =
+    newStatus === "LIVRE"
+      ? (actualAmount && actualAmount > 0 ? actualAmount : delivery.order.totalAmount)
+      : null;
+
   await prisma.$transaction(async (tx) => {
     await tx.delivery.update({
       where: { id: deliveryId },
       data: {
         status: newStatus,
         deliveredAt: newStatus === "LIVRE" ? new Date() : null,
-        amountCollected: newStatus === "LIVRE" ? delivery.order.totalAmount : null,
+        amountCollected,
         failureReason: newStatus === "RETOURNE" ? failureReason : null,
       },
     });
@@ -44,19 +54,22 @@ export async function updateDeliveryStatusAction(formData: FormData): Promise<vo
       data: { status: newStatus === "LIVRE" ? "LIVRE" : "RETOURNE" },
     });
 
-    // Si livré : générer la facture automatiquement (COD = payée à la livraison)
+    // Si livré : générer la facture COD automatiquement (payée à la livraison)
     if (newStatus === "LIVRE" && !delivery.order.invoice) {
       const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, "");
       const suffix = Math.random().toString(36).substring(2, 7).toUpperCase();
       const reference = `FACT-${dateStr}-${suffix}`;
-      const subtotal = delivery.order.totalAmount - delivery.order.deliveryFee;
+      // Utiliser le montant validé pour la facture
+      const total = amountCollected ?? delivery.order.totalAmount;
+      const deliveryFee = delivery.order.deliveryFee;
+      const subtotal = total - deliveryFee;
       await tx.invoice.create({
         data: {
           reference,
           orderId,
-          subtotal,
-          deliveryFee: delivery.order.deliveryFee,
-          total: delivery.order.totalAmount,
+          subtotal: Math.max(0, subtotal),
+          deliveryFee,
+          total,
           status: "PAYEE",
           paidAt: new Date(),
         },

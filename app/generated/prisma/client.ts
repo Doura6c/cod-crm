@@ -97,6 +97,11 @@ export type Delivery = Prisma.DeliveryModel
  */
 export type Invoice = Prisma.InvoiceModel
 /**
+ * Model MerchantInvoice
+ * 
+ */
+export type MerchantInvoice = Prisma.MerchantInvoiceModel
+/**
  * Model Expense
  * 
  */
