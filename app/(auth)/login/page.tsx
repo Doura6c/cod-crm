@@ -16,7 +16,7 @@ export default async function LoginPage({
   if (session?.user) redirect("/");
 
   const { error } = await searchParams;
-  const teamImageExists = fs.existsSync(path.join(process.cwd(), "public", "team.jpg"));
+  const teamImageExists = fs.existsSync(path.join(process.cwd(), "public", "login-bg.jpg")) || fs.existsSync(path.join(process.cwd(), "public", "team.jpg"));
 
   return (
     <div className="min-h-screen flex">
@@ -25,7 +25,7 @@ export default async function LoginPage({
         {teamImageExists ? (
           <>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/team.jpg" alt="HelpMeProcess Team" className="absolute inset-0 w-full h-full object-cover opacity-60" />
+            <img src="/login-bg.jpg" alt="HelpMeProcess Team" className="absolute inset-0 w-full h-full object-cover opacity-60" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/70 to-transparent" />
             <div className="relative z-10 flex flex-col items-center text-center text-white max-w-md pb-8">
               <div className="w-20 h-20 bg-white rounded-2xl shadow-2xl mb-6 overflow-hidden">
