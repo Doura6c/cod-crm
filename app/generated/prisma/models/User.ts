@@ -34,6 +34,7 @@ export type UserMinAggregateOutputType = {
   role: string | null
   active: boolean | null
   avatarUrl: string | null
+  isSuperAdmin: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -48,6 +49,7 @@ export type UserMaxAggregateOutputType = {
   role: string | null
   active: boolean | null
   avatarUrl: string | null
+  isSuperAdmin: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -62,6 +64,7 @@ export type UserCountAggregateOutputType = {
   role: number
   active: number
   avatarUrl: number
+  isSuperAdmin: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -78,6 +81,7 @@ export type UserMinAggregateInputType = {
   role?: true
   active?: true
   avatarUrl?: true
+  isSuperAdmin?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -92,6 +96,7 @@ export type UserMaxAggregateInputType = {
   role?: true
   active?: true
   avatarUrl?: true
+  isSuperAdmin?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -106,6 +111,7 @@ export type UserCountAggregateInputType = {
   role?: true
   active?: true
   avatarUrl?: true
+  isSuperAdmin?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -193,6 +199,7 @@ export type UserGroupByOutputType = {
   role: string
   active: boolean
   avatarUrl: string | null
+  isSuperAdmin: boolean
   createdAt: Date
   updatedAt: Date
   _count: UserCountAggregateOutputType | null
@@ -228,6 +235,7 @@ export type UserWhereInput = {
   role?: Prisma.StringFilter<"User"> | string
   active?: Prisma.BoolFilter<"User"> | boolean
   avatarUrl?: Prisma.StringNullableFilter<"User"> | string | null
+  isSuperAdmin?: Prisma.BoolFilter<"User"> | boolean
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   ordersAssigned?: Prisma.OrderListRelationFilter
@@ -246,6 +254,7 @@ export type UserOrderByWithRelationInput = {
   role?: Prisma.SortOrder
   active?: Prisma.SortOrder
   avatarUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  isSuperAdmin?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   ordersAssigned?: Prisma.OrderOrderByRelationAggregateInput
@@ -267,6 +276,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   role?: Prisma.StringFilter<"User"> | string
   active?: Prisma.BoolFilter<"User"> | boolean
   avatarUrl?: Prisma.StringNullableFilter<"User"> | string | null
+  isSuperAdmin?: Prisma.BoolFilter<"User"> | boolean
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   ordersAssigned?: Prisma.OrderListRelationFilter
@@ -285,6 +295,7 @@ export type UserOrderByWithAggregationInput = {
   role?: Prisma.SortOrder
   active?: Prisma.SortOrder
   avatarUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  isSuperAdmin?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
@@ -305,6 +316,7 @@ export type UserScalarWhereWithAggregatesInput = {
   role?: Prisma.StringWithAggregatesFilter<"User"> | string
   active?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   avatarUrl?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  isSuperAdmin?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
 }
@@ -319,6 +331,7 @@ export type UserCreateInput = {
   role?: string
   active?: boolean
   avatarUrl?: string | null
+  isSuperAdmin?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   ordersAssigned?: Prisma.OrderCreateNestedManyWithoutAssignedAgentInput
@@ -337,6 +350,7 @@ export type UserUncheckedCreateInput = {
   role?: string
   active?: boolean
   avatarUrl?: string | null
+  isSuperAdmin?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   ordersAssigned?: Prisma.OrderUncheckedCreateNestedManyWithoutAssignedAgentInput
@@ -355,6 +369,7 @@ export type UserUpdateInput = {
   role?: Prisma.StringFieldUpdateOperationsInput | string
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ordersAssigned?: Prisma.OrderUpdateManyWithoutAssignedAgentNestedInput
@@ -373,6 +388,7 @@ export type UserUncheckedUpdateInput = {
   role?: Prisma.StringFieldUpdateOperationsInput | string
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ordersAssigned?: Prisma.OrderUncheckedUpdateManyWithoutAssignedAgentNestedInput
@@ -391,6 +407,7 @@ export type UserCreateManyInput = {
   role?: string
   active?: boolean
   avatarUrl?: string | null
+  isSuperAdmin?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -405,6 +422,7 @@ export type UserUpdateManyMutationInput = {
   role?: Prisma.StringFieldUpdateOperationsInput | string
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -419,6 +437,7 @@ export type UserUncheckedUpdateManyInput = {
   role?: Prisma.StringFieldUpdateOperationsInput | string
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -433,6 +452,7 @@ export type UserCountOrderByAggregateInput = {
   role?: Prisma.SortOrder
   active?: Prisma.SortOrder
   avatarUrl?: Prisma.SortOrder
+  isSuperAdmin?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -447,6 +467,7 @@ export type UserMaxOrderByAggregateInput = {
   role?: Prisma.SortOrder
   active?: Prisma.SortOrder
   avatarUrl?: Prisma.SortOrder
+  isSuperAdmin?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -461,6 +482,7 @@ export type UserMinOrderByAggregateInput = {
   role?: Prisma.SortOrder
   active?: Prisma.SortOrder
   avatarUrl?: Prisma.SortOrder
+  isSuperAdmin?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -563,6 +585,7 @@ export type UserCreateWithoutOrdersAssignedInput = {
   role?: string
   active?: boolean
   avatarUrl?: string | null
+  isSuperAdmin?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   deliveries?: Prisma.DeliveryCreateNestedManyWithoutLivreurInput
@@ -580,6 +603,7 @@ export type UserUncheckedCreateWithoutOrdersAssignedInput = {
   role?: string
   active?: boolean
   avatarUrl?: string | null
+  isSuperAdmin?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   deliveries?: Prisma.DeliveryUncheckedCreateNestedManyWithoutLivreurInput
@@ -602,6 +626,7 @@ export type UserCreateWithoutOrdersValidatedInput = {
   role?: string
   active?: boolean
   avatarUrl?: string | null
+  isSuperAdmin?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   ordersAssigned?: Prisma.OrderCreateNestedManyWithoutAssignedAgentInput
@@ -619,6 +644,7 @@ export type UserUncheckedCreateWithoutOrdersValidatedInput = {
   role?: string
   active?: boolean
   avatarUrl?: string | null
+  isSuperAdmin?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   ordersAssigned?: Prisma.OrderUncheckedCreateNestedManyWithoutAssignedAgentInput
@@ -652,6 +678,7 @@ export type UserUpdateWithoutOrdersAssignedInput = {
   role?: Prisma.StringFieldUpdateOperationsInput | string
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deliveries?: Prisma.DeliveryUpdateManyWithoutLivreurNestedInput
@@ -669,6 +696,7 @@ export type UserUncheckedUpdateWithoutOrdersAssignedInput = {
   role?: Prisma.StringFieldUpdateOperationsInput | string
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deliveries?: Prisma.DeliveryUncheckedUpdateManyWithoutLivreurNestedInput
@@ -697,6 +725,7 @@ export type UserUpdateWithoutOrdersValidatedInput = {
   role?: Prisma.StringFieldUpdateOperationsInput | string
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ordersAssigned?: Prisma.OrderUpdateManyWithoutAssignedAgentNestedInput
@@ -714,6 +743,7 @@ export type UserUncheckedUpdateWithoutOrdersValidatedInput = {
   role?: Prisma.StringFieldUpdateOperationsInput | string
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ordersAssigned?: Prisma.OrderUncheckedUpdateManyWithoutAssignedAgentNestedInput
@@ -731,6 +761,7 @@ export type UserCreateWithoutCallLogsInput = {
   role?: string
   active?: boolean
   avatarUrl?: string | null
+  isSuperAdmin?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   ordersAssigned?: Prisma.OrderCreateNestedManyWithoutAssignedAgentInput
@@ -748,6 +779,7 @@ export type UserUncheckedCreateWithoutCallLogsInput = {
   role?: string
   active?: boolean
   avatarUrl?: string | null
+  isSuperAdmin?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   ordersAssigned?: Prisma.OrderUncheckedCreateNestedManyWithoutAssignedAgentInput
@@ -781,6 +813,7 @@ export type UserUpdateWithoutCallLogsInput = {
   role?: Prisma.StringFieldUpdateOperationsInput | string
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ordersAssigned?: Prisma.OrderUpdateManyWithoutAssignedAgentNestedInput
@@ -798,6 +831,7 @@ export type UserUncheckedUpdateWithoutCallLogsInput = {
   role?: Prisma.StringFieldUpdateOperationsInput | string
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ordersAssigned?: Prisma.OrderUncheckedUpdateManyWithoutAssignedAgentNestedInput
@@ -815,6 +849,7 @@ export type UserCreateWithoutDeliveriesInput = {
   role?: string
   active?: boolean
   avatarUrl?: string | null
+  isSuperAdmin?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   ordersAssigned?: Prisma.OrderCreateNestedManyWithoutAssignedAgentInput
@@ -832,6 +867,7 @@ export type UserUncheckedCreateWithoutDeliveriesInput = {
   role?: string
   active?: boolean
   avatarUrl?: string | null
+  isSuperAdmin?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   ordersAssigned?: Prisma.OrderUncheckedCreateNestedManyWithoutAssignedAgentInput
@@ -865,6 +901,7 @@ export type UserUpdateWithoutDeliveriesInput = {
   role?: Prisma.StringFieldUpdateOperationsInput | string
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ordersAssigned?: Prisma.OrderUpdateManyWithoutAssignedAgentNestedInput
@@ -882,6 +919,7 @@ export type UserUncheckedUpdateWithoutDeliveriesInput = {
   role?: Prisma.StringFieldUpdateOperationsInput | string
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ordersAssigned?: Prisma.OrderUncheckedUpdateManyWithoutAssignedAgentNestedInput
@@ -957,6 +995,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   role?: boolean
   active?: boolean
   avatarUrl?: boolean
+  isSuperAdmin?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   ordersAssigned?: boolean | Prisma.User$ordersAssignedArgs<ExtArgs>
@@ -976,6 +1015,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   role?: boolean
   active?: boolean
   avatarUrl?: boolean
+  isSuperAdmin?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -990,6 +1030,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   role?: boolean
   active?: boolean
   avatarUrl?: boolean
+  isSuperAdmin?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -1004,11 +1045,12 @@ export type UserSelectScalar = {
   role?: boolean
   active?: boolean
   avatarUrl?: boolean
+  isSuperAdmin?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "passwordHash" | "firstName" | "lastName" | "phone" | "role" | "active" | "avatarUrl" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "passwordHash" | "firstName" | "lastName" | "phone" | "role" | "active" | "avatarUrl" | "isSuperAdmin" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   ordersAssigned?: boolean | Prisma.User$ordersAssignedArgs<ExtArgs>
   deliveries?: boolean | Prisma.User$deliveriesArgs<ExtArgs>
@@ -1037,6 +1079,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     role: string
     active: boolean
     avatarUrl: string | null
+    isSuperAdmin: boolean
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["user"]>
@@ -1475,6 +1518,7 @@ export interface UserFieldRefs {
   readonly role: Prisma.FieldRef<"User", 'String'>
   readonly active: Prisma.FieldRef<"User", 'Boolean'>
   readonly avatarUrl: Prisma.FieldRef<"User", 'String'>
+  readonly isSuperAdmin: Prisma.FieldRef<"User", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
 }

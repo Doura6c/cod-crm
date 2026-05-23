@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { PageHeader } from "@/components/PageHeader";
-import { updateAvatarAction, updateProfileAction, removeAvatarAction } from "./actions";
+import { updateAvatarAction, updatePhoneAction, removeAvatarAction } from "./actions";
 import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 import { User, Camera, Palette, Phone, Mail, Shield } from "lucide-react";
 
@@ -42,9 +42,9 @@ export default async function ProfilPage({
             ✅ Photo de profil mise à jour avec succès.
           </div>
         )}
-        {success === "profile" && (
+        {success === "phone" && (
           <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm px-4 py-3 rounded-xl">
-            ✅ Profil mis à jour avec succès.
+            ✅ Téléphone mis à jour avec succès.
           </div>
         )}
         {error === "size" && (
@@ -139,29 +139,29 @@ export default async function ProfilPage({
             </div>
             <span className="font-bold text-slate-800 dark:text-white">Informations personnelles</span>
           </div>
-          <form action={updateProfileAction} className="px-6 py-6 space-y-4">
+          <div className="px-6 py-6 space-y-4">
+            {/* Nom & Prénom — lecture seule */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Prénom</label>
-                <input name="firstName" defaultValue={user.firstName} required className="input" />
+                <div className="input opacity-60 cursor-not-allowed bg-slate-50 dark:bg-slate-700">{user.firstName}</div>
               </div>
               <div>
                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Nom</label>
-                <input name="lastName" defaultValue={user.lastName} required className="input" />
+                <div className="input opacity-60 cursor-not-allowed bg-slate-50 dark:bg-slate-700">{user.lastName}</div>
               </div>
             </div>
+            <p className="text-xs text-slate-400 dark:text-slate-500 -mt-2">Le nom et prénom sont gérés par l&apos;administrateur.</p>
+
+            {/* Email */}
             <div>
               <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1">
-                <Phone className="w-3 h-3" /> Téléphone
-              </label>
-              <input name="phone" defaultValue={user.phone ?? ""} className="input" placeholder="Ex: 224620000000" />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1">
-                <Mail className="w-3 h-3" /> Email (non modifiable)
+                <Mail className="w-3 h-3" /> Email
               </label>
               <input value={user.email} disabled className="input opacity-50 cursor-not-allowed" readOnly />
             </div>
+
+            {/* Rôle */}
             <div>
               <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1">
                 <Shield className="w-3 h-3" /> Rôle
@@ -170,13 +170,23 @@ export default async function ProfilPage({
                 {ROLE_LABEL[user.role] ?? user.role}
               </div>
             </div>
-            <button
-              type="submit"
-              className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-6 py-2.5 rounded-xl transition"
-            >
-              💾 Enregistrer les modifications
-            </button>
-          </form>
+
+            {/* Téléphone — modifiable */}
+            <form action={updatePhoneAction} className="space-y-3">
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1">
+                  <Phone className="w-3 h-3" /> Téléphone
+                </label>
+                <input name="phone" defaultValue={user.phone ?? ""} className="input" placeholder="Ex: 224620000000" />
+              </div>
+              <button
+                type="submit"
+                className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-6 py-2.5 rounded-xl transition"
+              >
+                💾 Enregistrer le téléphone
+              </button>
+            </form>
+          </div>
         </div>
 
       </div>

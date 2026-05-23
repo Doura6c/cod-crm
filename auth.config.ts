@@ -22,6 +22,7 @@ export const authConfig: NextAuthConfig = {
       if (user) {
         token.id = user.id;
         token.role = (user as any).role;
+        token.isSuperAdmin = (user as any).isSuperAdmin ?? false;
       }
       return token;
     },
@@ -29,6 +30,7 @@ export const authConfig: NextAuthConfig = {
       if (token && session.user) {
         (session.user as any).id = token.id ?? token.sub;
         (session.user as any).role = token.role;
+        (session.user as any).isSuperAdmin = token.isSuperAdmin ?? false;
       }
       return session;
     },

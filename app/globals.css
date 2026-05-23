@@ -1,11 +1,56 @@
 @import "tailwindcss";
 
+/* ─── Base ──────────────────────────────── */
 :root {
   --sidebar-bg: #0f172a;
   --sidebar-bg-hover: #1e293b;
-  --accent: #3b82f6;
   --background: #f8fafc;
   --foreground: #0f172a;
+
+  /* Default accent: Sky/Blue */
+  --acc-400: #38bdf8;
+  --acc-500: #0ea5e9;
+  --acc-600: #0284c7;
+  --acc-100: #e0f2fe;
+  --acc-700: #0369a1;
+  --acc-50:  #f0f9ff;
+}
+
+/* ─── Color Themes ──────────────────────── */
+[data-color="violet"] {
+  --acc-400: #a78bfa;
+  --acc-500: #8b5cf6;
+  --acc-600: #7c3aed;
+  --acc-100: #ede9fe;
+  --acc-700: #6d28d9;
+  --acc-50:  #f5f3ff;
+}
+
+[data-color="emerald"] {
+  --acc-400: #34d399;
+  --acc-500: #10b981;
+  --acc-600: #059669;
+  --acc-100: #d1fae5;
+  --acc-700: #047857;
+  --acc-50:  #ecfdf5;
+}
+
+[data-color="orange"] {
+  --acc-400: #fb923c;
+  --acc-500: #f97316;
+  --acc-600: #ea580c;
+  --acc-100: #ffedd5;
+  --acc-700: #c2410c;
+  --acc-50:  #fff7ed;
+}
+
+[data-color="rose"] {
+  --acc-400: #fb7185;
+  --acc-500: #f43f5e;
+  --acc-600: #e11d48;
+  --acc-100: #ffe4e6;
+  --acc-700: #be123c;
+  --acc-50:  #fff1f2;
 }
 
 body {
@@ -33,8 +78,47 @@ body {
   background: #94a3b8;
 }
 
+/* ─── Accent utility classes ──────────── */
+.accent-bg {
+  background-color: var(--acc-500);
+}
+.accent-bg:hover {
+  background-color: var(--acc-600);
+}
+.accent-text {
+  color: var(--acc-500);
+}
+.accent-border-l {
+  border-left-color: var(--acc-400) !important;
+}
+.accent-ring {
+  outline-color: var(--acc-500);
+  box-shadow: 0 0 0 2px var(--acc-400);
+}
+.accent-bg-light {
+  background-color: var(--acc-100);
+}
+.accent-text-strong {
+  color: var(--acc-700);
+}
+.sidebar-accent-glow:hover {
+  outline: 2px solid var(--acc-400);
+}
+
 .btn-primary {
-  @apply bg-sky-500 hover:bg-sky-600 text-white font-medium px-4 py-2 rounded-md transition shadow-sm;
+  background-color: var(--acc-500);
+  color: white;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  transition: background-color 0.15s;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.btn-primary:hover {
+  background-color: var(--acc-600);
 }
 .btn-secondary {
   @apply bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium px-4 py-2 rounded-md transition;

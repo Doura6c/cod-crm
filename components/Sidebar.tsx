@@ -114,7 +114,7 @@ export function Sidebar({ userName, userRole, avatarUrl, counts = {}, notificati
         </div>
         <div className="leading-tight">
           <div className="font-bold text-sm text-white">HelpMeProcess</div>
-          <div className="text-xs text-sky-400 font-semibold">COD Manager</div>
+          <div className="text-xs font-semibold" style={{ color: "var(--acc-400)" }}>COD Manager</div>
         </div>
       </div>
 
@@ -149,7 +149,7 @@ export function Sidebar({ userName, userRole, avatarUrl, counts = {}, notificati
                           href={child.href}
                           className={`flex items-center justify-between pl-12 pr-5 py-2 text-sm transition ${
                             childActive
-                              ? "text-white border-l-4 border-sky-400 bg-white/5"
+                              ? "text-white border-l-4 bg-white/5 accent-border-l"
                               : "text-blue-200 hover:text-white hover:bg-white/5 border-l-4 border-transparent"
                           }`}
                         >
@@ -174,7 +174,7 @@ export function Sidebar({ userName, userRole, avatarUrl, counts = {}, notificati
               href={item.href}
               className={`flex items-center gap-3 px-5 py-2.5 text-sm transition ${
                 active
-                  ? "bg-white/10 text-white font-medium border-l-4 border-sky-400"
+                  ? "bg-white/10 text-white font-medium border-l-4 accent-border-l"
                   : "text-blue-100 hover:bg-white/5 border-l-4 border-transparent"
               }`}
             >
@@ -192,21 +192,21 @@ export function Sidebar({ userName, userRole, avatarUrl, counts = {}, notificati
 
       <div className="border-t border-white/10 p-4">
         <Link href="/profil" className="flex items-center gap-3 mb-3 hover:bg-white/5 rounded-xl p-2 -mx-2 transition group">
-          <div className="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-white/20 group-hover:ring-sky-400 transition">
+          <div className="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-white/20 transition" style={{ "--tw-ring-color": "var(--acc-400)" } as any}>
             {avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={avatarUrl} alt={userName} className="w-full h-full object-cover" />
             ) : (
-              <div className="w-full h-full bg-sky-500 flex items-center justify-center font-bold text-sm text-white">
+              <div className="w-full h-full flex items-center justify-center font-bold text-sm text-white" style={{ backgroundColor: "var(--acc-500)" }}>
                 {userName.charAt(0).toUpperCase()}
               </div>
             )}
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-sm font-semibold truncate group-hover:text-sky-300 transition">{userName}</div>
+            <div className="text-sm font-semibold truncate transition group-hover:opacity-80">{userName}</div>
             <div className="text-xs text-blue-200">{userRole ? ROLE_LABEL[userRole] ?? userRole : "Utilisateur"}</div>
           </div>
-          <span className="text-white/30 text-xs group-hover:text-sky-400 transition">✏️</span>
+          <span className="text-white/30 text-xs transition group-hover:opacity-100" style={{ color: "var(--acc-400)" }}>✏️</span>
         </Link>
         <button
           onClick={() => signOut({ callbackUrl: "/login" })}

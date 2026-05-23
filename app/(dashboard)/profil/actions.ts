@@ -33,25 +33,20 @@ export async function updateAvatarAction(formData: FormData): Promise<void> {
   redirect("/profil?success=avatar");
 }
 
-export async function updateProfileAction(formData: FormData): Promise<void> {
+export async function updatePhoneAction(formData: FormData): Promise<void> {
   const session = await auth();
   const userId = (session?.user as any)?.id;
   if (!userId) redirect("/login");
 
-  const firstName = String(formData.get("firstName") ?? "").trim();
-  const lastName = String(formData.get("lastName") ?? "").trim();
   const phone = String(formData.get("phone") ?? "").trim();
-
-  if (!firstName || !lastName) redirect("/profil?error=required");
 
   await prisma.user.update({
     where: { id: userId },
-    data: { firstName, lastName, phone: phone || null },
+    data: { phone: phone || null },
   });
 
   revalidatePath("/profil");
-  revalidatePath("/");
-  redirect("/profil?success=profile");
+  redirect("/profil?success=phone");
 }
 
 export async function removeAvatarAction(): Promise<void> {

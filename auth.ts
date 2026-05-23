@@ -56,6 +56,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           name: `${user.firstName} ${user.lastName}`,
           email: user.email,
           role: user.role,
+          isSuperAdmin: user.isSuperAdmin ?? false,
         } as any;
       },
     }),
