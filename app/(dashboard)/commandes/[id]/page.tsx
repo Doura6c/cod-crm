@@ -6,6 +6,7 @@ import { can } from "@/lib/rbac";
 import { PageHeader } from "@/components/PageHeader";
 import { formatGNF, formatDateTime, statusBadge } from "@/lib/utils";
 import { logCallAction, assignDeliveryAction, reassignAgentAction } from "./actions";
+import { ConfirmationScript } from "@/components/ConfirmationScript";
 import {
   Phone,
   MapPin,
@@ -174,6 +175,23 @@ export default async function OrderDetailPage({
               </tfoot>
             </table>
           </div>
+
+          {/* Script de confirmation HelpMeProcess + boutons WhatsApp / SMS */}
+          {["NOUVEAU", "REPORTE", "PDR", "INJOIGNABLE"].includes(order.status) && (
+            <ConfirmationScript
+              customerName={order.customer.fullName}
+              customerPhone={order.customer.phone}
+              orderCode={order.code}
+              boutiqueName={order.boutique.name}
+              agentName={(session.user as any).name || "votre conseiller"}
+              productsLabel={order.items.map(it => `${it.product.name} ×${it.quantity}`).join(", ")}
+              totalAmount={order.totalAmount}
+              deliveryDays={order.city?.estimatedDays ?? null}
+              city={order.city?.name ?? null}
+              address={order.customer.address ?? null}
+              status={order.status}
+            />
+          )}
 
           {/* Call log + form */}
           <div className="bg-white border border-slate-200 rounded-lg p-5">
