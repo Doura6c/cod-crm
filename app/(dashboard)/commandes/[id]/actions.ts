@@ -148,6 +148,40 @@ export async function reassignAgentAction(formData: FormData): Promise<void> {
   redirect(`/commandes/${orderId}`);
 }
 
+/**
+ * Basculer frais livraison : gratuit ↔ payant par le client
+ */
+export async function toggleDeliveryFeeAction(formData: FormData): Promise<void> {
+  const session = await auth();
+  const role = (session?.user as any)?.role;
+  if (role !== "ADMIN" && role !== "MANAGER") redirect("/");
+
+  const orderId = String(formData.get("orderId") ?? "");
+  const paidByClient = formData.get("deliveryPaidByClient") === "true";
+  const cityDeliveryFee = parseFloat(String(formData.get("cityDeliveryFee") ?? "0")) || 0;
+
+  const newDeliveryFee = paidByClient ? cityDeliveryFee : 0;
+
+  // Récupérer le totalAmount actuel sans frais de livraison
+  const order = await prisma.order.findUnique({ where: { id: orderId }, select: { totalAmount: true, deliveryFee: true } });
+  if (!order) return;
+
+  const baseAmount = order.totalAmount - order.deliveryFee; // montant produits seuls
+  const newTotal = baseAmount + newDeliveryFee;
+
+  await prisma.order.update({
+    where: { id: orderId },
+    data: {
+      deliveryPaidByClient: paidByClient,
+      deliveryFee: newDeliveryFee,
+      totalAmount: newTotal,
+    },
+  });
+
+  revalidatePath(`/commandes/${orderId}`);
+  redirect(`/commandes/${orderId}`);
+}
+
 export async function updateOrderStatusAction(formData: FormData): Promise<void> {
   const session = await auth();
   const role = (session?.user as any)?.role;

@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { can } from "@/lib/rbac";
 import { PageHeader } from "@/components/PageHeader";
 import { formatGNF, formatDateTime, statusBadge } from "@/lib/utils";
-import { logCallAction, assignDeliveryAction, reassignAgentAction } from "./actions";
+import { logCallAction, assignDeliveryAction, reassignAgentAction, toggleDeliveryFeeAction } from "./actions";
 import { ConfirmationScript } from "@/components/ConfirmationScript";
 import {
   Phone,
@@ -390,6 +390,67 @@ export default async function OrderDetailPage({
               </a>
             )}
           </div>
+
+          {/* Toggle frais de livraison — ADMIN/MANAGER sur commandes non terminées */}
+          {canReassignAgent && !["LIVRE", "RETOURNE", "ANNULE"].includes(order.status) && (
+            <div className="bg-white border border-slate-200 rounded-lg p-5">
+              <h2 className="text-sm font-semibold text-slate-600 uppercase mb-3 flex items-center gap-2">
+                <Truck className="w-4 h-4" /> Frais de livraison
+              </h2>
+              <div className="mb-3">
+                <span className={`inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full ${
+                  (order as any).deliveryPaidByClient
+                    ? "bg-amber-100 text-amber-700"
+                    : "bg-emerald-100 text-emerald-700"
+                }`}>
+                  {(order as any).deliveryPaidByClient ? "💰 Payant — à la charge du client" : "✅ Gratuit — offert"}
+                </span>
+              </div>
+              <div className="flex gap-2">
+                {!(order as any).deliveryPaidByClient ? (
+                  <form action={toggleDeliveryFeeAction}>
+                    <input type="hidden" name="orderId" value={order.id} />
+                    <input type="hidden" name="deliveryPaidByClient" value="true" />
+                    <input type="hidden" name="cityDeliveryFee" value={order.city?.deliveryFee ?? 0} />
+                    <button type="submit" className="text-xs bg-amber-500 hover:bg-amber-600 text-white font-bold px-3 py-1.5 rounded-lg transition">
+                      Mettre payant (+{order.city ? formatGNF(order.city.deliveryFee) : "?"})
+                    </button>
+                  </form>
+                ) : (
+                  <form action={toggleDeliveryFeeAction}>
+                    <input type="hidden" name="orderId" value={order.id} />
+                    <input type="hidden" name="deliveryPaidByClient" value="false" />
+                    <input type="hidden" name="cityDeliveryFee" value="0" />
+                    <button type="submit" className="text-xs bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-3 py-1.5 rounded-lg transition">
+                      Remettre gratuit
+                    </button>
+                  </form>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Raison de retour non livré */}
+          {order.status === "RETOURNE" && order.delivery && (
+            <div className="bg-red-50 border-2 border-red-200 rounded-lg p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-red-500 text-lg">📦</span>
+                <span className="text-sm font-bold text-red-800 uppercase">Retour non livré</span>
+              </div>
+              {order.delivery.failureReason ? (
+                <div className="text-sm text-red-900 bg-red-100 rounded p-3">
+                  <span className="font-semibold">Raison :</span> {order.delivery.failureReason}
+                </div>
+              ) : (
+                <div className="text-sm text-red-400 italic">Aucune raison saisie par le livreur.</div>
+              )}
+              {order.delivery.deliveredAt && (
+                <div className="text-xs text-red-600 mt-2">
+                  Retourné le {formatDateTime(order.delivery.deliveredAt)}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Affecter à un livreur */}
           {canAssignDelivery && order.status === "CONFIRME" && (

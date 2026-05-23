@@ -139,6 +139,7 @@ model Order {
   validatedBy      User?    @relation("ValidatedBy", fields: [validatedById], references: [id])
   validatedAt      DateTime?
 
+  deliveryPaidByClient Boolean @default(false) // true = frais à la charge du client, false = gratuit
   source           String   @default("MANUAL") // MANUAL, WEBHOOK, IMPORT
   externalRef      String?  // ID externe boutique
 

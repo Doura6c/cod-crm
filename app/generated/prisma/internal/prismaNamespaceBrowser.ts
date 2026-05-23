@@ -194,6 +194,7 @@ export const OrderScalarFieldEnum = {
   assignedAgentId: 'assignedAgentId',
   validatedById: 'validatedById',
   validatedAt: 'validatedAt',
+  deliveryPaidByClient: 'deliveryPaidByClient',
   source: 'source',
   externalRef: 'externalRef',
   createdAt: 'createdAt',
