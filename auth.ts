@@ -4,8 +4,30 @@ import bcrypt from "bcryptjs";
 import { authConfig } from "./auth.config";
 import { prisma } from "./lib/prisma";
 
+const isProd = process.env.NODE_ENV === "production";
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
+  trustHost: true,
+  cookies: {
+    sessionToken: {
+      name: isProd ? "__Secure-authjs.session-token" : "authjs.session-token",
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: isProd,
+      },
+    },
+    callbackUrl: {
+      name: isProd ? "__Secure-authjs.callback-url" : "authjs.callback-url",
+      options: { sameSite: "lax", path: "/", secure: isProd },
+    },
+    csrfToken: {
+      name: isProd ? "__Host-authjs.csrf-token" : "authjs.csrf-token",
+      options: { httpOnly: true, sameSite: "lax", path: "/", secure: isProd },
+    },
+  },
   providers: [
     Credentials({
       name: "credentials",
