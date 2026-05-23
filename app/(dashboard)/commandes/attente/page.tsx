@@ -22,7 +22,7 @@ export default async function AttentePage() {
     prisma.boutique.findMany({ select: { id: true, name: true } }),
     prisma.city.findMany({ select: { id: true, name: true } }),
     prisma.user.findMany({
-      where: { role: { in: ["AGENT", "MANAGER"] }, active: true },
+      where: { role: "AGENT", active: true },
       select: { id: true, firstName: true, lastName: true },
     }),
   ]);
