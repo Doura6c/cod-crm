@@ -718,6 +718,7 @@ export type MerchantInvoiceCreateOrConnectWithoutBoutiqueInput = {
 
 export type MerchantInvoiceCreateManyBoutiqueInputEnvelope = {
   data: Prisma.MerchantInvoiceCreateManyBoutiqueInput | Prisma.MerchantInvoiceCreateManyBoutiqueInput[]
+  skipDuplicates?: boolean
 }
 
 export type MerchantInvoiceUpsertWithWhereUniqueWithoutBoutiqueInput = {
@@ -1618,6 +1619,7 @@ export type MerchantInvoiceCreateManyArgs<ExtArgs extends runtime.Types.Extensio
    * The data used to create many MerchantInvoices.
    */
   data: Prisma.MerchantInvoiceCreateManyInput | Prisma.MerchantInvoiceCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1636,6 +1638,7 @@ export type MerchantInvoiceCreateManyAndReturnArgs<ExtArgs extends runtime.Types
    * The data used to create many MerchantInvoices.
    */
   data: Prisma.MerchantInvoiceCreateManyInput | Prisma.MerchantInvoiceCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

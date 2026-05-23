@@ -1561,6 +1561,7 @@ export type BoutiqueCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * The data used to create many Boutiques.
    */
   data: Prisma.BoutiqueCreateManyInput | Prisma.BoutiqueCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1579,6 +1580,7 @@ export type BoutiqueCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extens
    * The data used to create many Boutiques.
    */
   data: Prisma.BoutiqueCreateManyInput | Prisma.BoutiqueCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**

@@ -1426,6 +1426,7 @@ export type CityCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * The data used to create many Cities.
    */
   data: Prisma.CityCreateManyInput | Prisma.CityCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1444,6 +1445,7 @@ export type CityCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions
    * The data used to create many Cities.
    */
   data: Prisma.CityCreateManyInput | Prisma.CityCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
