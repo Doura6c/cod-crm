@@ -1,0 +1,243 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// ============ USERS / TEAM ============
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  firstName    String
+  lastName     String
+  phone        String?
+  role         String   @default("AGENT") // ADMIN, MANAGER, AGENT, LIVREUR
+  active       Boolean  @default(true)
+  avatarUrl    String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  ordersAssigned  Order[]    @relation("AssignedAgent")
+  deliveries      Delivery[] @relation("AssignedLivreur")
+  callLogs        CallLog[]
+  ordersValidated Order[]    @relation("ValidatedBy")
+}
+
+// ============ BOUTIQUES (SELLERS) ============
+model Boutique {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  sellerName  String
+  sellerPhone String?
+  sellerEmail String?
+  website     String?
+  webhookKey  String   @unique // clé secrète pour l'endpoint webhook
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  orders   Order[]
+  products Product[]
+}
+
+// ============ CLIENTS FINAUX (acheteurs) ============
+model Customer {
+  id        String   @id @default(cuid())
+  fullName  String
+  phone     String
+  altPhone  String?
+  address   String?
+  cityId    String?
+  city      City?    @relation(fields: [cityId], references: [id])
+  commune   String?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orders Order[]
+
+  @@index([phone])
+}
+
+// ============ VILLES ET ZONES LIVRAISON ============
+model City {
+  id           String   @id @default(cuid())
+  name         String   @unique
+  deliveryFee  Float    @default(0)
+  estimatedDays Int     @default(1)
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  customers  Customer[]
+  orders     Order[]
+  deliveries Delivery[]
+}
+
+// ============ PRODUITS & STOCK ============
+model Product {
+  id          String  @id @default(cuid())
+  sku         String  @unique
+  name        String
+  description String?
+  price       Float
+  costPrice   Float?
+  stock       Int     @default(0)
+  stockAlert  Int     @default(5)
+  imageUrl    String?
+  active      Boolean @default(true)
+  boutiqueId  String?
+  boutique    Boutique? @relation(fields: [boutiqueId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  orderItems     OrderItem[]
+  stockMovements StockMovement[]
+}
+
+model StockMovement {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  type      String   // IN, OUT, ADJUSTMENT, RETURN
+  quantity  Int
+  reason    String?
+  orderId   String?
+  createdAt DateTime @default(now())
+}
+
+// ============ COMMANDES ============
+model Order {
+  id               String   @id @default(cuid())
+  code             String   @unique // CMD-DDMMYYYY-XXXXX
+  boutiqueId       String
+  boutique         Boutique @relation(fields: [boutiqueId], references: [id])
+  customerId       String
+  customer         Customer @relation(fields: [customerId], references: [id])
+  cityId           String?
+  city             City?    @relation(fields: [cityId], references: [id])
+
+  // Status: NOUVEAU, REPORTE, INJOIGNABLE, PDR, CONFIRME, ANNULE, EN_LIVRAISON, LIVRE, RETOURNE
+  status           String   @default("NOUVEAU")
+  subStatus        String?  // for sub-states like "À rappeler"
+
+  totalAmount      Float
+  deliveryFee      Float    @default(0)
+  callCount        Int      @default(0)
+  notes            String?  // Note interne (ex: "À livrer demain matin")
+  reportDate       DateTime? // Date programmée si reporté
+
+  assignedAgentId  String?
+  assignedAgent    User?    @relation("AssignedAgent", fields: [assignedAgentId], references: [id])
+
+  validatedById    String?
+  validatedBy      User?    @relation("ValidatedBy", fields: [validatedById], references: [id])
+  validatedAt      DateTime?
+
+  source           String   @default("MANUAL") // MANUAL, WEBHOOK, IMPORT
+  externalRef      String?  // ID externe boutique
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  items     OrderItem[]
+  delivery  Delivery?
+  invoice   Invoice?
+  callLogs  CallLog[]
+
+  @@index([status])
+  @@index([boutiqueId])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int     @default(1)
+  unitPrice Float
+  subtotal  Float
+}
+
+model CallLog {
+  id        String   @id @default(cuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  agentId   String
+  agent     User     @relation(fields: [agentId], references: [id])
+  outcome   String   // ANSWERED, NO_ANSWER, BUSY, REPORTED, CONFIRMED, CANCELLED
+  note      String?
+  createdAt DateTime @default(now())
+}
+
+// ============ LIVRAISONS ============
+model Delivery {
+  id              String   @id @default(cuid())
+  orderId         String   @unique
+  order           Order    @relation(fields: [orderId], references: [id])
+  livreurId       String?
+  livreur         User?    @relation("AssignedLivreur", fields: [livreurId], references: [id])
+  cityId          String?
+  city            City?    @relation(fields: [cityId], references: [id])
+
+  // Status: ASSIGNED, PICKED_UP, IN_TRANSIT, DELIVERED, FAILED, RETURNED
+  status          String   @default("ASSIGNED")
+
+  scheduledAt     DateTime?
+  pickedUpAt      DateTime?
+  deliveredAt     DateTime?
+
+  amountCollected Float?
+  failureReason   String?
+  notes           String?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// ============ FACTURES & DEPENSES ============
+model Invoice {
+  id          String   @id @default(cuid())
+  reference   String   @unique // FACT-YYYYMMDD-XXXXX
+  orderId     String   @unique
+  order       Order    @relation(fields: [orderId], references: [id])
+
+  subtotal    Float
+  deliveryFee Float    @default(0)
+  discount    Float    @default(0)
+  tax         Float    @default(0)
+  total       Float
+
+  status      String   @default("EMISE") // EMISE, PAYEE, ANNULEE
+  paidAt      DateTime?
+  pdfUrl      String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Expense {
+  id          String   @id @default(cuid())
+  reference   String   @unique
+  category    String   // SALAIRE, LOYER, TRANSPORT, MARKETING, AUTRE
+  description String
+  amount      Float
+  date        DateTime
+  paidTo      String?
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ============ PARAMETRES ============
+model Setting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}
