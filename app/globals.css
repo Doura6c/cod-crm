@@ -53,19 +53,31 @@
   --acc-50:  #fff1f2;
 }
 
+/* ─── Base styles ────────────────────────── */
+html {
+  /* Taille de texte de base légèrement plus grande sur mobile pour lisibilité */
+  font-size: 16px;
+  /* Évite le zoom auto sur les inputs iOS */
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  /* Rendu du texte optimisé */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 * {
   box-sizing: border-box;
 }
 
+/* ─── Scrollbars ──────────────────────── */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
@@ -76,6 +88,44 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
+}
+
+/* ─── Dark mode scrollbars ─────────────── */
+.dark ::-webkit-scrollbar-thumb {
+  background: #475569;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* ─── Mobile : inputs sans zoom automatique iOS ─── */
+@media (max-width: 1024px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="tel"],
+  input[type="search"],
+  select,
+  textarea {
+    font-size: 16px !important; /* Empêche le zoom auto iOS sur focus */
+  }
+}
+
+/* ─── Touch targets minimum 44×44px (WCAG 2.5.5) ─── */
+@media (max-width: 1024px) {
+  button, a, [role="button"] {
+    min-height: 44px;
+  }
+}
+
+/* ─── Tables : scroll horizontal sur mobile ─── */
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.table-scroll table {
+  min-width: 640px;
 }
 
 /* ─── Accent utility classes ──────────── */
@@ -101,39 +151,60 @@ body {
 .accent-text-strong {
   color: var(--acc-700);
 }
-.sidebar-accent-glow:hover {
-  outline: 2px solid var(--acc-400);
-}
 
+/* ─── Buttons ─────────────────────────── */
 .btn-primary {
   background-color: var(--acc-500);
   color: white;
-  font-weight: 500;
-  padding: 0.5rem 1rem;
-  border-radius: 0.375rem;
-  transition: background-color 0.15s;
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  font-weight: 600;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.15s, transform 0.1s;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  min-height: 44px;
+  cursor: pointer;
 }
 .btn-primary:hover {
   background-color: var(--acc-600);
 }
+.btn-primary:active {
+  transform: scale(0.98);
+}
 .btn-secondary {
-  @apply bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium px-4 py-2 rounded-md transition;
+  @apply bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-medium px-4 py-2.5 rounded-lg transition min-h-[44px] cursor-pointer;
 }
 .btn-warning {
-  @apply bg-amber-500 hover:bg-amber-600 text-white font-medium px-4 py-2 rounded-md transition shadow-sm;
+  @apply bg-amber-500 hover:bg-amber-600 text-white font-semibold px-4 py-2.5 rounded-lg transition shadow-sm min-h-[44px] cursor-pointer;
 }
 .btn-danger {
-  @apply bg-red-500 hover:bg-red-600 text-white font-medium px-4 py-2 rounded-md transition;
+  @apply bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2.5 rounded-lg transition min-h-[44px] cursor-pointer;
 }
 
+/* ─── Form inputs ─────────────────────── */
 .input {
-  @apply w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm bg-white;
+  @apply w-full px-3 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent text-sm bg-white dark:bg-slate-800 dark:border-slate-600 dark:text-white;
+  focus-ring-color: var(--acc-500);
+  min-height: 44px;
+}
+.input:focus {
+  box-shadow: 0 0 0 2px var(--acc-400);
+  border-color: var(--acc-500);
 }
 
+/* ─── Badges ──────────────────────────── */
 .badge {
-  @apply inline-flex items-center px-2 py-0.5 rounded text-xs font-medium;
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold;
+}
+
+/* ─── Cards ───────────────────────────── */
+.card {
+  @apply bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm;
+}
+
+/* ─── Safe area iOS (notch, home indicator) ─── */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }

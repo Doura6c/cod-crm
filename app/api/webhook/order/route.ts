@@ -163,8 +163,13 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ ok: true, order }, { status: 201, headers: CORS });
   } catch (err: any) {
+    // Ne jamais exposer les détails d'erreur internes en production
     console.error("[webhook] error:", err);
-    return NextResponse.json({ error: err.message ?? "Erreur serveur" }, { status: 500, headers: CORS });
+    const isDev = process.env.NODE_ENV !== "production";
+    return NextResponse.json(
+      { error: isDev ? (err.message ?? "Erreur serveur") : "Erreur interne du serveur" },
+      { status: 500, headers: CORS }
+    );
   }
 }
 

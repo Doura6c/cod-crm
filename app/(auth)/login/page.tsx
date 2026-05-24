@@ -103,7 +103,13 @@ export default async function LoginPage({
                 />
               </div>
 
-              {error && (
+              {error === "rate_limit" && (
+                <div className="bg-orange-50 text-orange-700 text-sm px-4 py-3 rounded-xl border border-orange-200 flex items-start gap-2">
+                  <span className="text-lg leading-none">🔒</span>
+                  <span>Trop de tentatives. Accès temporairement bloqué (15 min). Contactez votre administrateur si nécessaire.</span>
+                </div>
+              )}
+              {error && error !== "rate_limit" && (
                 <div className="bg-red-50 text-red-600 text-sm px-4 py-3 rounded-xl border border-red-100">
                   Email ou mot de passe incorrect.
                 </div>

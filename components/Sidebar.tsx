@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CrmToggleButton } from "./CrmToggleButton";
 import {
   BarChart3,
@@ -21,6 +21,8 @@ import {
   Truck,
   Bell,
   Trophy,
+  Menu,
+  X,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -54,14 +56,37 @@ type NavItem = {
   icon?: any;
   badge?: number;
   children?: NavItem[];
-  roles?: string[]; // si défini, seuls ces rôles peuvent voir cet item
+  roles?: string[];
 };
 
-export function Sidebar({ userName, userRole, isSuperAdmin = false, avatarUrl, crmIsActive = true, counts = {}, notificationCount = 0, pendingRequestCount = 0 }: SidebarProps) {
+export function Sidebar({
+  userName,
+  userRole,
+  isSuperAdmin = false,
+  avatarUrl,
+  crmIsActive = true,
+  counts = {},
+  notificationCount = 0,
+  pendingRequestCount = 0,
+}: SidebarProps) {
   const pathname = usePathname();
-  const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({
-    commandes: true,
-  });
+  const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({ commandes: true });
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Fermer le menu mobile au changement de route
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
+
+  // Bloquer le scroll body quand le menu mobile est ouvert
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [mobileOpen]);
 
   const allItems: NavItem[] = [
     { href: "/", label: "Statistiques", icon: BarChart3, roles: ["ADMIN", "MANAGER"] },
@@ -110,21 +135,30 @@ export function Sidebar({ userName, userRole, isSuperAdmin = false, avatarUrl, c
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + "/");
   const toggleMenu = (key: string) => setOpenMenus((s) => ({ ...s, [key]: !s[key] }));
 
-  return (
-    <aside className="fixed left-0 top-0 bottom-0 w-64 bg-[#0f172a] text-white flex flex-col z-50 shadow-2xl">
+  const sidebarContent = (
+    <>
       {/* Logo */}
-      <div className="px-5 py-5 border-b border-white/10 flex items-center gap-3">
+      <div className="px-5 py-5 border-b border-white/10 flex items-center gap-3 flex-shrink-0">
         <div className="w-11 h-11 bg-white rounded-xl overflow-hidden flex-shrink-0 shadow-lg">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo.jpeg" alt="HelpMeProcess" className="object-cover w-full h-full" />
         </div>
-        <div className="leading-tight">
+        <div className="leading-tight flex-1 min-w-0">
           <div className="font-bold text-sm text-white">HelpMeProcess</div>
           <div className="text-xs font-semibold" style={{ color: "var(--acc-400)" }}>COD Manager</div>
         </div>
+        {/* Bouton fermer — mobile uniquement */}
+        <button
+          className="lg:hidden p-1.5 rounded-lg hover:bg-white/10 transition"
+          onClick={() => setMobileOpen(false)}
+          aria-label="Fermer le menu"
+        >
+          <X className="w-5 h-5 text-white/70" />
+        </button>
       </div>
 
-      <nav className="flex-1 py-4 overflow-y-auto">
+      {/* Navigation */}
+      <nav className="flex-1 py-3 overflow-y-auto overscroll-contain">
         {navItems.map((item) => {
           const Icon = item.icon;
           const active = isActive(item.href);
@@ -137,11 +171,11 @@ export function Sidebar({ userName, userRole, isSuperAdmin = false, avatarUrl, c
               <div key={item.href}>
                 <button
                   onClick={() => toggleMenu("commandes")}
-                  className={`w-full flex items-center gap-3 px-5 py-2.5 text-sm transition ${
+                  className={`w-full flex items-center gap-3 px-5 py-3 text-sm transition active:bg-white/15 ${
                     active ? "bg-white/10 font-medium" : "text-blue-100 hover:bg-white/5"
                   }`}
                 >
-                  <Icon className="w-5 h-5" />
+                  <Icon className="w-5 h-5 flex-shrink-0" />
                   <span className="flex-1 text-left font-semibold">{item.label}</span>
                   {isOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                 </button>
@@ -151,9 +185,9 @@ export function Sidebar({ userName, userRole, isSuperAdmin = false, avatarUrl, c
                       const childActive = pathname === child.href;
                       return (
                         <Link
-                          key={child.href}
+                          key={child.href + child.label}
                           href={child.href}
-                          className={`flex items-center justify-between pl-12 pr-5 py-2 text-sm transition ${
+                          className={`flex items-center justify-between pl-12 pr-5 py-3 text-sm transition active:bg-white/15 ${
                             childActive
                               ? "text-white border-l-4 bg-white/5 accent-border-l"
                               : "text-blue-200 hover:text-white hover:bg-white/5 border-l-4 border-transparent"
@@ -161,7 +195,7 @@ export function Sidebar({ userName, userRole, isSuperAdmin = false, avatarUrl, c
                         >
                           <span>{child.label}</span>
                           {child.badge !== undefined && child.badge > 0 && (
-                            <span className="bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded">
+                            <span className="bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full min-w-[1.25rem] text-center">
                               {child.badge}
                             </span>
                           )}
@@ -178,16 +212,16 @@ export function Sidebar({ userName, userRole, isSuperAdmin = false, avatarUrl, c
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 px-5 py-2.5 text-sm transition ${
+              className={`flex items-center gap-3 px-5 py-3 text-sm transition active:bg-white/15 ${
                 active
                   ? "bg-white/10 text-white font-medium border-l-4 accent-border-l"
                   : "text-blue-100 hover:bg-white/5 border-l-4 border-transparent"
               }`}
             >
-              <Icon className="w-5 h-5" />
+              {Icon && <Icon className="w-5 h-5 flex-shrink-0" />}
               <span className="flex-1">{item.label}</span>
               {item.badge !== undefined && item.badge > 0 && (
-                <span className="bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded">
+                <span className="bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full min-w-[1.25rem] text-center">
                   {item.badge}
                 </span>
               )}
@@ -198,7 +232,7 @@ export function Sidebar({ userName, userRole, isSuperAdmin = false, avatarUrl, c
 
       {/* Bouton suspension CRM — Admin seulement */}
       {userRole === "ADMIN" && (
-        <div className="px-1 pb-1 border-t border-white/10 pt-2">
+        <div className="px-1 pb-1 border-t border-white/10 pt-2 flex-shrink-0">
           {!crmIsActive && (
             <div className="mx-3 mb-2 px-3 py-1.5 rounded-lg bg-red-500/20 border border-red-500/30 text-xs text-red-300 text-center font-semibold">
               ⚠️ CRM SUSPENDU
@@ -208,38 +242,93 @@ export function Sidebar({ userName, userRole, isSuperAdmin = false, avatarUrl, c
         </div>
       )}
 
-      <div className="border-t border-white/10 p-4">
-        <Link href="/profil" className="flex items-center gap-3 mb-3 hover:bg-white/5 rounded-xl p-2 -mx-2 transition group">
-          <div className="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-white/20 transition" style={{ "--tw-ring-color": "var(--acc-400)" } as any}>
+      {/* Profil + Déconnexion */}
+      <div className="border-t border-white/10 p-4 flex-shrink-0">
+        <Link
+          href="/profil"
+          className="flex items-center gap-3 mb-3 hover:bg-white/5 rounded-xl p-2 -mx-2 transition group active:bg-white/10"
+        >
+          <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-white/20">
             {avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={avatarUrl} alt={userName} className="w-full h-full object-cover" />
             ) : (
-              <div className="w-full h-full flex items-center justify-center font-bold text-sm text-white" style={{ backgroundColor: "var(--acc-500)" }}>
+              <div
+                className="w-full h-full flex items-center justify-center font-bold text-sm text-white"
+                style={{ backgroundColor: "var(--acc-500)" }}
+              >
                 {userName.charAt(0).toUpperCase()}
               </div>
             )}
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-sm font-semibold truncate transition group-hover:opacity-80">{userName}</div>
-            <div className="text-xs flex items-center gap-1" style={{ color: isSuperAdmin ? "var(--acc-400)" : undefined }}>
+            <div className="text-sm font-semibold truncate">{userName}</div>
+            <div className="text-xs flex items-center gap-1">
               {isSuperAdmin ? (
-                <><span>👑</span> {SUPER_ADMIN_LABEL}</>
+                <span style={{ color: "var(--acc-400)" }}>
+                  👑 {SUPER_ADMIN_LABEL}
+                </span>
               ) : (
-                <span className="text-blue-200">{userRole ? ROLE_LABEL[userRole] ?? userRole : "Utilisateur"}</span>
+                <span className="text-blue-200">
+                  {userRole ? ROLE_LABEL[userRole] ?? userRole : "Utilisateur"}
+                </span>
               )}
             </div>
           </div>
-          <span className="text-white/30 text-xs transition group-hover:opacity-100" style={{ color: "var(--acc-400)" }}>✏️</span>
+          <span className="text-white/30 text-xs" style={{ color: "var(--acc-400)" }}>✏️</span>
         </Link>
         <button
           onClick={() => signOut({ callbackUrl: "/login" })}
-          className="w-full flex items-center gap-2 px-3 py-2 text-sm text-blue-100 hover:text-white hover:bg-white/10 rounded transition"
+          className="w-full flex items-center gap-2 px-3 py-3 text-sm text-blue-100 hover:text-white hover:bg-white/10 rounded-xl transition active:bg-white/15"
         >
           <LogOut className="w-4 h-4" />
           Déconnexion
         </button>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* ── Bouton hamburger mobile (visible uniquement sur petit écran) ── */}
+      <button
+        className="lg:hidden fixed top-4 left-4 z-50 p-2.5 bg-[#0f172a] rounded-xl shadow-lg border border-white/10 text-white"
+        onClick={() => setMobileOpen(true)}
+        aria-label="Ouvrir le menu"
+      >
+        <Menu className="w-5 h-5" />
+        {/* Badge total notifications sur le bouton hamburger */}
+        {(notificationCount > 0 || pendingRequestCount > 0) && (
+          <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-[10px] font-bold text-white flex items-center justify-center">
+            {notificationCount + pendingRequestCount > 9 ? "9+" : notificationCount + pendingRequestCount}
+          </span>
+        )}
+      </button>
+
+      {/* ── Overlay mobile ── */}
+      {mobileOpen && (
+        <div
+          className="lg:hidden fixed inset-0 bg-black/60 z-40 backdrop-blur-sm"
+          onClick={() => setMobileOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* ── Sidebar desktop (toujours visible) ── */}
+      <aside className="hidden lg:flex fixed left-0 top-0 bottom-0 w-64 bg-[#0f172a] text-white flex-col z-30 shadow-2xl">
+        {sidebarContent}
+      </aside>
+
+      {/* ── Sidebar mobile (slide-in depuis la gauche) ── */}
+      <aside
+        className={`lg:hidden fixed left-0 top-0 bottom-0 w-72 bg-[#0f172a] text-white flex flex-col z-50 shadow-2xl transform transition-transform duration-300 ease-in-out ${
+          mobileOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+        aria-modal="true"
+        role="dialog"
+      >
+        {sidebarContent}
+      </aside>
+    </>
   );
 }

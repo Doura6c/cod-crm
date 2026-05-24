@@ -55,10 +55,10 @@ export async function updateCollaboratorAction(formData: FormData): Promise<void
   };
 
   if (newPassword) {
-    if (newPassword.length < 6) {
+    if (newPassword.length < 8) {
       redirect(`/equipe/${userId}/edit?error=password-short`);
     }
-    updateData.password = await hash(newPassword, 10);
+    updateData.passwordHash = await hash(newPassword, 12);
   }
 
   await prisma.user.update({

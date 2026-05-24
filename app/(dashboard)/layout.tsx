@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { Sidebar } from "@/components/Sidebar";
 import { prisma } from "@/lib/prisma";
+import { getSidebarCounts } from "@/lib/layoutCache";
 
 export default async function DashboardLayout({
   children,
@@ -21,11 +22,22 @@ export default async function DashboardLayout({
   const isAgentOnly = userRole === "AGENT";
   const isLivreur = userRole === "LIVREUR";
 
+  // ── Sécurité : vérifier que le compte est toujours actif en base ──
+  // Le JWT peut rester valide même si un admin désactive le compte
+  if (userId) {
+    const dbUser = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { active: true },
+    });
+    if (!dbUser || !dbUser.active) {
+      redirect("/login");
+    }
+  }
+
   // Vérifier si le CRM est suspendu (sauf pour les admins)
   if (!isAdmin) {
     const crmSetting = await prisma.setting.findUnique({ where: { key: "crm_active" } });
     if (crmSetting?.value === "false") {
-      // CRM suspendu — afficher page maintenance
       return (
         <div className="min-h-screen bg-slate-900 flex items-center justify-center p-6">
           <div className="bg-slate-800 border border-slate-700 rounded-2xl p-10 max-w-md w-full text-center shadow-2xl">
@@ -46,42 +58,19 @@ export default async function DashboardLayout({
     }
   }
 
-  const currentUser = userId ? await prisma.user.findUnique({ where: { id: userId }, select: { avatarUrl: true } }) : null;
-
-  const [confirmCount, attenteCount, totalCount, livraisonCount, notifCount, crmSetting, pendingRequestCount] = await Promise.all([
-    prisma.order.count({
-      where: {
-        status: "NOUVEAU",
-        ...(isAgentOnly && userId ? { assignedAgentId: userId } : {}),
-      },
+  // Récupérer l'avatar et les compteurs sidebar en parallèle (compteurs mis en cache 30s)
+  const [currentUser, counts] = await Promise.all([
+    userId ? prisma.user.findUnique({ where: { id: userId }, select: { avatarUrl: true } }) : Promise.resolve(null),
+    userId && userRole ? getSidebarCounts(userId, userRole) : Promise.resolve({
+      confirmCount: 0, attenteCount: 0, totalCount: 0, livraisonCount: 0,
+      notifCount: 0, crmIsActive: true, pendingRequestCount: 0,
     }),
-    prisma.order.count({ where: { status: "CONFIRME" } }),
-    prisma.order.count({
-      where: isAgentOnly && userId ? { assignedAgentId: userId } : {},
-    }),
-    (userRole === "LIVREUR" || userRole === "ADMIN" || userRole === "MANAGER")
-      ? prisma.delivery.count({
-          where: {
-            status: "ASSIGNED",
-            ...(isLivreur && userId ? { livreurId: userId } : {}),
-          },
-        })
-      : Promise.resolve(0),
-    userRole === "ADMIN"
-      ? prisma.notification.count({ where: { readAt: null } })
-      : Promise.resolve(0),
-    isAdmin
-      ? prisma.setting.findUnique({ where: { key: "crm_active" } })
-      : Promise.resolve(null),
-    isAdmin
-      ? (prisma as any).teamRequest.count({ where: { status: "PENDING" } })
-      : Promise.resolve(0),
   ]);
 
-  const crmIsActive = crmSetting?.value !== "false";
+  const { confirmCount, attenteCount, totalCount, livraisonCount, notifCount, crmIsActive, pendingRequestCount } = counts;
 
   return (
-    <div className="flex min-h-screen bg-slate-50">
+    <div className="flex min-h-screen bg-slate-50 dark:bg-slate-900">
       <Sidebar
         userName={session.user.name || "Utilisateur"}
         userRole={userRole}
@@ -92,7 +81,12 @@ export default async function DashboardLayout({
         notificationCount={notifCount}
         pendingRequestCount={pendingRequestCount as number}
       />
-      <div className="flex-1 ml-64 flex flex-col min-h-screen">
+      {/* lg:ml-64 : sur desktop on décale le contenu ; sur mobile la sidebar est un overlay */}
+      <div className="flex-1 lg:ml-64 flex flex-col min-h-screen min-w-0">
+        {/* Barre mobile : espace pour le bouton hamburger fixe (visible uniquement sur petit écran) */}
+        <div className="lg:hidden h-14 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 flex-shrink-0 flex items-center px-16 shadow-sm">
+          <span className="text-sm font-bold text-slate-700 dark:text-slate-200">HelpMeProcess COD</span>
+        </div>
         <main className="flex-1 overflow-auto">{children}</main>
       </div>
     </div>

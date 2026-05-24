@@ -55,10 +55,19 @@ export default async function ConfirmationPage({
     prisma.order.count({ where: { status: { in: ["PDR", "INJOIGNABLE"] }, ...agentFilter } }),
   ]);
 
+  // Statut "en ligne" basé sur une activité récente (commande traitée dans les 30 dernières minutes)
+  const thirtyMinAgo = new Date(Date.now() - 30 * 60 * 1000);
+  const recentAgentIds = await prisma.callLog.findMany({
+    where: { createdAt: { gte: thirtyMinAgo } },
+    select: { agentId: true },
+    distinct: ["agentId"],
+  });
+  const onlineSet = new Set(recentAgentIds.map((r) => r.agentId));
+
   const teamAgents = agents.map((a) => ({
     id: a.id,
     name: `${a.firstName} ${a.lastName}`,
-    online: Math.random() > 0.5,
+    online: onlineSet.has(a.id),
   }));
 
   return (

@@ -6,24 +6,32 @@ import { can } from "@/lib/rbac";
 import bcrypt from "bcryptjs";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { clean, isEmail, isValidRole } from "@/lib/validate";
 
 export async function createUserAction(formData: FormData): Promise<void> {
   const session = await auth();
   const role = (session?.user as any)?.role;
   if (!can(role, "CREATE_USER")) redirect("/");
 
-  const firstName = String(formData.get("firstName") ?? "").trim();
-  const lastName = String(formData.get("lastName") ?? "").trim();
-  const email = String(formData.get("email") ?? "").trim().toLowerCase();
-  const phone = String(formData.get("phone") ?? "").trim() || null;
-  const newRole = String(formData.get("role") ?? "AGENT");
-  const password = String(formData.get("password") ?? "");
+  const firstName = clean(formData.get("firstName"), 50);
+  const lastName  = clean(formData.get("lastName"), 50);
+  const email     = clean(formData.get("email"), 254).toLowerCase();
+  const phone     = clean(formData.get("phone"), 20) || null;
+  const newRole   = clean(formData.get("role"), 20) || "AGENT";
+  const password  = String(formData.get("password") ?? "").slice(0, 200);
 
+  // Validation
   if (!firstName || !lastName || !email || !password) {
     redirect("/equipe/nouveau?error=missing");
   }
-  if (password.length < 6) {
+  if (!isEmail(email)) {
+    redirect("/equipe/nouveau?error=email-invalid");
+  }
+  if (password.length < 8) {
     redirect("/equipe/nouveau?error=password-short");
+  }
+  if (!isValidRole(newRole)) {
+    redirect("/equipe/nouveau?error=forbidden-role");
   }
   // Seul un Admin peut créer un Admin
   if (newRole === "ADMIN" && !can(role, "CREATE_ADMIN")) {
@@ -35,7 +43,8 @@ export async function createUserAction(formData: FormData): Promise<void> {
     redirect("/equipe/nouveau?error=email-exists");
   }
 
-  const passwordHash = await bcrypt.hash(password, 10);
+  // bcrypt cost 12 (plus sécurisé que 10)
+  const passwordHash = await bcrypt.hash(password, 12);
   await prisma.user.create({
     data: {
       firstName,
