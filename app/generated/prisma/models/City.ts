@@ -231,6 +231,7 @@ export type CityWhereInput = {
   customers?: Prisma.CustomerListRelationFilter
   orders?: Prisma.OrderListRelationFilter
   deliveries?: Prisma.DeliveryListRelationFilter
+  assignedLivreurs?: Prisma.UserListRelationFilter
 }
 
 export type CityOrderByWithRelationInput = {
@@ -243,6 +244,7 @@ export type CityOrderByWithRelationInput = {
   customers?: Prisma.CustomerOrderByRelationAggregateInput
   orders?: Prisma.OrderOrderByRelationAggregateInput
   deliveries?: Prisma.DeliveryOrderByRelationAggregateInput
+  assignedLivreurs?: Prisma.UserOrderByRelationAggregateInput
 }
 
 export type CityWhereUniqueInput = Prisma.AtLeast<{
@@ -258,6 +260,7 @@ export type CityWhereUniqueInput = Prisma.AtLeast<{
   customers?: Prisma.CustomerListRelationFilter
   orders?: Prisma.OrderListRelationFilter
   deliveries?: Prisma.DeliveryListRelationFilter
+  assignedLivreurs?: Prisma.UserListRelationFilter
 }, "id" | "name">
 
 export type CityOrderByWithAggregationInput = {
@@ -296,6 +299,7 @@ export type CityCreateInput = {
   customers?: Prisma.CustomerCreateNestedManyWithoutCityInput
   orders?: Prisma.OrderCreateNestedManyWithoutCityInput
   deliveries?: Prisma.DeliveryCreateNestedManyWithoutCityInput
+  assignedLivreurs?: Prisma.UserCreateNestedManyWithoutAssignedCityInput
 }
 
 export type CityUncheckedCreateInput = {
@@ -308,6 +312,7 @@ export type CityUncheckedCreateInput = {
   customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutCityInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCityInput
   deliveries?: Prisma.DeliveryUncheckedCreateNestedManyWithoutCityInput
+  assignedLivreurs?: Prisma.UserUncheckedCreateNestedManyWithoutAssignedCityInput
 }
 
 export type CityUpdateInput = {
@@ -320,6 +325,7 @@ export type CityUpdateInput = {
   customers?: Prisma.CustomerUpdateManyWithoutCityNestedInput
   orders?: Prisma.OrderUpdateManyWithoutCityNestedInput
   deliveries?: Prisma.DeliveryUpdateManyWithoutCityNestedInput
+  assignedLivreurs?: Prisma.UserUpdateManyWithoutAssignedCityNestedInput
 }
 
 export type CityUncheckedUpdateInput = {
@@ -332,6 +338,7 @@ export type CityUncheckedUpdateInput = {
   customers?: Prisma.CustomerUncheckedUpdateManyWithoutCityNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutCityNestedInput
   deliveries?: Prisma.DeliveryUncheckedUpdateManyWithoutCityNestedInput
+  assignedLivreurs?: Prisma.UserUncheckedUpdateManyWithoutAssignedCityNestedInput
 }
 
 export type CityCreateManyInput = {
@@ -403,6 +410,22 @@ export type CitySumOrderByAggregateInput = {
   estimatedDays?: Prisma.SortOrder
 }
 
+export type CityCreateNestedOneWithoutAssignedLivreursInput = {
+  create?: Prisma.XOR<Prisma.CityCreateWithoutAssignedLivreursInput, Prisma.CityUncheckedCreateWithoutAssignedLivreursInput>
+  connectOrCreate?: Prisma.CityCreateOrConnectWithoutAssignedLivreursInput
+  connect?: Prisma.CityWhereUniqueInput
+}
+
+export type CityUpdateOneWithoutAssignedLivreursNestedInput = {
+  create?: Prisma.XOR<Prisma.CityCreateWithoutAssignedLivreursInput, Prisma.CityUncheckedCreateWithoutAssignedLivreursInput>
+  connectOrCreate?: Prisma.CityCreateOrConnectWithoutAssignedLivreursInput
+  upsert?: Prisma.CityUpsertWithoutAssignedLivreursInput
+  disconnect?: Prisma.CityWhereInput | boolean
+  delete?: Prisma.CityWhereInput | boolean
+  connect?: Prisma.CityWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CityUpdateToOneWithWhereWithoutAssignedLivreursInput, Prisma.CityUpdateWithoutAssignedLivreursInput>, Prisma.CityUncheckedUpdateWithoutAssignedLivreursInput>
+}
+
 export type CityCreateNestedOneWithoutCustomersInput = {
   create?: Prisma.XOR<Prisma.CityCreateWithoutCustomersInput, Prisma.CityUncheckedCreateWithoutCustomersInput>
   connectOrCreate?: Prisma.CityCreateOrConnectWithoutCustomersInput
@@ -467,6 +490,70 @@ export type CityUpdateOneWithoutDeliveriesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.CityUpdateToOneWithWhereWithoutDeliveriesInput, Prisma.CityUpdateWithoutDeliveriesInput>, Prisma.CityUncheckedUpdateWithoutDeliveriesInput>
 }
 
+export type CityCreateWithoutAssignedLivreursInput = {
+  id?: string
+  name: string
+  deliveryFee?: number
+  estimatedDays?: number
+  active?: boolean
+  createdAt?: Date | string
+  customers?: Prisma.CustomerCreateNestedManyWithoutCityInput
+  orders?: Prisma.OrderCreateNestedManyWithoutCityInput
+  deliveries?: Prisma.DeliveryCreateNestedManyWithoutCityInput
+}
+
+export type CityUncheckedCreateWithoutAssignedLivreursInput = {
+  id?: string
+  name: string
+  deliveryFee?: number
+  estimatedDays?: number
+  active?: boolean
+  createdAt?: Date | string
+  customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutCityInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCityInput
+  deliveries?: Prisma.DeliveryUncheckedCreateNestedManyWithoutCityInput
+}
+
+export type CityCreateOrConnectWithoutAssignedLivreursInput = {
+  where: Prisma.CityWhereUniqueInput
+  create: Prisma.XOR<Prisma.CityCreateWithoutAssignedLivreursInput, Prisma.CityUncheckedCreateWithoutAssignedLivreursInput>
+}
+
+export type CityUpsertWithoutAssignedLivreursInput = {
+  update: Prisma.XOR<Prisma.CityUpdateWithoutAssignedLivreursInput, Prisma.CityUncheckedUpdateWithoutAssignedLivreursInput>
+  create: Prisma.XOR<Prisma.CityCreateWithoutAssignedLivreursInput, Prisma.CityUncheckedCreateWithoutAssignedLivreursInput>
+  where?: Prisma.CityWhereInput
+}
+
+export type CityUpdateToOneWithWhereWithoutAssignedLivreursInput = {
+  where?: Prisma.CityWhereInput
+  data: Prisma.XOR<Prisma.CityUpdateWithoutAssignedLivreursInput, Prisma.CityUncheckedUpdateWithoutAssignedLivreursInput>
+}
+
+export type CityUpdateWithoutAssignedLivreursInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  deliveryFee?: Prisma.FloatFieldUpdateOperationsInput | number
+  estimatedDays?: Prisma.IntFieldUpdateOperationsInput | number
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  customers?: Prisma.CustomerUpdateManyWithoutCityNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutCityNestedInput
+  deliveries?: Prisma.DeliveryUpdateManyWithoutCityNestedInput
+}
+
+export type CityUncheckedUpdateWithoutAssignedLivreursInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  deliveryFee?: Prisma.FloatFieldUpdateOperationsInput | number
+  estimatedDays?: Prisma.IntFieldUpdateOperationsInput | number
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  customers?: Prisma.CustomerUncheckedUpdateManyWithoutCityNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutCityNestedInput
+  deliveries?: Prisma.DeliveryUncheckedUpdateManyWithoutCityNestedInput
+}
+
 export type CityCreateWithoutCustomersInput = {
   id?: string
   name: string
@@ -476,6 +563,7 @@ export type CityCreateWithoutCustomersInput = {
   createdAt?: Date | string
   orders?: Prisma.OrderCreateNestedManyWithoutCityInput
   deliveries?: Prisma.DeliveryCreateNestedManyWithoutCityInput
+  assignedLivreurs?: Prisma.UserCreateNestedManyWithoutAssignedCityInput
 }
 
 export type CityUncheckedCreateWithoutCustomersInput = {
@@ -487,6 +575,7 @@ export type CityUncheckedCreateWithoutCustomersInput = {
   createdAt?: Date | string
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCityInput
   deliveries?: Prisma.DeliveryUncheckedCreateNestedManyWithoutCityInput
+  assignedLivreurs?: Prisma.UserUncheckedCreateNestedManyWithoutAssignedCityInput
 }
 
 export type CityCreateOrConnectWithoutCustomersInput = {
@@ -514,6 +603,7 @@ export type CityUpdateWithoutCustomersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   orders?: Prisma.OrderUpdateManyWithoutCityNestedInput
   deliveries?: Prisma.DeliveryUpdateManyWithoutCityNestedInput
+  assignedLivreurs?: Prisma.UserUpdateManyWithoutAssignedCityNestedInput
 }
 
 export type CityUncheckedUpdateWithoutCustomersInput = {
@@ -525,6 +615,7 @@ export type CityUncheckedUpdateWithoutCustomersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   orders?: Prisma.OrderUncheckedUpdateManyWithoutCityNestedInput
   deliveries?: Prisma.DeliveryUncheckedUpdateManyWithoutCityNestedInput
+  assignedLivreurs?: Prisma.UserUncheckedUpdateManyWithoutAssignedCityNestedInput
 }
 
 export type CityCreateWithoutOrdersInput = {
@@ -536,6 +627,7 @@ export type CityCreateWithoutOrdersInput = {
   createdAt?: Date | string
   customers?: Prisma.CustomerCreateNestedManyWithoutCityInput
   deliveries?: Prisma.DeliveryCreateNestedManyWithoutCityInput
+  assignedLivreurs?: Prisma.UserCreateNestedManyWithoutAssignedCityInput
 }
 
 export type CityUncheckedCreateWithoutOrdersInput = {
@@ -547,6 +639,7 @@ export type CityUncheckedCreateWithoutOrdersInput = {
   createdAt?: Date | string
   customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutCityInput
   deliveries?: Prisma.DeliveryUncheckedCreateNestedManyWithoutCityInput
+  assignedLivreurs?: Prisma.UserUncheckedCreateNestedManyWithoutAssignedCityInput
 }
 
 export type CityCreateOrConnectWithoutOrdersInput = {
@@ -574,6 +667,7 @@ export type CityUpdateWithoutOrdersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   customers?: Prisma.CustomerUpdateManyWithoutCityNestedInput
   deliveries?: Prisma.DeliveryUpdateManyWithoutCityNestedInput
+  assignedLivreurs?: Prisma.UserUpdateManyWithoutAssignedCityNestedInput
 }
 
 export type CityUncheckedUpdateWithoutOrdersInput = {
@@ -585,6 +679,7 @@ export type CityUncheckedUpdateWithoutOrdersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   customers?: Prisma.CustomerUncheckedUpdateManyWithoutCityNestedInput
   deliveries?: Prisma.DeliveryUncheckedUpdateManyWithoutCityNestedInput
+  assignedLivreurs?: Prisma.UserUncheckedUpdateManyWithoutAssignedCityNestedInput
 }
 
 export type CityCreateWithoutDeliveriesInput = {
@@ -596,6 +691,7 @@ export type CityCreateWithoutDeliveriesInput = {
   createdAt?: Date | string
   customers?: Prisma.CustomerCreateNestedManyWithoutCityInput
   orders?: Prisma.OrderCreateNestedManyWithoutCityInput
+  assignedLivreurs?: Prisma.UserCreateNestedManyWithoutAssignedCityInput
 }
 
 export type CityUncheckedCreateWithoutDeliveriesInput = {
@@ -607,6 +703,7 @@ export type CityUncheckedCreateWithoutDeliveriesInput = {
   createdAt?: Date | string
   customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutCityInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCityInput
+  assignedLivreurs?: Prisma.UserUncheckedCreateNestedManyWithoutAssignedCityInput
 }
 
 export type CityCreateOrConnectWithoutDeliveriesInput = {
@@ -634,6 +731,7 @@ export type CityUpdateWithoutDeliveriesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   customers?: Prisma.CustomerUpdateManyWithoutCityNestedInput
   orders?: Prisma.OrderUpdateManyWithoutCityNestedInput
+  assignedLivreurs?: Prisma.UserUpdateManyWithoutAssignedCityNestedInput
 }
 
 export type CityUncheckedUpdateWithoutDeliveriesInput = {
@@ -645,6 +743,7 @@ export type CityUncheckedUpdateWithoutDeliveriesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   customers?: Prisma.CustomerUncheckedUpdateManyWithoutCityNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutCityNestedInput
+  assignedLivreurs?: Prisma.UserUncheckedUpdateManyWithoutAssignedCityNestedInput
 }
 
 
@@ -656,12 +755,14 @@ export type CityCountOutputType = {
   customers: number
   orders: number
   deliveries: number
+  assignedLivreurs: number
 }
 
 export type CityCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   customers?: boolean | CityCountOutputTypeCountCustomersArgs
   orders?: boolean | CityCountOutputTypeCountOrdersArgs
   deliveries?: boolean | CityCountOutputTypeCountDeliveriesArgs
+  assignedLivreurs?: boolean | CityCountOutputTypeCountAssignedLivreursArgs
 }
 
 /**
@@ -695,6 +796,13 @@ export type CityCountOutputTypeCountDeliveriesArgs<ExtArgs extends runtime.Types
   where?: Prisma.DeliveryWhereInput
 }
 
+/**
+ * CityCountOutputType without action
+ */
+export type CityCountOutputTypeCountAssignedLivreursArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.UserWhereInput
+}
+
 
 export type CitySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -706,6 +814,7 @@ export type CitySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   customers?: boolean | Prisma.City$customersArgs<ExtArgs>
   orders?: boolean | Prisma.City$ordersArgs<ExtArgs>
   deliveries?: boolean | Prisma.City$deliveriesArgs<ExtArgs>
+  assignedLivreurs?: boolean | Prisma.City$assignedLivreursArgs<ExtArgs>
   _count?: boolean | Prisma.CityCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["city"]>
 
@@ -741,6 +850,7 @@ export type CityInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   customers?: boolean | Prisma.City$customersArgs<ExtArgs>
   orders?: boolean | Prisma.City$ordersArgs<ExtArgs>
   deliveries?: boolean | Prisma.City$deliveriesArgs<ExtArgs>
+  assignedLivreurs?: boolean | Prisma.City$assignedLivreursArgs<ExtArgs>
   _count?: boolean | Prisma.CityCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type CityIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -752,6 +862,7 @@ export type $CityPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     customers: Prisma.$CustomerPayload<ExtArgs>[]
     orders: Prisma.$OrderPayload<ExtArgs>[]
     deliveries: Prisma.$DeliveryPayload<ExtArgs>[]
+    assignedLivreurs: Prisma.$UserPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1157,6 +1268,7 @@ export interface Prisma__CityClient<T, Null = never, ExtArgs extends runtime.Typ
   customers<T extends Prisma.City$customersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.City$customersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   orders<T extends Prisma.City$ordersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.City$ordersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   deliveries<T extends Prisma.City$deliveriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.City$deliveriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DeliveryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  assignedLivreurs<T extends Prisma.City$assignedLivreursArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.City$assignedLivreursArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1654,6 +1766,30 @@ export type City$deliveriesArgs<ExtArgs extends runtime.Types.Extensions.Interna
   take?: number
   skip?: number
   distinct?: Prisma.DeliveryScalarFieldEnum | Prisma.DeliveryScalarFieldEnum[]
+}
+
+/**
+ * City.assignedLivreurs
+ */
+export type City$assignedLivreursArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the User
+   */
+  select?: Prisma.UserSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the User
+   */
+  omit?: Prisma.UserOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
+  where?: Prisma.UserWhereInput
+  orderBy?: Prisma.UserOrderByWithRelationInput | Prisma.UserOrderByWithRelationInput[]
+  cursor?: Prisma.UserWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.UserScalarFieldEnum | Prisma.UserScalarFieldEnum[]
 }
 
 /**

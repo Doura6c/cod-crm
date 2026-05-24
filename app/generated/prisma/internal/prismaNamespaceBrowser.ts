@@ -65,6 +65,7 @@ export const ModelName = {
   MerchantInvoice: 'MerchantInvoice',
   Expense: 'Expense',
   Notification: 'Notification',
+  TeamRequest: 'TeamRequest',
   Setting: 'Setting'
 } as const
 
@@ -95,6 +96,8 @@ export const UserScalarFieldEnum = {
   active: 'active',
   avatarUrl: 'avatarUrl',
   isSuperAdmin: 'isSuperAdmin',
+  assignedCityId: 'assignedCityId',
+  subZone: 'subZone',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -320,6 +323,24 @@ export const NotificationScalarFieldEnum = {
 } as const
 
 export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
+
+
+export const TeamRequestScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  status: 'status',
+  requestedById: 'requestedById',
+  targetUserId: 'targetUserId',
+  targetName: 'targetName',
+  requestData: 'requestData',
+  adminNote: 'adminNote',
+  reviewedById: 'reviewedById',
+  reviewedAt: 'reviewedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TeamRequestScalarFieldEnum = (typeof TeamRequestScalarFieldEnum)[keyof typeof TeamRequestScalarFieldEnum]
 
 
 export const SettingScalarFieldEnum = {

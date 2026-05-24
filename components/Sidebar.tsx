@@ -31,6 +31,7 @@ interface SidebarProps {
   crmIsActive?: boolean;
   counts?: { confirmation?: number; attente?: number; commandes?: number; livraisons?: number };
   notificationCount?: number;
+  pendingRequestCount?: number;
 }
 
 const ROLE_LABEL: Record<string, string> = {
@@ -56,7 +57,7 @@ type NavItem = {
   roles?: string[]; // si défini, seuls ces rôles peuvent voir cet item
 };
 
-export function Sidebar({ userName, userRole, isSuperAdmin = false, avatarUrl, crmIsActive = true, counts = {}, notificationCount = 0 }: SidebarProps) {
+export function Sidebar({ userName, userRole, isSuperAdmin = false, avatarUrl, crmIsActive = true, counts = {}, notificationCount = 0, pendingRequestCount = 0 }: SidebarProps) {
   const pathname = usePathname();
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({
     commandes: true,
@@ -64,7 +65,7 @@ export function Sidebar({ userName, userRole, isSuperAdmin = false, avatarUrl, c
 
   const allItems: NavItem[] = [
     { href: "/", label: "Statistiques", icon: BarChart3, roles: ["ADMIN", "MANAGER"] },
-    { href: "/equipe", label: "Équipe", icon: Users, roles: ["ADMIN", "MANAGER"] },
+    { href: "/equipe", label: "Équipe", icon: Users, badge: pendingRequestCount || undefined, roles: ["ADMIN", "MANAGER"] },
     { href: "/livraison", label: "Paramètres Livraison", icon: Bike, roles: ["ADMIN", "MANAGER"] },
     { href: "/clients", label: "Clients", icon: UserCircle, roles: ["ADMIN", "MANAGER", "AGENT"] },
     { href: "/produits", label: "Produits et stock", icon: Package, roles: ["ADMIN", "MANAGER"] },

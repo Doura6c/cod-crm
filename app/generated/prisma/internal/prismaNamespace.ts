@@ -398,6 +398,7 @@ export const ModelName = {
   MerchantInvoice: 'MerchantInvoice',
   Expense: 'Expense',
   Notification: 'Notification',
+  TeamRequest: 'TeamRequest',
   Setting: 'Setting'
 } as const
 
@@ -414,7 +415,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "boutique" | "customer" | "city" | "product" | "stockMovement" | "order" | "orderItem" | "callLog" | "delivery" | "invoice" | "merchantInvoice" | "expense" | "notification" | "setting"
+    modelProps: "user" | "boutique" | "customer" | "city" | "product" | "stockMovement" | "order" | "orderItem" | "callLog" | "delivery" | "invoice" | "merchantInvoice" | "expense" | "notification" | "teamRequest" | "setting"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1454,6 +1455,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    TeamRequest: {
+      payload: Prisma.$TeamRequestPayload<ExtArgs>
+      fields: Prisma.TeamRequestFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.TeamRequestFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TeamRequestPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.TeamRequestFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TeamRequestPayload>
+        }
+        findFirst: {
+          args: Prisma.TeamRequestFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TeamRequestPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.TeamRequestFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TeamRequestPayload>
+        }
+        findMany: {
+          args: Prisma.TeamRequestFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TeamRequestPayload>[]
+        }
+        create: {
+          args: Prisma.TeamRequestCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TeamRequestPayload>
+        }
+        createMany: {
+          args: Prisma.TeamRequestCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.TeamRequestCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TeamRequestPayload>[]
+        }
+        delete: {
+          args: Prisma.TeamRequestDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TeamRequestPayload>
+        }
+        update: {
+          args: Prisma.TeamRequestUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TeamRequestPayload>
+        }
+        deleteMany: {
+          args: Prisma.TeamRequestDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.TeamRequestUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.TeamRequestUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TeamRequestPayload>[]
+        }
+        upsert: {
+          args: Prisma.TeamRequestUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TeamRequestPayload>
+        }
+        aggregate: {
+          args: Prisma.TeamRequestAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateTeamRequest>
+        }
+        groupBy: {
+          args: Prisma.TeamRequestGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TeamRequestGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.TeamRequestCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TeamRequestCountAggregateOutputType> | number
+        }
+      }
+    }
     Setting: {
       payload: Prisma.$SettingPayload<ExtArgs>
       fields: Prisma.SettingFieldRefs
@@ -1578,6 +1653,8 @@ export const UserScalarFieldEnum = {
   active: 'active',
   avatarUrl: 'avatarUrl',
   isSuperAdmin: 'isSuperAdmin',
+  assignedCityId: 'assignedCityId',
+  subZone: 'subZone',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1805,6 +1882,24 @@ export const NotificationScalarFieldEnum = {
 export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
 
 
+export const TeamRequestScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  status: 'status',
+  requestedById: 'requestedById',
+  targetUserId: 'targetUserId',
+  targetName: 'targetName',
+  requestData: 'requestData',
+  adminNote: 'adminNote',
+  reviewedById: 'reviewedById',
+  reviewedAt: 'reviewedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TeamRequestScalarFieldEnum = (typeof TeamRequestScalarFieldEnum)[keyof typeof TeamRequestScalarFieldEnum]
+
+
 export const SettingScalarFieldEnum = {
   key: 'key',
   value: 'value',
@@ -2030,6 +2125,7 @@ export type GlobalOmitConfig = {
   merchantInvoice?: Prisma.MerchantInvoiceOmit
   expense?: Prisma.ExpenseOmit
   notification?: Prisma.NotificationOmit
+  teamRequest?: Prisma.TeamRequestOmit
   setting?: Prisma.SettingOmit
 }
 

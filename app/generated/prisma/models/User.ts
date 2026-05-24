@@ -35,6 +35,8 @@ export type UserMinAggregateOutputType = {
   active: boolean | null
   avatarUrl: string | null
   isSuperAdmin: boolean | null
+  assignedCityId: string | null
+  subZone: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -50,6 +52,8 @@ export type UserMaxAggregateOutputType = {
   active: boolean | null
   avatarUrl: string | null
   isSuperAdmin: boolean | null
+  assignedCityId: string | null
+  subZone: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -65,6 +69,8 @@ export type UserCountAggregateOutputType = {
   active: number
   avatarUrl: number
   isSuperAdmin: number
+  assignedCityId: number
+  subZone: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -82,6 +88,8 @@ export type UserMinAggregateInputType = {
   active?: true
   avatarUrl?: true
   isSuperAdmin?: true
+  assignedCityId?: true
+  subZone?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -97,6 +105,8 @@ export type UserMaxAggregateInputType = {
   active?: true
   avatarUrl?: true
   isSuperAdmin?: true
+  assignedCityId?: true
+  subZone?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -112,6 +122,8 @@ export type UserCountAggregateInputType = {
   active?: true
   avatarUrl?: true
   isSuperAdmin?: true
+  assignedCityId?: true
+  subZone?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -200,6 +212,8 @@ export type UserGroupByOutputType = {
   active: boolean
   avatarUrl: string | null
   isSuperAdmin: boolean
+  assignedCityId: string | null
+  subZone: string | null
   createdAt: Date
   updatedAt: Date
   _count: UserCountAggregateOutputType | null
@@ -236,12 +250,16 @@ export type UserWhereInput = {
   active?: Prisma.BoolFilter<"User"> | boolean
   avatarUrl?: Prisma.StringNullableFilter<"User"> | string | null
   isSuperAdmin?: Prisma.BoolFilter<"User"> | boolean
+  assignedCityId?: Prisma.StringNullableFilter<"User"> | string | null
+  subZone?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
+  assignedCity?: Prisma.XOR<Prisma.CityNullableScalarRelationFilter, Prisma.CityWhereInput> | null
   ordersAssigned?: Prisma.OrderListRelationFilter
   deliveries?: Prisma.DeliveryListRelationFilter
   callLogs?: Prisma.CallLogListRelationFilter
   ordersValidated?: Prisma.OrderListRelationFilter
+  teamRequestsMade?: Prisma.TeamRequestListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -255,12 +273,16 @@ export type UserOrderByWithRelationInput = {
   active?: Prisma.SortOrder
   avatarUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   isSuperAdmin?: Prisma.SortOrder
+  assignedCityId?: Prisma.SortOrderInput | Prisma.SortOrder
+  subZone?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  assignedCity?: Prisma.CityOrderByWithRelationInput
   ordersAssigned?: Prisma.OrderOrderByRelationAggregateInput
   deliveries?: Prisma.DeliveryOrderByRelationAggregateInput
   callLogs?: Prisma.CallLogOrderByRelationAggregateInput
   ordersValidated?: Prisma.OrderOrderByRelationAggregateInput
+  teamRequestsMade?: Prisma.TeamRequestOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -277,12 +299,16 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   active?: Prisma.BoolFilter<"User"> | boolean
   avatarUrl?: Prisma.StringNullableFilter<"User"> | string | null
   isSuperAdmin?: Prisma.BoolFilter<"User"> | boolean
+  assignedCityId?: Prisma.StringNullableFilter<"User"> | string | null
+  subZone?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
+  assignedCity?: Prisma.XOR<Prisma.CityNullableScalarRelationFilter, Prisma.CityWhereInput> | null
   ordersAssigned?: Prisma.OrderListRelationFilter
   deliveries?: Prisma.DeliveryListRelationFilter
   callLogs?: Prisma.CallLogListRelationFilter
   ordersValidated?: Prisma.OrderListRelationFilter
+  teamRequestsMade?: Prisma.TeamRequestListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -296,6 +322,8 @@ export type UserOrderByWithAggregationInput = {
   active?: Prisma.SortOrder
   avatarUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   isSuperAdmin?: Prisma.SortOrder
+  assignedCityId?: Prisma.SortOrderInput | Prisma.SortOrder
+  subZone?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
@@ -317,6 +345,8 @@ export type UserScalarWhereWithAggregatesInput = {
   active?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   avatarUrl?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   isSuperAdmin?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
+  assignedCityId?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  subZone?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
 }
@@ -332,12 +362,15 @@ export type UserCreateInput = {
   active?: boolean
   avatarUrl?: string | null
   isSuperAdmin?: boolean
+  subZone?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  assignedCity?: Prisma.CityCreateNestedOneWithoutAssignedLivreursInput
   ordersAssigned?: Prisma.OrderCreateNestedManyWithoutAssignedAgentInput
   deliveries?: Prisma.DeliveryCreateNestedManyWithoutLivreurInput
   callLogs?: Prisma.CallLogCreateNestedManyWithoutAgentInput
   ordersValidated?: Prisma.OrderCreateNestedManyWithoutValidatedByInput
+  teamRequestsMade?: Prisma.TeamRequestCreateNestedManyWithoutRequestedByInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -351,12 +384,15 @@ export type UserUncheckedCreateInput = {
   active?: boolean
   avatarUrl?: string | null
   isSuperAdmin?: boolean
+  assignedCityId?: string | null
+  subZone?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   ordersAssigned?: Prisma.OrderUncheckedCreateNestedManyWithoutAssignedAgentInput
   deliveries?: Prisma.DeliveryUncheckedCreateNestedManyWithoutLivreurInput
   callLogs?: Prisma.CallLogUncheckedCreateNestedManyWithoutAgentInput
   ordersValidated?: Prisma.OrderUncheckedCreateNestedManyWithoutValidatedByInput
+  teamRequestsMade?: Prisma.TeamRequestUncheckedCreateNestedManyWithoutRequestedByInput
 }
 
 export type UserUpdateInput = {
@@ -370,12 +406,15 @@ export type UserUpdateInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  subZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assignedCity?: Prisma.CityUpdateOneWithoutAssignedLivreursNestedInput
   ordersAssigned?: Prisma.OrderUpdateManyWithoutAssignedAgentNestedInput
   deliveries?: Prisma.DeliveryUpdateManyWithoutLivreurNestedInput
   callLogs?: Prisma.CallLogUpdateManyWithoutAgentNestedInput
   ordersValidated?: Prisma.OrderUpdateManyWithoutValidatedByNestedInput
+  teamRequestsMade?: Prisma.TeamRequestUpdateManyWithoutRequestedByNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -389,12 +428,15 @@ export type UserUncheckedUpdateInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  assignedCityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ordersAssigned?: Prisma.OrderUncheckedUpdateManyWithoutAssignedAgentNestedInput
   deliveries?: Prisma.DeliveryUncheckedUpdateManyWithoutLivreurNestedInput
   callLogs?: Prisma.CallLogUncheckedUpdateManyWithoutAgentNestedInput
   ordersValidated?: Prisma.OrderUncheckedUpdateManyWithoutValidatedByNestedInput
+  teamRequestsMade?: Prisma.TeamRequestUncheckedUpdateManyWithoutRequestedByNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -408,6 +450,8 @@ export type UserCreateManyInput = {
   active?: boolean
   avatarUrl?: string | null
   isSuperAdmin?: boolean
+  assignedCityId?: string | null
+  subZone?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -423,6 +467,7 @@ export type UserUpdateManyMutationInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  subZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -438,6 +483,8 @@ export type UserUncheckedUpdateManyInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  assignedCityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -453,6 +500,8 @@ export type UserCountOrderByAggregateInput = {
   active?: Prisma.SortOrder
   avatarUrl?: Prisma.SortOrder
   isSuperAdmin?: Prisma.SortOrder
+  assignedCityId?: Prisma.SortOrder
+  subZone?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -468,6 +517,8 @@ export type UserMaxOrderByAggregateInput = {
   active?: Prisma.SortOrder
   avatarUrl?: Prisma.SortOrder
   isSuperAdmin?: Prisma.SortOrder
+  assignedCityId?: Prisma.SortOrder
+  subZone?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -483,8 +534,20 @@ export type UserMinOrderByAggregateInput = {
   active?: Prisma.SortOrder
   avatarUrl?: Prisma.SortOrder
   isSuperAdmin?: Prisma.SortOrder
+  assignedCityId?: Prisma.SortOrder
+  subZone?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type UserListRelationFilter = {
+  every?: Prisma.UserWhereInput
+  some?: Prisma.UserWhereInput
+  none?: Prisma.UserWhereInput
+}
+
+export type UserOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type UserNullableScalarRelationFilter = {
@@ -511,6 +574,48 @@ export type BoolFieldUpdateOperationsInput = {
 
 export type DateTimeFieldUpdateOperationsInput = {
   set?: Date | string
+}
+
+export type UserCreateNestedManyWithoutAssignedCityInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAssignedCityInput, Prisma.UserUncheckedCreateWithoutAssignedCityInput> | Prisma.UserCreateWithoutAssignedCityInput[] | Prisma.UserUncheckedCreateWithoutAssignedCityInput[]
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAssignedCityInput | Prisma.UserCreateOrConnectWithoutAssignedCityInput[]
+  createMany?: Prisma.UserCreateManyAssignedCityInputEnvelope
+  connect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+}
+
+export type UserUncheckedCreateNestedManyWithoutAssignedCityInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAssignedCityInput, Prisma.UserUncheckedCreateWithoutAssignedCityInput> | Prisma.UserCreateWithoutAssignedCityInput[] | Prisma.UserUncheckedCreateWithoutAssignedCityInput[]
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAssignedCityInput | Prisma.UserCreateOrConnectWithoutAssignedCityInput[]
+  createMany?: Prisma.UserCreateManyAssignedCityInputEnvelope
+  connect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+}
+
+export type UserUpdateManyWithoutAssignedCityNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAssignedCityInput, Prisma.UserUncheckedCreateWithoutAssignedCityInput> | Prisma.UserCreateWithoutAssignedCityInput[] | Prisma.UserUncheckedCreateWithoutAssignedCityInput[]
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAssignedCityInput | Prisma.UserCreateOrConnectWithoutAssignedCityInput[]
+  upsert?: Prisma.UserUpsertWithWhereUniqueWithoutAssignedCityInput | Prisma.UserUpsertWithWhereUniqueWithoutAssignedCityInput[]
+  createMany?: Prisma.UserCreateManyAssignedCityInputEnvelope
+  set?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+  disconnect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+  delete?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+  connect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+  update?: Prisma.UserUpdateWithWhereUniqueWithoutAssignedCityInput | Prisma.UserUpdateWithWhereUniqueWithoutAssignedCityInput[]
+  updateMany?: Prisma.UserUpdateManyWithWhereWithoutAssignedCityInput | Prisma.UserUpdateManyWithWhereWithoutAssignedCityInput[]
+  deleteMany?: Prisma.UserScalarWhereInput | Prisma.UserScalarWhereInput[]
+}
+
+export type UserUncheckedUpdateManyWithoutAssignedCityNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAssignedCityInput, Prisma.UserUncheckedCreateWithoutAssignedCityInput> | Prisma.UserCreateWithoutAssignedCityInput[] | Prisma.UserUncheckedCreateWithoutAssignedCityInput[]
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAssignedCityInput | Prisma.UserCreateOrConnectWithoutAssignedCityInput[]
+  upsert?: Prisma.UserUpsertWithWhereUniqueWithoutAssignedCityInput | Prisma.UserUpsertWithWhereUniqueWithoutAssignedCityInput[]
+  createMany?: Prisma.UserCreateManyAssignedCityInputEnvelope
+  set?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+  disconnect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+  delete?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+  connect?: Prisma.UserWhereUniqueInput | Prisma.UserWhereUniqueInput[]
+  update?: Prisma.UserUpdateWithWhereUniqueWithoutAssignedCityInput | Prisma.UserUpdateWithWhereUniqueWithoutAssignedCityInput[]
+  updateMany?: Prisma.UserUpdateManyWithWhereWithoutAssignedCityInput | Prisma.UserUpdateManyWithWhereWithoutAssignedCityInput[]
+  deleteMany?: Prisma.UserScalarWhereInput | Prisma.UserScalarWhereInput[]
 }
 
 export type UserCreateNestedOneWithoutOrdersAssignedInput = {
@@ -575,6 +680,108 @@ export type UserUpdateOneWithoutDeliveriesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutDeliveriesInput, Prisma.UserUpdateWithoutDeliveriesInput>, Prisma.UserUncheckedUpdateWithoutDeliveriesInput>
 }
 
+export type UserCreateNestedOneWithoutTeamRequestsMadeInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutTeamRequestsMadeInput, Prisma.UserUncheckedCreateWithoutTeamRequestsMadeInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutTeamRequestsMadeInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutTeamRequestsMadeNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutTeamRequestsMadeInput, Prisma.UserUncheckedCreateWithoutTeamRequestsMadeInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutTeamRequestsMadeInput
+  upsert?: Prisma.UserUpsertWithoutTeamRequestsMadeInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutTeamRequestsMadeInput, Prisma.UserUpdateWithoutTeamRequestsMadeInput>, Prisma.UserUncheckedUpdateWithoutTeamRequestsMadeInput>
+}
+
+export type UserCreateWithoutAssignedCityInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  firstName: string
+  lastName: string
+  phone?: string | null
+  role?: string
+  active?: boolean
+  avatarUrl?: string | null
+  isSuperAdmin?: boolean
+  subZone?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  ordersAssigned?: Prisma.OrderCreateNestedManyWithoutAssignedAgentInput
+  deliveries?: Prisma.DeliveryCreateNestedManyWithoutLivreurInput
+  callLogs?: Prisma.CallLogCreateNestedManyWithoutAgentInput
+  ordersValidated?: Prisma.OrderCreateNestedManyWithoutValidatedByInput
+  teamRequestsMade?: Prisma.TeamRequestCreateNestedManyWithoutRequestedByInput
+}
+
+export type UserUncheckedCreateWithoutAssignedCityInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  firstName: string
+  lastName: string
+  phone?: string | null
+  role?: string
+  active?: boolean
+  avatarUrl?: string | null
+  isSuperAdmin?: boolean
+  subZone?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  ordersAssigned?: Prisma.OrderUncheckedCreateNestedManyWithoutAssignedAgentInput
+  deliveries?: Prisma.DeliveryUncheckedCreateNestedManyWithoutLivreurInput
+  callLogs?: Prisma.CallLogUncheckedCreateNestedManyWithoutAgentInput
+  ordersValidated?: Prisma.OrderUncheckedCreateNestedManyWithoutValidatedByInput
+  teamRequestsMade?: Prisma.TeamRequestUncheckedCreateNestedManyWithoutRequestedByInput
+}
+
+export type UserCreateOrConnectWithoutAssignedCityInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutAssignedCityInput, Prisma.UserUncheckedCreateWithoutAssignedCityInput>
+}
+
+export type UserCreateManyAssignedCityInputEnvelope = {
+  data: Prisma.UserCreateManyAssignedCityInput | Prisma.UserCreateManyAssignedCityInput[]
+  skipDuplicates?: boolean
+}
+
+export type UserUpsertWithWhereUniqueWithoutAssignedCityInput = {
+  where: Prisma.UserWhereUniqueInput
+  update: Prisma.XOR<Prisma.UserUpdateWithoutAssignedCityInput, Prisma.UserUncheckedUpdateWithoutAssignedCityInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutAssignedCityInput, Prisma.UserUncheckedCreateWithoutAssignedCityInput>
+}
+
+export type UserUpdateWithWhereUniqueWithoutAssignedCityInput = {
+  where: Prisma.UserWhereUniqueInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutAssignedCityInput, Prisma.UserUncheckedUpdateWithoutAssignedCityInput>
+}
+
+export type UserUpdateManyWithWhereWithoutAssignedCityInput = {
+  where: Prisma.UserScalarWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateManyMutationInput, Prisma.UserUncheckedUpdateManyWithoutAssignedCityInput>
+}
+
+export type UserScalarWhereInput = {
+  AND?: Prisma.UserScalarWhereInput | Prisma.UserScalarWhereInput[]
+  OR?: Prisma.UserScalarWhereInput[]
+  NOT?: Prisma.UserScalarWhereInput | Prisma.UserScalarWhereInput[]
+  id?: Prisma.StringFilter<"User"> | string
+  email?: Prisma.StringFilter<"User"> | string
+  passwordHash?: Prisma.StringFilter<"User"> | string
+  firstName?: Prisma.StringFilter<"User"> | string
+  lastName?: Prisma.StringFilter<"User"> | string
+  phone?: Prisma.StringNullableFilter<"User"> | string | null
+  role?: Prisma.StringFilter<"User"> | string
+  active?: Prisma.BoolFilter<"User"> | boolean
+  avatarUrl?: Prisma.StringNullableFilter<"User"> | string | null
+  isSuperAdmin?: Prisma.BoolFilter<"User"> | boolean
+  assignedCityId?: Prisma.StringNullableFilter<"User"> | string | null
+  subZone?: Prisma.StringNullableFilter<"User"> | string | null
+  createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
+}
+
 export type UserCreateWithoutOrdersAssignedInput = {
   id?: string
   email: string
@@ -586,11 +793,14 @@ export type UserCreateWithoutOrdersAssignedInput = {
   active?: boolean
   avatarUrl?: string | null
   isSuperAdmin?: boolean
+  subZone?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  assignedCity?: Prisma.CityCreateNestedOneWithoutAssignedLivreursInput
   deliveries?: Prisma.DeliveryCreateNestedManyWithoutLivreurInput
   callLogs?: Prisma.CallLogCreateNestedManyWithoutAgentInput
   ordersValidated?: Prisma.OrderCreateNestedManyWithoutValidatedByInput
+  teamRequestsMade?: Prisma.TeamRequestCreateNestedManyWithoutRequestedByInput
 }
 
 export type UserUncheckedCreateWithoutOrdersAssignedInput = {
@@ -604,11 +814,14 @@ export type UserUncheckedCreateWithoutOrdersAssignedInput = {
   active?: boolean
   avatarUrl?: string | null
   isSuperAdmin?: boolean
+  assignedCityId?: string | null
+  subZone?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deliveries?: Prisma.DeliveryUncheckedCreateNestedManyWithoutLivreurInput
   callLogs?: Prisma.CallLogUncheckedCreateNestedManyWithoutAgentInput
   ordersValidated?: Prisma.OrderUncheckedCreateNestedManyWithoutValidatedByInput
+  teamRequestsMade?: Prisma.TeamRequestUncheckedCreateNestedManyWithoutRequestedByInput
 }
 
 export type UserCreateOrConnectWithoutOrdersAssignedInput = {
@@ -627,11 +840,14 @@ export type UserCreateWithoutOrdersValidatedInput = {
   active?: boolean
   avatarUrl?: string | null
   isSuperAdmin?: boolean
+  subZone?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  assignedCity?: Prisma.CityCreateNestedOneWithoutAssignedLivreursInput
   ordersAssigned?: Prisma.OrderCreateNestedManyWithoutAssignedAgentInput
   deliveries?: Prisma.DeliveryCreateNestedManyWithoutLivreurInput
   callLogs?: Prisma.CallLogCreateNestedManyWithoutAgentInput
+  teamRequestsMade?: Prisma.TeamRequestCreateNestedManyWithoutRequestedByInput
 }
 
 export type UserUncheckedCreateWithoutOrdersValidatedInput = {
@@ -645,11 +861,14 @@ export type UserUncheckedCreateWithoutOrdersValidatedInput = {
   active?: boolean
   avatarUrl?: string | null
   isSuperAdmin?: boolean
+  assignedCityId?: string | null
+  subZone?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   ordersAssigned?: Prisma.OrderUncheckedCreateNestedManyWithoutAssignedAgentInput
   deliveries?: Prisma.DeliveryUncheckedCreateNestedManyWithoutLivreurInput
   callLogs?: Prisma.CallLogUncheckedCreateNestedManyWithoutAgentInput
+  teamRequestsMade?: Prisma.TeamRequestUncheckedCreateNestedManyWithoutRequestedByInput
 }
 
 export type UserCreateOrConnectWithoutOrdersValidatedInput = {
@@ -679,11 +898,14 @@ export type UserUpdateWithoutOrdersAssignedInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  subZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assignedCity?: Prisma.CityUpdateOneWithoutAssignedLivreursNestedInput
   deliveries?: Prisma.DeliveryUpdateManyWithoutLivreurNestedInput
   callLogs?: Prisma.CallLogUpdateManyWithoutAgentNestedInput
   ordersValidated?: Prisma.OrderUpdateManyWithoutValidatedByNestedInput
+  teamRequestsMade?: Prisma.TeamRequestUpdateManyWithoutRequestedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOrdersAssignedInput = {
@@ -697,11 +919,14 @@ export type UserUncheckedUpdateWithoutOrdersAssignedInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  assignedCityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deliveries?: Prisma.DeliveryUncheckedUpdateManyWithoutLivreurNestedInput
   callLogs?: Prisma.CallLogUncheckedUpdateManyWithoutAgentNestedInput
   ordersValidated?: Prisma.OrderUncheckedUpdateManyWithoutValidatedByNestedInput
+  teamRequestsMade?: Prisma.TeamRequestUncheckedUpdateManyWithoutRequestedByNestedInput
 }
 
 export type UserUpsertWithoutOrdersValidatedInput = {
@@ -726,11 +951,14 @@ export type UserUpdateWithoutOrdersValidatedInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  subZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assignedCity?: Prisma.CityUpdateOneWithoutAssignedLivreursNestedInput
   ordersAssigned?: Prisma.OrderUpdateManyWithoutAssignedAgentNestedInput
   deliveries?: Prisma.DeliveryUpdateManyWithoutLivreurNestedInput
   callLogs?: Prisma.CallLogUpdateManyWithoutAgentNestedInput
+  teamRequestsMade?: Prisma.TeamRequestUpdateManyWithoutRequestedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOrdersValidatedInput = {
@@ -744,11 +972,14 @@ export type UserUncheckedUpdateWithoutOrdersValidatedInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  assignedCityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ordersAssigned?: Prisma.OrderUncheckedUpdateManyWithoutAssignedAgentNestedInput
   deliveries?: Prisma.DeliveryUncheckedUpdateManyWithoutLivreurNestedInput
   callLogs?: Prisma.CallLogUncheckedUpdateManyWithoutAgentNestedInput
+  teamRequestsMade?: Prisma.TeamRequestUncheckedUpdateManyWithoutRequestedByNestedInput
 }
 
 export type UserCreateWithoutCallLogsInput = {
@@ -762,11 +993,14 @@ export type UserCreateWithoutCallLogsInput = {
   active?: boolean
   avatarUrl?: string | null
   isSuperAdmin?: boolean
+  subZone?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  assignedCity?: Prisma.CityCreateNestedOneWithoutAssignedLivreursInput
   ordersAssigned?: Prisma.OrderCreateNestedManyWithoutAssignedAgentInput
   deliveries?: Prisma.DeliveryCreateNestedManyWithoutLivreurInput
   ordersValidated?: Prisma.OrderCreateNestedManyWithoutValidatedByInput
+  teamRequestsMade?: Prisma.TeamRequestCreateNestedManyWithoutRequestedByInput
 }
 
 export type UserUncheckedCreateWithoutCallLogsInput = {
@@ -780,11 +1014,14 @@ export type UserUncheckedCreateWithoutCallLogsInput = {
   active?: boolean
   avatarUrl?: string | null
   isSuperAdmin?: boolean
+  assignedCityId?: string | null
+  subZone?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   ordersAssigned?: Prisma.OrderUncheckedCreateNestedManyWithoutAssignedAgentInput
   deliveries?: Prisma.DeliveryUncheckedCreateNestedManyWithoutLivreurInput
   ordersValidated?: Prisma.OrderUncheckedCreateNestedManyWithoutValidatedByInput
+  teamRequestsMade?: Prisma.TeamRequestUncheckedCreateNestedManyWithoutRequestedByInput
 }
 
 export type UserCreateOrConnectWithoutCallLogsInput = {
@@ -814,11 +1051,14 @@ export type UserUpdateWithoutCallLogsInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  subZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assignedCity?: Prisma.CityUpdateOneWithoutAssignedLivreursNestedInput
   ordersAssigned?: Prisma.OrderUpdateManyWithoutAssignedAgentNestedInput
   deliveries?: Prisma.DeliveryUpdateManyWithoutLivreurNestedInput
   ordersValidated?: Prisma.OrderUpdateManyWithoutValidatedByNestedInput
+  teamRequestsMade?: Prisma.TeamRequestUpdateManyWithoutRequestedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCallLogsInput = {
@@ -832,11 +1072,14 @@ export type UserUncheckedUpdateWithoutCallLogsInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  assignedCityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ordersAssigned?: Prisma.OrderUncheckedUpdateManyWithoutAssignedAgentNestedInput
   deliveries?: Prisma.DeliveryUncheckedUpdateManyWithoutLivreurNestedInput
   ordersValidated?: Prisma.OrderUncheckedUpdateManyWithoutValidatedByNestedInput
+  teamRequestsMade?: Prisma.TeamRequestUncheckedUpdateManyWithoutRequestedByNestedInput
 }
 
 export type UserCreateWithoutDeliveriesInput = {
@@ -850,11 +1093,14 @@ export type UserCreateWithoutDeliveriesInput = {
   active?: boolean
   avatarUrl?: string | null
   isSuperAdmin?: boolean
+  subZone?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  assignedCity?: Prisma.CityCreateNestedOneWithoutAssignedLivreursInput
   ordersAssigned?: Prisma.OrderCreateNestedManyWithoutAssignedAgentInput
   callLogs?: Prisma.CallLogCreateNestedManyWithoutAgentInput
   ordersValidated?: Prisma.OrderCreateNestedManyWithoutValidatedByInput
+  teamRequestsMade?: Prisma.TeamRequestCreateNestedManyWithoutRequestedByInput
 }
 
 export type UserUncheckedCreateWithoutDeliveriesInput = {
@@ -868,11 +1114,14 @@ export type UserUncheckedCreateWithoutDeliveriesInput = {
   active?: boolean
   avatarUrl?: string | null
   isSuperAdmin?: boolean
+  assignedCityId?: string | null
+  subZone?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   ordersAssigned?: Prisma.OrderUncheckedCreateNestedManyWithoutAssignedAgentInput
   callLogs?: Prisma.CallLogUncheckedCreateNestedManyWithoutAgentInput
   ordersValidated?: Prisma.OrderUncheckedCreateNestedManyWithoutValidatedByInput
+  teamRequestsMade?: Prisma.TeamRequestUncheckedCreateNestedManyWithoutRequestedByInput
 }
 
 export type UserCreateOrConnectWithoutDeliveriesInput = {
@@ -902,11 +1151,14 @@ export type UserUpdateWithoutDeliveriesInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  subZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assignedCity?: Prisma.CityUpdateOneWithoutAssignedLivreursNestedInput
   ordersAssigned?: Prisma.OrderUpdateManyWithoutAssignedAgentNestedInput
   callLogs?: Prisma.CallLogUpdateManyWithoutAgentNestedInput
   ordersValidated?: Prisma.OrderUpdateManyWithoutValidatedByNestedInput
+  teamRequestsMade?: Prisma.TeamRequestUpdateManyWithoutRequestedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDeliveriesInput = {
@@ -920,11 +1172,188 @@ export type UserUncheckedUpdateWithoutDeliveriesInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  assignedCityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ordersAssigned?: Prisma.OrderUncheckedUpdateManyWithoutAssignedAgentNestedInput
   callLogs?: Prisma.CallLogUncheckedUpdateManyWithoutAgentNestedInput
   ordersValidated?: Prisma.OrderUncheckedUpdateManyWithoutValidatedByNestedInput
+  teamRequestsMade?: Prisma.TeamRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+}
+
+export type UserCreateWithoutTeamRequestsMadeInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  firstName: string
+  lastName: string
+  phone?: string | null
+  role?: string
+  active?: boolean
+  avatarUrl?: string | null
+  isSuperAdmin?: boolean
+  subZone?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  assignedCity?: Prisma.CityCreateNestedOneWithoutAssignedLivreursInput
+  ordersAssigned?: Prisma.OrderCreateNestedManyWithoutAssignedAgentInput
+  deliveries?: Prisma.DeliveryCreateNestedManyWithoutLivreurInput
+  callLogs?: Prisma.CallLogCreateNestedManyWithoutAgentInput
+  ordersValidated?: Prisma.OrderCreateNestedManyWithoutValidatedByInput
+}
+
+export type UserUncheckedCreateWithoutTeamRequestsMadeInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  firstName: string
+  lastName: string
+  phone?: string | null
+  role?: string
+  active?: boolean
+  avatarUrl?: string | null
+  isSuperAdmin?: boolean
+  assignedCityId?: string | null
+  subZone?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  ordersAssigned?: Prisma.OrderUncheckedCreateNestedManyWithoutAssignedAgentInput
+  deliveries?: Prisma.DeliveryUncheckedCreateNestedManyWithoutLivreurInput
+  callLogs?: Prisma.CallLogUncheckedCreateNestedManyWithoutAgentInput
+  ordersValidated?: Prisma.OrderUncheckedCreateNestedManyWithoutValidatedByInput
+}
+
+export type UserCreateOrConnectWithoutTeamRequestsMadeInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutTeamRequestsMadeInput, Prisma.UserUncheckedCreateWithoutTeamRequestsMadeInput>
+}
+
+export type UserUpsertWithoutTeamRequestsMadeInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutTeamRequestsMadeInput, Prisma.UserUncheckedUpdateWithoutTeamRequestsMadeInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutTeamRequestsMadeInput, Prisma.UserUncheckedCreateWithoutTeamRequestsMadeInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutTeamRequestsMadeInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutTeamRequestsMadeInput, Prisma.UserUncheckedUpdateWithoutTeamRequestsMadeInput>
+}
+
+export type UserUpdateWithoutTeamRequestsMadeInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  subZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assignedCity?: Prisma.CityUpdateOneWithoutAssignedLivreursNestedInput
+  ordersAssigned?: Prisma.OrderUpdateManyWithoutAssignedAgentNestedInput
+  deliveries?: Prisma.DeliveryUpdateManyWithoutLivreurNestedInput
+  callLogs?: Prisma.CallLogUpdateManyWithoutAgentNestedInput
+  ordersValidated?: Prisma.OrderUpdateManyWithoutValidatedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutTeamRequestsMadeInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  assignedCityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ordersAssigned?: Prisma.OrderUncheckedUpdateManyWithoutAssignedAgentNestedInput
+  deliveries?: Prisma.DeliveryUncheckedUpdateManyWithoutLivreurNestedInput
+  callLogs?: Prisma.CallLogUncheckedUpdateManyWithoutAgentNestedInput
+  ordersValidated?: Prisma.OrderUncheckedUpdateManyWithoutValidatedByNestedInput
+}
+
+export type UserCreateManyAssignedCityInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  firstName: string
+  lastName: string
+  phone?: string | null
+  role?: string
+  active?: boolean
+  avatarUrl?: string | null
+  isSuperAdmin?: boolean
+  subZone?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type UserUpdateWithoutAssignedCityInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  subZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ordersAssigned?: Prisma.OrderUpdateManyWithoutAssignedAgentNestedInput
+  deliveries?: Prisma.DeliveryUpdateManyWithoutLivreurNestedInput
+  callLogs?: Prisma.CallLogUpdateManyWithoutAgentNestedInput
+  ordersValidated?: Prisma.OrderUpdateManyWithoutValidatedByNestedInput
+  teamRequestsMade?: Prisma.TeamRequestUpdateManyWithoutRequestedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutAssignedCityInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  subZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ordersAssigned?: Prisma.OrderUncheckedUpdateManyWithoutAssignedAgentNestedInput
+  deliveries?: Prisma.DeliveryUncheckedUpdateManyWithoutLivreurNestedInput
+  callLogs?: Prisma.CallLogUncheckedUpdateManyWithoutAgentNestedInput
+  ordersValidated?: Prisma.OrderUncheckedUpdateManyWithoutValidatedByNestedInput
+  teamRequestsMade?: Prisma.TeamRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+}
+
+export type UserUncheckedUpdateManyWithoutAssignedCityInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  subZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -937,6 +1366,7 @@ export type UserCountOutputType = {
   deliveries: number
   callLogs: number
   ordersValidated: number
+  teamRequestsMade: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -944,6 +1374,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   deliveries?: boolean | UserCountOutputTypeCountDeliveriesArgs
   callLogs?: boolean | UserCountOutputTypeCountCallLogsArgs
   ordersValidated?: boolean | UserCountOutputTypeCountOrdersValidatedArgs
+  teamRequestsMade?: boolean | UserCountOutputTypeCountTeamRequestsMadeArgs
 }
 
 /**
@@ -984,6 +1415,13 @@ export type UserCountOutputTypeCountOrdersValidatedArgs<ExtArgs extends runtime.
   where?: Prisma.OrderWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountTeamRequestsMadeArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TeamRequestWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -996,12 +1434,16 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   active?: boolean
   avatarUrl?: boolean
   isSuperAdmin?: boolean
+  assignedCityId?: boolean
+  subZone?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  assignedCity?: boolean | Prisma.User$assignedCityArgs<ExtArgs>
   ordersAssigned?: boolean | Prisma.User$ordersAssignedArgs<ExtArgs>
   deliveries?: boolean | Prisma.User$deliveriesArgs<ExtArgs>
   callLogs?: boolean | Prisma.User$callLogsArgs<ExtArgs>
   ordersValidated?: boolean | Prisma.User$ordersValidatedArgs<ExtArgs>
+  teamRequestsMade?: boolean | Prisma.User$teamRequestsMadeArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -1016,8 +1458,11 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   active?: boolean
   avatarUrl?: boolean
   isSuperAdmin?: boolean
+  assignedCityId?: boolean
+  subZone?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  assignedCity?: boolean | Prisma.User$assignedCityArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1031,8 +1476,11 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   active?: boolean
   avatarUrl?: boolean
   isSuperAdmin?: boolean
+  assignedCityId?: boolean
+  subZone?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  assignedCity?: boolean | Prisma.User$assignedCityArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectScalar = {
@@ -1046,28 +1494,38 @@ export type UserSelectScalar = {
   active?: boolean
   avatarUrl?: boolean
   isSuperAdmin?: boolean
+  assignedCityId?: boolean
+  subZone?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "passwordHash" | "firstName" | "lastName" | "phone" | "role" | "active" | "avatarUrl" | "isSuperAdmin" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "passwordHash" | "firstName" | "lastName" | "phone" | "role" | "active" | "avatarUrl" | "isSuperAdmin" | "assignedCityId" | "subZone" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  assignedCity?: boolean | Prisma.User$assignedCityArgs<ExtArgs>
   ordersAssigned?: boolean | Prisma.User$ordersAssignedArgs<ExtArgs>
   deliveries?: boolean | Prisma.User$deliveriesArgs<ExtArgs>
   callLogs?: boolean | Prisma.User$callLogsArgs<ExtArgs>
   ordersValidated?: boolean | Prisma.User$ordersValidatedArgs<ExtArgs>
+  teamRequestsMade?: boolean | Prisma.User$teamRequestsMadeArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
-export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
-export type UserIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  assignedCity?: boolean | Prisma.User$assignedCityArgs<ExtArgs>
+}
+export type UserIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  assignedCity?: boolean | Prisma.User$assignedCityArgs<ExtArgs>
+}
 
 export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "User"
   objects: {
+    assignedCity: Prisma.$CityPayload<ExtArgs> | null
     ordersAssigned: Prisma.$OrderPayload<ExtArgs>[]
     deliveries: Prisma.$DeliveryPayload<ExtArgs>[]
     callLogs: Prisma.$CallLogPayload<ExtArgs>[]
     ordersValidated: Prisma.$OrderPayload<ExtArgs>[]
+    teamRequestsMade: Prisma.$TeamRequestPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1080,6 +1538,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     active: boolean
     avatarUrl: string | null
     isSuperAdmin: boolean
+    assignedCityId: string | null
+    subZone: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["user"]>
@@ -1476,10 +1936,12 @@ readonly fields: UserFieldRefs;
  */
 export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  assignedCity<T extends Prisma.User$assignedCityArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$assignedCityArgs<ExtArgs>>): Prisma.Prisma__CityClient<runtime.Types.Result.GetResult<Prisma.$CityPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   ordersAssigned<T extends Prisma.User$ordersAssignedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$ordersAssignedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   deliveries<T extends Prisma.User$deliveriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$deliveriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DeliveryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   callLogs<T extends Prisma.User$callLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$callLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CallLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   ordersValidated<T extends Prisma.User$ordersValidatedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$ordersValidatedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  teamRequestsMade<T extends Prisma.User$teamRequestsMadeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$teamRequestsMadeArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TeamRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1519,6 +1981,8 @@ export interface UserFieldRefs {
   readonly active: Prisma.FieldRef<"User", 'Boolean'>
   readonly avatarUrl: Prisma.FieldRef<"User", 'String'>
   readonly isSuperAdmin: Prisma.FieldRef<"User", 'Boolean'>
+  readonly assignedCityId: Prisma.FieldRef<"User", 'String'>
+  readonly subZone: Prisma.FieldRef<"User", 'String'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
 }
@@ -1775,6 +2239,10 @@ export type UserCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions
    */
   data: Prisma.UserCreateManyInput | Prisma.UserCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1845,6 +2313,10 @@ export type UserUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions
    * Limit how many Users to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1911,6 +2383,25 @@ export type UserDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Limit how many Users to delete.
    */
   limit?: number
+}
+
+/**
+ * User.assignedCity
+ */
+export type User$assignedCityArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the City
+   */
+  select?: Prisma.CitySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the City
+   */
+  omit?: Prisma.CityOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CityInclude<ExtArgs> | null
+  where?: Prisma.CityWhereInput
 }
 
 /**
@@ -2007,6 +2498,30 @@ export type User$ordersValidatedArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.OrderScalarFieldEnum | Prisma.OrderScalarFieldEnum[]
+}
+
+/**
+ * User.teamRequestsMade
+ */
+export type User$teamRequestsMadeArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TeamRequest
+   */
+  select?: Prisma.TeamRequestSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TeamRequest
+   */
+  omit?: Prisma.TeamRequestOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TeamRequestInclude<ExtArgs> | null
+  where?: Prisma.TeamRequestWhereInput
+  orderBy?: Prisma.TeamRequestOrderByWithRelationInput | Prisma.TeamRequestOrderByWithRelationInput[]
+  cursor?: Prisma.TeamRequestWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TeamRequestScalarFieldEnum | Prisma.TeamRequestScalarFieldEnum[]
 }
 
 /**

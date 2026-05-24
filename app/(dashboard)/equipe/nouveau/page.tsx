@@ -4,7 +4,8 @@ import { auth } from "@/auth";
 import { PageHeader } from "@/components/PageHeader";
 import { can } from "@/lib/rbac";
 import { createUserAction } from "./actions";
-import { ArrowLeft, UserPlus } from "lucide-react";
+import { requestCreateAgentAction } from "../demandes/actions";
+import { ArrowLeft, UserPlus, Send } from "lucide-react";
 
 export default async function NouveauMembrePage({
   searchParams,
@@ -40,16 +41,30 @@ export default async function NouveauMembrePage({
       <div className="p-6 max-w-2xl">
         <div className="bg-white border border-slate-200 rounded-lg p-6">
           <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
-            <div className="w-12 h-12 bg-sky-100 text-sky-600 rounded-xl flex items-center justify-center">
-              <UserPlus className="w-6 h-6" />
+            <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${isAdmin ? "bg-sky-100 text-sky-600" : "bg-amber-100 text-amber-600"}`}>
+              {isAdmin ? <UserPlus className="w-6 h-6" /> : <Send className="w-6 h-6" />}
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-slate-800">Créer un membre de l&apos;équipe</h2>
+              <h2 className="text-lg font-semibold text-slate-800">
+                {isAdmin ? "Créer un membre de l'équipe" : "Demander la création d'un agent"}
+              </h2>
               <p className="text-sm text-slate-500">
-                Le membre pourra se connecter immédiatement avec l&apos;email et le mot de passe que vous définissez.
+                {isAdmin
+                  ? "Le membre pourra se connecter immédiatement."
+                  : "Votre demande sera soumise à l'administrateur pour validation avant création."}
               </p>
             </div>
           </div>
+
+          {!isAdmin && (
+            <div className="mb-4 bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded-lg text-sm flex items-start gap-2">
+              <span className="text-lg">⏳</span>
+              <div>
+                <strong>Demande soumise à validation</strong>
+                <p className="text-xs mt-0.5 text-amber-700">L&apos;administrateur recevra votre demande et devra l&apos;approuver. Le compte sera créé uniquement après validation.</p>
+              </div>
+            </div>
+          )}
 
           {error && errors[error] && (
             <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
@@ -57,7 +72,7 @@ export default async function NouveauMembrePage({
             </div>
           )}
 
-          <form action={createUserAction} className="space-y-4">
+          <form action={isAdmin ? createUserAction : requestCreateAgentAction} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1.5">
@@ -97,12 +112,13 @@ export default async function NouveauMembrePage({
                 <label className="block text-sm font-medium text-slate-700 mb-1.5">
                   Rôle <span className="text-red-500">*</span>
                 </label>
-                <select name="role" required defaultValue="AGENT" className="input">
+                <select name="role" required defaultValue="AGENT" className="input" disabled={!isAdmin}>
                   <option value="AGENT">Agent (téléopérateur)</option>
-                  <option value="MANAGER">Superviseur</option>
-                  <option value="LIVREUR">Livreur</option>
+                  {isAdmin && <option value="MANAGER">Superviseur</option>}
+                  {isAdmin && <option value="LIVREUR">Livreur</option>}
                   {isAdmin && <option value="ADMIN">Administrateur</option>}
                 </select>
+                {!isAdmin && <p className="text-xs text-slate-400 mt-1">Les superviseurs peuvent uniquement demander la création d&apos;agents.</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1.5">
@@ -137,9 +153,10 @@ export default async function NouveauMembrePage({
             <div className="flex items-center gap-3 pt-4 border-t border-slate-100">
               <button
                 type="submit"
-                className="bg-sky-500 hover:bg-sky-600 text-white font-semibold px-6 py-2.5 rounded-lg"
+                className="flex items-center gap-2 text-white font-semibold px-6 py-2.5 rounded-lg transition"
+                style={{ backgroundColor: isAdmin ? "var(--acc-500)" : "#f59e0b" }}
               >
-                Créer le membre
+                {isAdmin ? <><UserPlus className="w-4 h-4" /> Créer le membre</> : <><Send className="w-4 h-4" /> Envoyer la demande</>}
               </button>
               <Link
                 href="/equipe"

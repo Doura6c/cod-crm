@@ -28,6 +28,8 @@ export async function updateCollaboratorAction(formData: FormData): Promise<void
   const newRole = String(formData.get("role") ?? "").trim();
   const active = formData.get("active") === "true";
   const newPassword = String(formData.get("password") ?? "").trim();
+  const assignedCityId = String(formData.get("assignedCityId") ?? "").trim() || null;
+  const subZone = String(formData.get("subZone") ?? "").trim() || null;
 
   if (!firstName || !lastName || !email || !newRole) {
     redirect(`/equipe/${userId}/edit?error=missing`);
@@ -48,6 +50,8 @@ export async function updateCollaboratorAction(formData: FormData): Promise<void
     phone: phone || null,
     role: newRole,
     active,
+    assignedCityId: newRole === "LIVREUR" ? assignedCityId : null,
+    subZone: newRole === "LIVREUR" ? subZone : null,
   };
 
   if (newPassword) {

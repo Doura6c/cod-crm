@@ -112,6 +112,11 @@ export type Expense = Prisma.ExpenseModel
  */
 export type Notification = Prisma.NotificationModel
 /**
+ * Model TeamRequest
+ * 
+ */
+export type TeamRequest = Prisma.TeamRequestModel
+/**
  * Model Setting
  * 
  */

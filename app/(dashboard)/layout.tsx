@@ -51,7 +51,7 @@ export default async function DashboardLayout({
 
   const currentUser = userId ? await prisma.user.findUnique({ where: { id: userId }, select: { avatarUrl: true } }) : null;
 
-  const [confirmCount, attenteCount, totalCount, livraisonCount, notifCount, crmSetting] = await Promise.all([
+  const [confirmCount, attenteCount, totalCount, livraisonCount, notifCount, crmSetting, pendingRequestCount] = await Promise.all([
     prisma.order.count({
       where: {
         status: "NOUVEAU",
@@ -76,6 +76,9 @@ export default async function DashboardLayout({
     isAdmin
       ? prisma.setting.findUnique({ where: { key: "crm_active" } })
       : Promise.resolve(null),
+    isAdmin
+      ? (prisma as any).teamRequest.count({ where: { status: "PENDING" } })
+      : Promise.resolve(0),
   ]);
 
   const crmIsActive = crmSetting?.value !== "false";
@@ -91,6 +94,7 @@ export default async function DashboardLayout({
           crmIsActive={crmIsActive}
           counts={{ confirmation: confirmCount, attente: attenteCount, commandes: totalCount, livraisons: livraisonCount }}
           notificationCount={notifCount}
+          pendingRequestCount={pendingRequestCount as number}
         />
         <div className="flex-1 ml-64 flex flex-col min-h-screen">
           <main className="flex-1 overflow-auto">{children}</main>

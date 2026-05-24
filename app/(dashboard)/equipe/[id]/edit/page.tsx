@@ -29,8 +29,13 @@ export default async function EditCollaboratorPage({
   const { id } = await params;
   const { error } = await searchParams;
 
-  const user = await prisma.user.findUnique({ where: { id } });
+  const [user, cities] = await Promise.all([
+    prisma.user.findUnique({ where: { id } }),
+    prisma.city.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } }),
+  ]);
   if (!user) redirect("/equipe");
+
+  const isLivreur = user.role === "LIVREUR";
 
   const errors: Record<string, string> = {
     missing: "Tous les champs obligatoires doivent être remplis.",
@@ -137,6 +142,34 @@ export default async function EditCollaboratorPage({
               />
               <p className="text-xs text-slate-400 mt-1">Laissez vide pour conserver le mot de passe actuel. Min. 6 caractères.</p>
             </div>
+
+            {/* Zone d'affectation — livreurs uniquement */}
+            {(isLivreur || user.role === "LIVREUR") && (
+              <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700/40 rounded-xl p-4 space-y-3">
+                <p className="text-xs font-bold text-amber-700 dark:text-amber-400 uppercase tracking-wide">📍 Zone d'affectation livreur</p>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Ville / Zone de livraison</label>
+                  <select name="assignedCityId" defaultValue={user.assignedCityId ?? ""} className="input">
+                    <option value="">— Non assigné —</option>
+                    {cities.map((c) => (
+                      <option key={c.id} value={c.id}>{c.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                    Sous-zone / Commune <span className="text-xs font-normal text-slate-400">(Conakry uniquement)</span>
+                  </label>
+                  <input
+                    name="subZone"
+                    defaultValue={user.subZone ?? ""}
+                    className="input"
+                    placeholder="Ex: Ratoma, Kaloum, Matam..."
+                  />
+                  <p className="text-xs text-slate-400 mt-1">Le livreur peut aussi renseigner ce champ depuis son profil.</p>
+                </div>
+              </div>
+            )}
 
             <div className="flex items-center gap-3 pt-4 border-t border-slate-100 dark:border-slate-700">
               <button
