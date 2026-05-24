@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { useState } from "react";
+import { CrmToggleButton } from "./CrmToggleButton";
 import {
   BarChart3,
   Users,
@@ -25,7 +26,9 @@ import {
 interface SidebarProps {
   userName: string;
   userRole?: string;
+  isSuperAdmin?: boolean;
   avatarUrl?: string | null;
+  crmIsActive?: boolean;
   counts?: { confirmation?: number; attente?: number; commandes?: number; livraisons?: number };
   notificationCount?: number;
 }
@@ -36,6 +39,8 @@ const ROLE_LABEL: Record<string, string> = {
   AGENT: "Agent",
   LIVREUR: "Livreur",
 };
+
+const SUPER_ADMIN_LABEL = "Super Administrateur";
 
 function hasAccess(role: string | undefined, allowed: string[]): boolean {
   if (!role) return false;
@@ -51,7 +56,7 @@ type NavItem = {
   roles?: string[]; // si défini, seuls ces rôles peuvent voir cet item
 };
 
-export function Sidebar({ userName, userRole, avatarUrl, counts = {}, notificationCount = 0 }: SidebarProps) {
+export function Sidebar({ userName, userRole, isSuperAdmin = false, avatarUrl, crmIsActive = true, counts = {}, notificationCount = 0 }: SidebarProps) {
   const pathname = usePathname();
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({
     commandes: true,
@@ -190,6 +195,18 @@ export function Sidebar({ userName, userRole, avatarUrl, counts = {}, notificati
         })}
       </nav>
 
+      {/* Bouton suspension CRM — Admin seulement */}
+      {userRole === "ADMIN" && (
+        <div className="px-1 pb-1 border-t border-white/10 pt-2">
+          {!crmIsActive && (
+            <div className="mx-3 mb-2 px-3 py-1.5 rounded-lg bg-red-500/20 border border-red-500/30 text-xs text-red-300 text-center font-semibold">
+              ⚠️ CRM SUSPENDU
+            </div>
+          )}
+          <CrmToggleButton isActive={crmIsActive} />
+        </div>
+      )}
+
       <div className="border-t border-white/10 p-4">
         <Link href="/profil" className="flex items-center gap-3 mb-3 hover:bg-white/5 rounded-xl p-2 -mx-2 transition group">
           <div className="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-white/20 transition" style={{ "--tw-ring-color": "var(--acc-400)" } as any}>
@@ -204,7 +221,13 @@ export function Sidebar({ userName, userRole, avatarUrl, counts = {}, notificati
           </div>
           <div className="flex-1 min-w-0">
             <div className="text-sm font-semibold truncate transition group-hover:opacity-80">{userName}</div>
-            <div className="text-xs text-blue-200">{userRole ? ROLE_LABEL[userRole] ?? userRole : "Utilisateur"}</div>
+            <div className="text-xs flex items-center gap-1" style={{ color: isSuperAdmin ? "var(--acc-400)" : undefined }}>
+              {isSuperAdmin ? (
+                <><span>👑</span> {SUPER_ADMIN_LABEL}</>
+              ) : (
+                <span className="text-blue-200">{userRole ? ROLE_LABEL[userRole] ?? userRole : "Utilisateur"}</span>
+              )}
+            </div>
           </div>
           <span className="text-white/30 text-xs transition group-hover:opacity-100" style={{ color: "var(--acc-400)" }}>✏️</span>
         </Link>
