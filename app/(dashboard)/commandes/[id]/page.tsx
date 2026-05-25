@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { can } from "@/lib/rbac";
 import { PageHeader } from "@/components/PageHeader";
 import { formatGNF, formatDateTime, statusBadge } from "@/lib/utils";
-import { logCallAction, assignDeliveryAction, reassignAgentAction, toggleDeliveryFeeAction } from "./actions";
+import { logCallAction, assignDeliveryAction, reassignAgentAction, toggleDeliveryFeeAction, reprocessReturnAction } from "./actions";
 import { ConfirmationScript } from "@/components/ConfirmationScript";
 import {
   Phone,
@@ -72,6 +72,17 @@ export default async function OrderDetailPage({
 
   if (!order) notFound();
 
+  // Détection doublon : autres commandes actives pour ce client
+  const activeStatuses = ["NOUVEAU", "REPORTE", "PDR", "INJOIGNABLE", "CONFIRME"];
+  const doublons = await prisma.order.findMany({
+    where: {
+      id: { not: id },
+      customerId: order.customerId,
+      status: { in: activeStatuses },
+    },
+    select: { id: true, code: true, status: true, createdAt: true },
+  });
+
   // Si AGENT, vérifier que la commande lui est affectée
   if (userRole === "AGENT" && order.assignedAgentId !== userId) {
     redirect("/commandes/confirmation");
@@ -93,7 +104,55 @@ export default async function OrderDetailPage({
           </Link>
         }
       />
-      <div className="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-7xl">
+      <div className="p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-7xl">
+
+        {/* ── Alerte BLACKLIST ── */}
+        {(order.customer as any).blacklisted && (
+          <div className="lg:col-span-3 bg-red-50 border-2 border-red-400 rounded-xl p-4 flex items-start gap-3">
+            <span className="text-2xl">⛔</span>
+            <div>
+              <div className="font-bold text-red-700 text-base">CLIENT BLACKLISTÉ</div>
+              <div className="text-sm text-red-600 mt-0.5">
+                Ce client est sur la liste noire.
+                {(order.customer as any).blacklistReason && (
+                  <span> Raison : <strong>{(order.customer as any).blacklistReason}</strong></span>
+                )}
+              </div>
+              <div className="text-xs text-red-500 mt-1">⚠️ Traiter avec précaution — ne pas confirmer sans vérification</div>
+            </div>
+          </div>
+        )}
+
+        {/* ── Alerte DOUBLON ── */}
+        {doublons.length > 0 && (
+          <div className="lg:col-span-3 bg-orange-50 border-2 border-orange-400 rounded-xl p-4 flex items-start gap-3">
+            <span className="text-2xl">⚠️</span>
+            <div className="flex-1">
+              <div className="font-bold text-orange-700 text-base">
+                DOUBLON DÉTECTÉ — {doublons.length} autre{doublons.length > 1 ? "s" : ""} commande{doublons.length > 1 ? "s" : ""} active{doublons.length > 1 ? "s" : ""} pour ce client
+              </div>
+              <div className="text-sm text-orange-600 mt-1">
+                Vérifiez avant de confirmer pour éviter les livraisons multiples.
+              </div>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {doublons.map((d) => {
+                  const b = statusBadge(d.status);
+                  return (
+                    <Link
+                      key={d.id}
+                      href={`/commandes/${d.id}`}
+                      className="inline-flex items-center gap-1.5 bg-white border border-orange-300 text-orange-800 hover:bg-orange-100 px-3 py-1 rounded-full text-xs font-semibold transition"
+                    >
+                      <span>{d.code}</span>
+                      <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${b.color}`}>{b.label}</span>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Colonne principale */}
         <div className="lg:col-span-2 space-y-6">
           {/* Infos client */}
@@ -237,27 +296,48 @@ export default async function OrderDetailPage({
               </button>
             </form>
 
-            {/* Liste des appels */}
+            {/* Timeline des appels */}
             {order.callLogs.length === 0 ? (
-              <div className="text-center text-slate-500 py-6 text-sm">
-                Aucun appel enregistré.
+              <div className="text-center text-slate-400 py-8 text-sm flex flex-col items-center gap-2">
+                <PhoneCall className="w-8 h-8 opacity-30" />
+                Aucun appel enregistré pour cette commande.
               </div>
             ) : (
-              <div className="space-y-2">
-                {order.callLogs.map((c) => {
-                  const out = OUTCOME_LABELS[c.outcome] ?? { label: c.outcome, color: "bg-slate-100" };
-                  return (
-                    <div key={c.id} className="border border-slate-200 rounded p-3 text-sm">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className={`badge ${out.color}`}>{out.label}</span>
-                        <span className="text-xs text-slate-500">
-                          {formatDateTime(c.createdAt)} — {c.agent.firstName} {c.agent.lastName}
-                        </span>
+              <div className="relative pl-6">
+                {/* Ligne verticale */}
+                <div className="absolute left-2.5 top-2 bottom-2 w-0.5 bg-slate-200" />
+                <div className="space-y-4">
+                  {order.callLogs.map((c, i) => {
+                    const out = OUTCOME_LABELS[c.outcome] ?? { label: c.outcome, color: "bg-slate-100 text-slate-700" };
+                    const dotColor =
+                      c.outcome === "CONFIRMED" ? "bg-emerald-500 ring-emerald-200" :
+                      c.outcome === "CANCELLED" ? "bg-red-500 ring-red-200" :
+                      c.outcome === "REPORTED" ? "bg-purple-500 ring-purple-200" :
+                      c.outcome === "ANSWERED" ? "bg-sky-500 ring-sky-200" :
+                      "bg-slate-400 ring-slate-200";
+                    return (
+                      <div key={c.id} className="relative flex gap-4">
+                        {/* Dot */}
+                        <div className={`absolute -left-6 mt-1 w-4 h-4 rounded-full border-2 border-white ring-2 flex-shrink-0 z-10 ${dotColor}`} />
+                        {/* Contenu */}
+                        <div className="flex-1 bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm shadow-sm">
+                          <div className="flex items-center flex-wrap gap-2 mb-1">
+                            <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${out.color}`}>{out.label}</span>
+                            <span className="text-xs text-slate-400 ml-auto">{formatDateTime(c.createdAt)}</span>
+                          </div>
+                          <div className="text-xs text-slate-500 font-medium">
+                            👤 {c.agent.firstName} {c.agent.lastName}
+                          </div>
+                          {c.note && (
+                            <div className="mt-2 text-slate-700 text-sm bg-white border border-slate-200 rounded-lg px-3 py-2 italic">
+                              &ldquo;{c.note}&rdquo;
+                            </div>
+                          )}
+                        </div>
                       </div>
-                      {c.note && <div className="text-slate-700 text-sm mt-1">{c.note}</div>}
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
             )}
           </div>
@@ -449,6 +529,28 @@ export default async function OrderDetailPage({
                   Retourné le {formatDateTime(order.delivery.deliveredAt)}
                 </div>
               )}
+            </div>
+          )}
+
+          {/* Re-traiter un retour — ADMIN/MANAGER */}
+          {canReassignAgent && order.status === "RETOURNE" && (
+            <div className="bg-orange-50 border-2 border-orange-300 rounded-lg p-4">
+              <div className="text-sm font-bold text-orange-800 mb-2 flex items-center gap-2">
+                <Truck className="w-4 h-4" /> Re-lancer cette commande ?
+              </div>
+              <p className="text-xs text-orange-700 mb-3">
+                Remettra la commande en statut <strong>NOUVEAU</strong> pour une nouvelle tentative de livraison.
+              </p>
+              <form action={reprocessReturnAction}>
+                <input type="hidden" name="orderId" value={order.id} />
+                <button
+                  type="submit"
+                  className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold px-4 py-2.5 rounded-lg text-sm transition"
+                  onClick={(e) => { if (!confirm("Remettre cette commande en NOUVEAU pour re-traitement ?")) e.preventDefault(); }}
+                >
+                  🔄 Re-lancer la commande
+                </button>
+              </form>
             </div>
           )}
 

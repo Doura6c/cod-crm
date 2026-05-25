@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { Sidebar } from "@/components/Sidebar";
 import { prisma } from "@/lib/prisma";
 import { getSidebarCounts } from "@/lib/layoutCache";
+import { GlobalSearch } from "@/components/GlobalSearch";
 
 export default async function DashboardLayout({
   children,
@@ -83,9 +84,13 @@ export default async function DashboardLayout({
       />
       {/* lg:ml-64 : sur desktop on décale le contenu ; sur mobile la sidebar est un overlay */}
       <div className="flex-1 lg:ml-64 flex flex-col min-h-screen min-w-0">
-        {/* Barre mobile : espace pour le bouton hamburger fixe (visible uniquement sur petit écran) */}
-        <div className="lg:hidden h-14 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 flex-shrink-0 flex items-center px-16 shadow-sm">
-          <span className="text-sm font-bold text-slate-700 dark:text-slate-200">HelpMeProcess COD</span>
+        {/* Topbar desktop + mobile avec recherche globale */}
+        <div className="sticky top-0 z-20 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 flex-shrink-0 flex items-center gap-3 px-4 py-2.5 shadow-sm">
+          {/* Espace hamburger mobile */}
+          <div className="lg:hidden w-10 flex-shrink-0" />
+          <div className="flex-1">
+            <GlobalSearch />
+          </div>
         </div>
         <main className="flex-1 overflow-auto">{children}</main>
       </div>

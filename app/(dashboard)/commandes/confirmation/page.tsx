@@ -6,6 +6,8 @@ import { OrderActions } from "@/components/OrderActions";
 import { OrderTable } from "@/components/OrderTable";
 import { StatusTabs } from "@/components/StatusTabs";
 import { TeamStatus } from "@/components/TeamStatus";
+import Link from "next/link";
+import { Bell, Phone } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -29,7 +31,11 @@ export default async function ConfirmationPage({
     ? { status: { in: ["PDR", "INJOIGNABLE"] } }
     : { status: currentStatus };
 
-  const [orders, nouveauCount, reporteCount, pdrCount, boutiques, cities, agents, reportedTotal, pdrTotal] = await Promise.all([
+  // Reportés à rappeler AUJOURD'HUI
+  const todayStart = new Date(); todayStart.setHours(0, 0, 0, 0);
+  const todayEnd   = new Date(); todayEnd.setHours(23, 59, 59, 999);
+
+  const [orders, nouveauCount, reporteCount, pdrCount, boutiques, cities, agents, reportedTotal, pdrTotal, rappelsAujourdHui] = await Promise.all([
     prisma.order.findMany({
       where: { ...statusFilter, ...agentFilter },
       include: {
@@ -53,6 +59,16 @@ export default async function ConfirmationPage({
     }),
     prisma.order.count({ where: { status: "REPORTE", ...agentFilter } }),
     prisma.order.count({ where: { status: { in: ["PDR", "INJOIGNABLE"] }, ...agentFilter } }),
+    // Rappels du jour : commandes REPORTÉES avec reportDate = aujourd'hui
+    prisma.order.findMany({
+      where: {
+        status: "REPORTE",
+        reportDate: { gte: todayStart, lte: todayEnd },
+        ...agentFilter,
+      },
+      include: { customer: true, boutique: true, city: true },
+      orderBy: { reportDate: "asc" },
+    }),
   ]);
 
   // Statut "en ligne" basé sur une activité récente (commande traitée dans les 30 dernières minutes)
@@ -79,7 +95,44 @@ export default async function ConfirmationPage({
           { label: `${pdrTotal} PDR & INJOIGNABLE`, color: "bg-red-500 text-white" },
         ]}
       />
-      <div className="p-6">
+      <div className="p-4 lg:p-6">
+
+        {/* ── Bannière rappels du jour ── */}
+        {rappelsAujourdHui.length > 0 && (
+          <div className="mb-5 bg-amber-50 border-2 border-amber-400 rounded-2xl p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <Bell className="w-5 h-5 text-amber-600" />
+              <span className="font-bold text-amber-800 text-base">
+                🔔 {rappelsAujourdHui.length} rappel{rappelsAujourdHui.length > 1 ? "s" : ""} à faire AUJOURD&apos;HUI
+              </span>
+            </div>
+            <div className="flex flex-col gap-2">
+              {rappelsAujourdHui.map((o) => (
+                <Link
+                  key={o.id}
+                  href={`/commandes/${o.id}`}
+                  className="flex items-center justify-between bg-white border border-amber-200 rounded-xl px-4 py-2.5 hover:bg-amber-50 transition"
+                >
+                  <div>
+                    <span className="font-semibold text-slate-800 text-sm">{o.customer.fullName}</span>
+                    <span className="text-xs text-slate-500 ml-2">{o.code}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-slate-500">{o.boutique.name}</span>
+                    <a
+                      href={`tel:${o.customer.phone}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="inline-flex items-center gap-1 bg-sky-500 text-white text-xs px-2.5 py-1 rounded-lg hover:bg-sky-600"
+                    >
+                      <Phone className="w-3 h-3" /> {o.customer.phone}
+                    </a>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
         <TeamStatus agents={teamAgents} />
         <OrderFilters
           boutiques={boutiques}

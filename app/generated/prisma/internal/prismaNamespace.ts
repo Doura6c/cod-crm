@@ -1688,6 +1688,9 @@ export const CustomerScalarFieldEnum = {
   cityId: 'cityId',
   commune: 'commune',
   notes: 'notes',
+  blacklisted: 'blacklisted',
+  blacklistReason: 'blacklistReason',
+  blacklistedAt: 'blacklistedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

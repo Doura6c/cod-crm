@@ -53,21 +53,26 @@ model Boutique {
 
 // ============ CLIENTS FINAUX (acheteurs) ============
 model Customer {
-  id        String   @id @default(cuid())
-  fullName  String
-  phone     String
-  altPhone  String?
-  address   String?
-  cityId    String?
-  city      City?    @relation(fields: [cityId], references: [id])
-  commune   String?
-  notes     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id               String    @id @default(cuid())
+  fullName         String
+  phone            String
+  altPhone         String?
+  address          String?
+  cityId           String?
+  city             City?     @relation(fields: [cityId], references: [id])
+  commune          String?
+  notes            String?
+  // ── Blacklist ──
+  blacklisted      Boolean   @default(false)
+  blacklistReason  String?
+  blacklistedAt    DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 
   orders Order[]
 
   @@index([phone])
+  @@index([blacklisted])
 }
 
 // ============ VILLES ET ZONES LIVRAISON ============

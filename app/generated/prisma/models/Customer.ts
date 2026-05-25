@@ -33,6 +33,9 @@ export type CustomerMinAggregateOutputType = {
   cityId: string | null
   commune: string | null
   notes: string | null
+  blacklisted: boolean | null
+  blacklistReason: string | null
+  blacklistedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -46,6 +49,9 @@ export type CustomerMaxAggregateOutputType = {
   cityId: string | null
   commune: string | null
   notes: string | null
+  blacklisted: boolean | null
+  blacklistReason: string | null
+  blacklistedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -59,6 +65,9 @@ export type CustomerCountAggregateOutputType = {
   cityId: number
   commune: number
   notes: number
+  blacklisted: number
+  blacklistReason: number
+  blacklistedAt: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -74,6 +83,9 @@ export type CustomerMinAggregateInputType = {
   cityId?: true
   commune?: true
   notes?: true
+  blacklisted?: true
+  blacklistReason?: true
+  blacklistedAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -87,6 +99,9 @@ export type CustomerMaxAggregateInputType = {
   cityId?: true
   commune?: true
   notes?: true
+  blacklisted?: true
+  blacklistReason?: true
+  blacklistedAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -100,6 +115,9 @@ export type CustomerCountAggregateInputType = {
   cityId?: true
   commune?: true
   notes?: true
+  blacklisted?: true
+  blacklistReason?: true
+  blacklistedAt?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -186,6 +204,9 @@ export type CustomerGroupByOutputType = {
   cityId: string | null
   commune: string | null
   notes: string | null
+  blacklisted: boolean
+  blacklistReason: string | null
+  blacklistedAt: Date | null
   createdAt: Date
   updatedAt: Date
   _count: CustomerCountAggregateOutputType | null
@@ -220,6 +241,9 @@ export type CustomerWhereInput = {
   cityId?: Prisma.StringNullableFilter<"Customer"> | string | null
   commune?: Prisma.StringNullableFilter<"Customer"> | string | null
   notes?: Prisma.StringNullableFilter<"Customer"> | string | null
+  blacklisted?: Prisma.BoolFilter<"Customer"> | boolean
+  blacklistReason?: Prisma.StringNullableFilter<"Customer"> | string | null
+  blacklistedAt?: Prisma.DateTimeNullableFilter<"Customer"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
   city?: Prisma.XOR<Prisma.CityNullableScalarRelationFilter, Prisma.CityWhereInput> | null
@@ -235,6 +259,9 @@ export type CustomerOrderByWithRelationInput = {
   cityId?: Prisma.SortOrderInput | Prisma.SortOrder
   commune?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
+  blacklisted?: Prisma.SortOrder
+  blacklistReason?: Prisma.SortOrderInput | Prisma.SortOrder
+  blacklistedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   city?: Prisma.CityOrderByWithRelationInput
@@ -253,6 +280,9 @@ export type CustomerWhereUniqueInput = Prisma.AtLeast<{
   cityId?: Prisma.StringNullableFilter<"Customer"> | string | null
   commune?: Prisma.StringNullableFilter<"Customer"> | string | null
   notes?: Prisma.StringNullableFilter<"Customer"> | string | null
+  blacklisted?: Prisma.BoolFilter<"Customer"> | boolean
+  blacklistReason?: Prisma.StringNullableFilter<"Customer"> | string | null
+  blacklistedAt?: Prisma.DateTimeNullableFilter<"Customer"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
   city?: Prisma.XOR<Prisma.CityNullableScalarRelationFilter, Prisma.CityWhereInput> | null
@@ -268,6 +298,9 @@ export type CustomerOrderByWithAggregationInput = {
   cityId?: Prisma.SortOrderInput | Prisma.SortOrder
   commune?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
+  blacklisted?: Prisma.SortOrder
+  blacklistReason?: Prisma.SortOrderInput | Prisma.SortOrder
+  blacklistedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.CustomerCountOrderByAggregateInput
@@ -287,6 +320,9 @@ export type CustomerScalarWhereWithAggregatesInput = {
   cityId?: Prisma.StringNullableWithAggregatesFilter<"Customer"> | string | null
   commune?: Prisma.StringNullableWithAggregatesFilter<"Customer"> | string | null
   notes?: Prisma.StringNullableWithAggregatesFilter<"Customer"> | string | null
+  blacklisted?: Prisma.BoolWithAggregatesFilter<"Customer"> | boolean
+  blacklistReason?: Prisma.StringNullableWithAggregatesFilter<"Customer"> | string | null
+  blacklistedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Customer"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Customer"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Customer"> | Date | string
 }
@@ -299,6 +335,9 @@ export type CustomerCreateInput = {
   address?: string | null
   commune?: string | null
   notes?: string | null
+  blacklisted?: boolean
+  blacklistReason?: string | null
+  blacklistedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   city?: Prisma.CityCreateNestedOneWithoutCustomersInput
@@ -314,6 +353,9 @@ export type CustomerUncheckedCreateInput = {
   cityId?: string | null
   commune?: string | null
   notes?: string | null
+  blacklisted?: boolean
+  blacklistReason?: string | null
+  blacklistedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerInput
@@ -327,6 +369,9 @@ export type CustomerUpdateInput = {
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commune?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  blacklisted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  blacklistReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  blacklistedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   city?: Prisma.CityUpdateOneWithoutCustomersNestedInput
@@ -342,6 +387,9 @@ export type CustomerUncheckedUpdateInput = {
   cityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commune?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  blacklisted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  blacklistReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  blacklistedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   orders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerNestedInput
@@ -356,6 +404,9 @@ export type CustomerCreateManyInput = {
   cityId?: string | null
   commune?: string | null
   notes?: string | null
+  blacklisted?: boolean
+  blacklistReason?: string | null
+  blacklistedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -368,6 +419,9 @@ export type CustomerUpdateManyMutationInput = {
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commune?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  blacklisted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  blacklistReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  blacklistedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -381,6 +435,9 @@ export type CustomerUncheckedUpdateManyInput = {
   cityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commune?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  blacklisted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  blacklistReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  blacklistedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -394,6 +451,9 @@ export type CustomerCountOrderByAggregateInput = {
   cityId?: Prisma.SortOrder
   commune?: Prisma.SortOrder
   notes?: Prisma.SortOrder
+  blacklisted?: Prisma.SortOrder
+  blacklistReason?: Prisma.SortOrder
+  blacklistedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -407,6 +467,9 @@ export type CustomerMaxOrderByAggregateInput = {
   cityId?: Prisma.SortOrder
   commune?: Prisma.SortOrder
   notes?: Prisma.SortOrder
+  blacklisted?: Prisma.SortOrder
+  blacklistReason?: Prisma.SortOrder
+  blacklistedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -420,6 +483,9 @@ export type CustomerMinOrderByAggregateInput = {
   cityId?: Prisma.SortOrder
   commune?: Prisma.SortOrder
   notes?: Prisma.SortOrder
+  blacklisted?: Prisma.SortOrder
+  blacklistReason?: Prisma.SortOrder
+  blacklistedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -437,6 +503,10 @@ export type CustomerOrderByRelationAggregateInput = {
 export type CustomerScalarRelationFilter = {
   is?: Prisma.CustomerWhereInput
   isNot?: Prisma.CustomerWhereInput
+}
+
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
 }
 
 export type CustomerCreateNestedManyWithoutCityInput = {
@@ -503,6 +573,9 @@ export type CustomerCreateWithoutCityInput = {
   address?: string | null
   commune?: string | null
   notes?: string | null
+  blacklisted?: boolean
+  blacklistReason?: string | null
+  blacklistedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   orders?: Prisma.OrderCreateNestedManyWithoutCustomerInput
@@ -516,6 +589,9 @@ export type CustomerUncheckedCreateWithoutCityInput = {
   address?: string | null
   commune?: string | null
   notes?: string | null
+  blacklisted?: boolean
+  blacklistReason?: string | null
+  blacklistedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerInput
@@ -559,6 +635,9 @@ export type CustomerScalarWhereInput = {
   cityId?: Prisma.StringNullableFilter<"Customer"> | string | null
   commune?: Prisma.StringNullableFilter<"Customer"> | string | null
   notes?: Prisma.StringNullableFilter<"Customer"> | string | null
+  blacklisted?: Prisma.BoolFilter<"Customer"> | boolean
+  blacklistReason?: Prisma.StringNullableFilter<"Customer"> | string | null
+  blacklistedAt?: Prisma.DateTimeNullableFilter<"Customer"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
 }
@@ -571,6 +650,9 @@ export type CustomerCreateWithoutOrdersInput = {
   address?: string | null
   commune?: string | null
   notes?: string | null
+  blacklisted?: boolean
+  blacklistReason?: string | null
+  blacklistedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   city?: Prisma.CityCreateNestedOneWithoutCustomersInput
@@ -585,6 +667,9 @@ export type CustomerUncheckedCreateWithoutOrdersInput = {
   cityId?: string | null
   commune?: string | null
   notes?: string | null
+  blacklisted?: boolean
+  blacklistReason?: string | null
+  blacklistedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -613,6 +698,9 @@ export type CustomerUpdateWithoutOrdersInput = {
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commune?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  blacklisted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  blacklistReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  blacklistedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   city?: Prisma.CityUpdateOneWithoutCustomersNestedInput
@@ -627,6 +715,9 @@ export type CustomerUncheckedUpdateWithoutOrdersInput = {
   cityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commune?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  blacklisted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  blacklistReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  blacklistedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -639,6 +730,9 @@ export type CustomerCreateManyCityInput = {
   address?: string | null
   commune?: string | null
   notes?: string | null
+  blacklisted?: boolean
+  blacklistReason?: string | null
+  blacklistedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -651,6 +745,9 @@ export type CustomerUpdateWithoutCityInput = {
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commune?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  blacklisted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  blacklistReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  blacklistedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   orders?: Prisma.OrderUpdateManyWithoutCustomerNestedInput
@@ -664,6 +761,9 @@ export type CustomerUncheckedUpdateWithoutCityInput = {
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commune?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  blacklisted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  blacklistReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  blacklistedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   orders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerNestedInput
@@ -677,6 +777,9 @@ export type CustomerUncheckedUpdateManyWithoutCityInput = {
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commune?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  blacklisted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  blacklistReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  blacklistedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -721,6 +824,9 @@ export type CustomerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   cityId?: boolean
   commune?: boolean
   notes?: boolean
+  blacklisted?: boolean
+  blacklistReason?: boolean
+  blacklistedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   city?: boolean | Prisma.Customer$cityArgs<ExtArgs>
@@ -737,6 +843,9 @@ export type CustomerSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   cityId?: boolean
   commune?: boolean
   notes?: boolean
+  blacklisted?: boolean
+  blacklistReason?: boolean
+  blacklistedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   city?: boolean | Prisma.Customer$cityArgs<ExtArgs>
@@ -751,6 +860,9 @@ export type CustomerSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   cityId?: boolean
   commune?: boolean
   notes?: boolean
+  blacklisted?: boolean
+  blacklistReason?: boolean
+  blacklistedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   city?: boolean | Prisma.Customer$cityArgs<ExtArgs>
@@ -765,11 +877,14 @@ export type CustomerSelectScalar = {
   cityId?: boolean
   commune?: boolean
   notes?: boolean
+  blacklisted?: boolean
+  blacklistReason?: boolean
+  blacklistedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type CustomerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "fullName" | "phone" | "altPhone" | "address" | "cityId" | "commune" | "notes" | "createdAt" | "updatedAt", ExtArgs["result"]["customer"]>
+export type CustomerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "fullName" | "phone" | "altPhone" | "address" | "cityId" | "commune" | "notes" | "blacklisted" | "blacklistReason" | "blacklistedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["customer"]>
 export type CustomerInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   city?: boolean | Prisma.Customer$cityArgs<ExtArgs>
   orders?: boolean | Prisma.Customer$ordersArgs<ExtArgs>
@@ -797,6 +912,9 @@ export type $CustomerPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     cityId: string | null
     commune: string | null
     notes: string | null
+    blacklisted: boolean
+    blacklistReason: string | null
+    blacklistedAt: Date | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["customer"]>
@@ -1232,6 +1350,9 @@ export interface CustomerFieldRefs {
   readonly cityId: Prisma.FieldRef<"Customer", 'String'>
   readonly commune: Prisma.FieldRef<"Customer", 'String'>
   readonly notes: Prisma.FieldRef<"Customer", 'String'>
+  readonly blacklisted: Prisma.FieldRef<"Customer", 'Boolean'>
+  readonly blacklistReason: Prisma.FieldRef<"Customer", 'String'>
+  readonly blacklistedAt: Prisma.FieldRef<"Customer", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Customer", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Customer", 'DateTime'>
 }

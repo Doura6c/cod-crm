@@ -77,6 +77,29 @@ export async function POST(req: Request) {
       }
     }
 
+    // Détection client blacklisté
+    const existingCustCheck = await prisma.customer.findFirst({
+      where: { phone: customer.phone },
+      select: { blacklisted: true, blacklistReason: true },
+    });
+    if (existingCustCheck?.blacklisted) {
+      return NextResponse.json({
+        error: "Client blacklisté",
+        reason: existingCustCheck.blacklistReason ?? "Client sur liste noire",
+        code: "BLACKLISTED_CUSTOMER",
+      }, { status: 403, headers: CORS });
+    }
+
+    // Détection doublon actif (commande en cours pour ce numéro)
+    const activeStatuses = ["NOUVEAU", "REPORTE", "PDR", "INJOIGNABLE", "CONFIRME"];
+    const activeDuplicate = await prisma.order.findFirst({
+      where: {
+        status: { in: activeStatuses },
+        customer: { phone: customer.phone },
+      },
+      select: { id: true, code: true, status: true },
+    });
+
     // Ville (création si nécessaire)
     let cityId: string | null = null;
     if (customer.city) {
@@ -161,7 +184,13 @@ export async function POST(req: Request) {
       include: { items: true },
     });
 
-    return NextResponse.json({ ok: true, order }, { status: 201, headers: CORS });
+    return NextResponse.json({
+      ok: true,
+      order,
+      warning: activeDuplicate
+        ? `Ce client a déjà une commande active : ${activeDuplicate.code} (${activeDuplicate.status})`
+        : undefined,
+    }, { status: 201, headers: CORS });
   } catch (err: any) {
     // Ne jamais exposer les détails d'erreur internes en production
     console.error("[webhook] error:", err);

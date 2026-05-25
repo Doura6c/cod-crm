@@ -10,8 +10,9 @@ import Link from "next/link";
 import {
   Search, Filter, Plus, ChevronRight, Phone, MapPin,
   Package, Clock, CheckCircle, XCircle, Truck,
-  TrendingUp, AlertCircle
+  TrendingUp, AlertCircle, Download
 } from "lucide-react";
+import { BulkSelectController } from "@/components/BulkSelectController";
 
 export const dynamic = "force-dynamic";
 
@@ -134,12 +135,30 @@ export default async function ListePage({
           ...(livrésCount > 0 ? [{ label: `${livrésCount} livrées`, color: "bg-emerald-600 text-white" }] : []),
         ]}
         actions={
-          <Link
-            href="/commandes/nouvelle"
-            className="inline-flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded text-sm font-medium"
-          >
-            <Plus className="w-4 h-4" /> Nouvelle commande
-          </Link>
+          <div className="flex items-center gap-2 flex-wrap">
+            {!isAgent && (
+              <>
+                <a
+                  href={`/api/export/orders?status=${status}&from=${from}&to=${to}`}
+                  className="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition"
+                >
+                  <Download className="w-4 h-4" /> Export Excel
+                </a>
+                <Link
+                  href="/commandes/import"
+                  className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition"
+                >
+                  <Plus className="w-4 h-4" /> Import CSV
+                </Link>
+              </>
+            )}
+            <Link
+              href="/commandes/nouvelle"
+              className="inline-flex items-center gap-2 bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition"
+            >
+              <Plus className="w-4 h-4" /> Nouvelle
+            </Link>
+          </div>
         }
       />
 
@@ -291,9 +310,12 @@ export default async function ListePage({
               <table className="w-full text-sm">
                 <thead className="bg-slate-50 text-xs text-slate-500 uppercase font-semibold border-b border-slate-200">
                   <tr>
-                    <th className="px-3 py-3 text-left w-6">
-                      <input type="checkbox" className="rounded" />
-                    </th>
+                    {!isAgent && (
+                      <th className="px-3 py-3 text-left w-6">
+                        <input type="checkbox" data-select-all className="rounded cursor-pointer" />
+                      </th>
+                    )}
+                    {isAgent && <th className="px-3 py-3 w-0" />}
                     <th className="px-3 py-3 text-left">Commande</th>
                     <th className="px-3 py-3 text-left">Client / Ville</th>
                     <th className="px-3 py-3 text-left">Produits</th>
@@ -311,7 +333,13 @@ export default async function ListePage({
                     return (
                       <tr key={o.id} className="hover:bg-slate-50/80 group">
                         <td className="px-3 py-3">
-                          <input type="checkbox" className="rounded" />
+                          {!isAgent && (
+                            <input
+                              type="checkbox"
+                              data-order-id={o.id}
+                              className="rounded cursor-pointer"
+                            />
+                          )}
                         </td>
                         <td className="px-3 py-3">
                           <div className="font-mono text-xs font-bold text-sky-700">{o.code}</div>
@@ -407,6 +435,9 @@ export default async function ListePage({
           )}
         </div>
       </div>
+
+      {/* Barre de sélection multiple — visible quand des commandes sont sélectionnées */}
+      {!isAgent && <BulkSelectController agents={agents} />}
     </div>
   );
 }

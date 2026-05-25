@@ -182,6 +182,40 @@ export async function toggleDeliveryFeeAction(formData: FormData): Promise<void>
   redirect(`/commandes/${orderId}`);
 }
 
+/**
+ * Re-traiter une commande retournée : remettre en NOUVEAU pour re-livraison
+ * ADMIN / MANAGER uniquement
+ */
+export async function reprocessReturnAction(formData: FormData): Promise<void> {
+  const session = await auth();
+  const role = (session?.user as any)?.role;
+  if (role !== "ADMIN" && role !== "MANAGER") redirect("/");
+
+  const orderId = String(formData.get("orderId") ?? "");
+  if (!orderId) return;
+
+  await prisma.$transaction(async (tx) => {
+    // Remettre la commande en NOUVEAU
+    await tx.order.update({
+      where: { id: orderId },
+      data: {
+        status: "NOUVEAU",
+        validatedById: null,
+        validatedAt: null,
+      },
+    });
+    // Annuler la livraison existante
+    await tx.delivery.updateMany({
+      where: { orderId, status: { in: ["ASSIGNED", "EN_ROUTE"] } },
+      data: { status: "RETOURNE" },
+    });
+  });
+
+  revalidatePath(`/commandes/${orderId}`);
+  revalidatePath("/commandes/confirmation");
+  redirect(`/commandes/${orderId}`);
+}
+
 export async function updateOrderStatusAction(formData: FormData): Promise<void> {
   const session = await auth();
   const role = (session?.user as any)?.role;

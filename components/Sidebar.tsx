@@ -21,6 +21,7 @@ import {
   Truck,
   Bell,
   Trophy,
+  Medal,
   Menu,
   X,
 } from "lucide-react";
@@ -103,12 +104,15 @@ export function Sidebar({
         { href: "/commandes/confirmation", label: "Confirmation", icon: ClipboardList, badge: counts.confirmation },
         { href: "/commandes/attente", label: "En attente validation", icon: ClipboardList, badge: counts.attente, roles: ["ADMIN", "MANAGER"] },
         { href: "/commandes/liste", label: "Mes commandes", icon: ClipboardList, roles: ["AGENT"] },
+        { href: "/commandes/rappels", label: "Rappels planifiés", icon: ClipboardList },
         { href: "/commandes/annule", label: "Annulé-terminé", icon: ClipboardList },
+        { href: "/commandes/import", label: "Import CSV", icon: ClipboardList, roles: ["ADMIN", "MANAGER"] },
         { href: "/commandes/liste", label: "Commandes", icon: ClipboardList, badge: counts.commandes, roles: ["ADMIN", "MANAGER"] },
       ],
     },
     { href: "/livraisons", label: "Livraisons", icon: Truck, badge: counts.livraisons, roles: ["ADMIN", "MANAGER", "LIVREUR"] },
     { href: "/performance", label: "Ma performance", icon: Trophy, roles: ["AGENT", "LIVREUR"] },
+    { href: "/leaderboard", label: "Classement", icon: Medal, roles: ["ADMIN", "MANAGER", "AGENT", "LIVREUR"] },
     {
       href: "/factures",
       label: "Factures",
