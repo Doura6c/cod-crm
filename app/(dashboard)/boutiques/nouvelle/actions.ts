@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { randomKey } from "@/lib/utils";
+import { clean } from "@/lib/validate";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
@@ -19,47 +20,44 @@ export async function createBoutiqueAction(formData: FormData): Promise<void> {
   const session = await auth();
   if (!session?.user) redirect("/login");
 
-  const name        = String(formData.get("name") ?? "").trim();
-  const sellerName  = String(formData.get("sellerName") ?? "").trim();
-  const sellerPhone = String(formData.get("sellerPhone") ?? "").trim() || null;
-  const sellerEmail = String(formData.get("sellerEmail") ?? "").trim() || null;
-  const website     = String(formData.get("website") ?? "").trim() || null;
+  // Identité
+  const name           = clean(formData.get("name"), 100);
+  const sellerName     = clean(formData.get("sellerName"), 100);
+  const sellerPhone    = clean(formData.get("sellerPhone"), 20) || null;
+  const sellerEmail    = clean(formData.get("sellerEmail"), 100) || null;
+  const website        = clean(formData.get("website"), 200) || null;
 
-  // Nouveaux champs onboarding — stockés en note structurée
-  const productType       = String(formData.get("productType") ?? "").trim();
-  const volumeEstimate    = String(formData.get("volumeEstimate") ?? "").trim();
-  const deliveryZone      = String(formData.get("deliveryZone") ?? "").trim();
-  const deliveryPaidBy    = String(formData.get("deliveryPaidBy") ?? "").trim();
-  const processingTime    = String(formData.get("processingTime") ?? "").trim();
-  const returnPolicy      = String(formData.get("returnPolicy") ?? "").trim();
-  const productCount      = String(formData.get("productCount") ?? "").trim();
-  const integrationMethod = String(formData.get("integrationMethod") ?? "").trim();
-  const sellerWhatsapp    = String(formData.get("sellerWhatsapp") ?? "").trim();
-  const notes             = String(formData.get("notes") ?? "").trim();
+  if (!name || !sellerName) redirect("/boutiques/nouvelle?error=missing");
 
-  if (!name || !sellerName) {
-    redirect("/boutiques/nouvelle?error=missing");
-  }
+  // Stratégie COD
+  const avgOrderValue       = clean(formData.get("avgOrderValue"), 20);
+  const volumeEstimate      = clean(formData.get("volumeEstimate"), 50);
+  const confirmationTarget  = clean(formData.get("confirmationTarget"), 10);
+  const processingTime      = clean(formData.get("processingTime"), 20);
+  const deliveryZone        = clean(formData.get("deliveryZone"), 50);
+  const deliveryPaidBy      = clean(formData.get("deliveryPaidBy"), 20);
+  const returnPolicy        = clean(formData.get("returnPolicy"), 50);
+  const maxCallAttempts     = clean(formData.get("maxCallAttempts"), 5);
 
+  // Marketing
+  const trafficSource   = clean(formData.get("trafficSource"), 50);
+  const adBudget        = clean(formData.get("adBudget"), 20);
+  const fbPixelId       = clean(formData.get("fbPixelId"), 50);
+  const currentPromo    = clean(formData.get("currentPromo"), 200);
+  const targetAudience  = clean(formData.get("targetAudience"), 200);
+  const sellerWhatsapp  = clean(formData.get("sellerWhatsapp"), 20);
+  const productType     = clean(formData.get("productType"), 50);
+  const productCount    = clean(formData.get("productCount"), 50);
+
+  // Script agents
+  const salesArguments  = clean(formData.get("salesArguments"), 1000);
+  const salesObjections = clean(formData.get("salesObjections"), 1000);
+  const notes           = clean(formData.get("notes"), 500);
+
+  // Slug unique
   let slug = slugify(name);
   const existing = await prisma.boutique.findUnique({ where: { slug } });
   if (existing) slug = `${slug}-${Math.floor(Math.random() * 1000)}`;
-
-  // Construire une note structurée avec toutes les infos onboarding
-  const onboardingNote = [
-    productType       && `Type produits: ${productType}`,
-    volumeEstimate    && `Volume estimé: ${volumeEstimate}`,
-    deliveryZone      && `Zones livraison: ${deliveryZone}`,
-    deliveryPaidBy    && `Livraison payée par: ${deliveryPaidBy}`,
-    processingTime    && `Délai traitement: ${processingTime}`,
-    returnPolicy      && `Politique retour: ${returnPolicy}`,
-    productCount      && `Nb références: ${productCount}`,
-    integrationMethod && `Intégration: ${integrationMethod}`,
-    sellerWhatsapp    && `WhatsApp vendeur: ${sellerWhatsapp}`,
-    notes             && `Notes: ${notes}`,
-  ]
-    .filter(Boolean)
-    .join(" | ");
 
   const boutique = await prisma.boutique.create({
     data: {
@@ -73,15 +71,26 @@ export async function createBoutiqueAction(formData: FormData): Promise<void> {
     },
   });
 
-  // Sauvegarder les infos onboarding dans un setting dédié
-  if (onboardingNote) {
-    await prisma.setting.upsert({
-      where: { key: `boutique_onboarding_${boutique.id}` },
-      create: { key: `boutique_onboarding_${boutique.id}`, value: onboardingNote },
-      update: { value: onboardingNote },
-    });
-  }
+  // Stocker toutes les infos onboarding dans les settings
+  const onboardingData = JSON.stringify({
+    // COD
+    avgOrderValue, volumeEstimate, confirmationTarget,
+    processingTime, deliveryZone, deliveryPaidBy,
+    returnPolicy, maxCallAttempts,
+    // Marketing
+    trafficSource, adBudget, fbPixelId,
+    currentPromo, targetAudience,
+    sellerWhatsapp, productType, productCount,
+    // Script
+    salesArguments, salesObjections, notes,
+  });
+
+  await prisma.setting.upsert({
+    where: { key: `boutique_onboarding_${boutique.id}` },
+    create: { key: `boutique_onboarding_${boutique.id}`, value: onboardingData },
+    update: { value: onboardingData },
+  });
 
   revalidatePath("/boutiques");
-  redirect(`/boutiques/${boutique.id}/integration`);
+  redirect(`/boutiques/${boutique.id}/importer`);
 }
