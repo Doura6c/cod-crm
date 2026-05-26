@@ -4,7 +4,7 @@ import { redirect, notFound } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { PageHeader } from "@/components/PageHeader";
-import { CheckCircle2, Copy, ExternalLink, Globe, Key, ArrowLeft } from "lucide-react";
+import { CheckCircle2, Copy, ExternalLink, Globe, Key, ArrowLeft, Download } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -216,12 +216,28 @@ async function envoyerCommande(commande) {
           </pre>
         </div>
 
+        {/* Télécharger le catalogue produits */}
+        <div className="bg-white border border-slate-200 rounded-lg p-6">
+          <h2 className="text-lg font-semibold text-slate-800 mb-2">Catalogue produits (Excel)</h2>
+          <p className="text-sm text-slate-600 mb-4">
+            Téléchargez le catalogue produits de cette boutique au format Excel. Le vendeur peut le
+            remplir et vous le renvoyer pour import dans le CRM.
+          </p>
+          <a
+            href={`/api/export/products?boutiqueId=${boutique.id}`}
+            className="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-5 py-2.5 rounded-lg transition"
+          >
+            <Download className="w-4 h-4" />
+            Télécharger catalogue Excel
+          </a>
+        </div>
+
         <div className="flex items-center gap-3 pt-2">
           <Link
             href="/boutiques/nouvelle"
             className="bg-sky-500 hover:bg-sky-600 text-white font-semibold px-5 py-2.5 rounded-lg"
           >
-            + Créer une autre boutique
+            + Intégrer une autre boutique
           </Link>
           <Link
             href="/boutiques"
