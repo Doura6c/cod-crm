@@ -28,7 +28,7 @@ export default function ImporterClient({ boutiqueId, boutiqueName }: { boutiqueI
   const [result, setResult] = useState<ImportResult | null>(null);
   const [dragOver, setDragOver] = useState(false);
 
-  // ── Parsing Excel côté client avec xlsx (chargé dynamiquement) ──
+  // Colonnes : SKU | Nom | Catégorie | Prix | Ancien Prix | Description | Stock | Badge | Photo URL
   async function parseFile(file: File) {
     const XLSX = await import("xlsx");
     const buf = await file.arrayBuffer();
@@ -36,7 +36,9 @@ export default function ImporterClient({ boutiqueId, boutiqueName }: { boutiqueI
     const ws = wb.Sheets[wb.SheetNames[0]];
     const data: any[][] = XLSX.utils.sheet_to_json(ws, { header: 1, defval: "" });
 
-    // Ignorer ligne 1 (en-têtes) + lignes vides
+    const EXEMPLES = ["MASQUE-LED-01", "EPILATEUR-02", "MONTRE-GPS-03", "ROBOT-COOK-04"];
+    const CATS_OK  = ["beaute", "maison", "tech", "sante", "mode", "enfant"];
+
     const parsed: ProductRow[] = [];
     for (let i = 1; i < data.length; i++) {
       const row = data[i];
@@ -44,22 +46,21 @@ export default function ImporterClient({ boutiqueId, boutiqueName }: { boutiqueI
 
       const sku         = String(row[0] ?? "").trim();
       const name        = String(row[1] ?? "").trim();
-      const description = String(row[2] ?? "").trim();
+      const category    = String(row[2] ?? "").trim().toLowerCase();
       const price       = parseFloat(String(row[3] ?? "0").replace(/\s/g, ""));
       const costPrice   = row[4] !== "" ? parseFloat(String(row[4]).replace(/\s/g, "")) : null;
-      const stock       = parseInt(String(row[5] ?? "0"), 10) || 0;
-      const stockAlert  = parseInt(String(row[6] ?? "5"), 10) || 5;
-      const category    = String(row[7] ?? "").trim();
+      const description = String(row[5] ?? "").trim();
+      const stockVal    = String(row[6] ?? "OUI").trim().toUpperCase();
+      const stock       = stockVal === "NON" ? 0 : 1;
+      const stockAlert  = 5;
       const imageUrl    = String(row[8] ?? "").trim();
-      const tags        = String(row[9] ?? "").trim();
 
       const errors: string[] = [];
       if (!sku) errors.push("SKU manquant");
       if (!name) errors.push("Nom manquant");
       if (isNaN(price) || price <= 0) errors.push("Prix invalide");
-      if (sku === "MASQUE-LED-01" || sku === "EPILATEUR-02" || sku === "MONTRE-GPS-03") {
-        errors.push("Ligne d'exemple — à supprimer");
-      }
+      if (category && !CATS_OK.includes(category)) errors.push(`Catégorie invalide: "${category}"`);
+      if (EXEMPLES.includes(sku)) errors.push("Ligne d'exemple — à supprimer");
 
       parsed.push({ sku, name, description, price, costPrice, stock, stockAlert, imageUrl, category, tags, _valid: errors.length === 0, _errors: errors });
     }
