@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/PageHeader";
 import { formatGNF, formatDateTime, statusBadge } from "@/lib/utils";
 import { logCallAction, assignDeliveryAction, reassignAgentAction, toggleDeliveryFeeAction, reprocessReturnAction } from "./actions";
 import { ConfirmationScript } from "@/components/ConfirmationScript";
+import { WhatsAppSuiviButton } from "@/components/WhatsAppSuiviButton";
 import {
   Phone,
   MapPin,
@@ -249,6 +250,19 @@ export default async function OrderDetailPage({
               city={order.city?.name ?? null}
               address={order.customer.address ?? null}
               status={order.status}
+              orderId={order.id}
+            />
+          )}
+
+          {/* Bouton WhatsApp lien suivi — commande confirmée ou en livraison */}
+          {["CONFIRME", "EN_LIVRAISON"].includes(order.status) && (
+            <WhatsAppSuiviButton
+              phone={order.customer.phone}
+              customerName={order.customer.fullName}
+              orderCode={order.code}
+              orderId={order.id}
+              status={order.status}
+              boutiqueName={order.boutique.name}
             />
           )}
 

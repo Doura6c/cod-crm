@@ -15,6 +15,7 @@ interface Props {
   city?: string | null;
   address?: string | null;
   status: string;                 // statut actuel de la commande
+  orderId?: string;               // pour le lien de suivi
 }
 
 /** Numéro international compatible WhatsApp/SMS (retire tout sauf chiffres, ajoute "224" si manque) */
@@ -28,9 +29,11 @@ function formatGNF(n: number) {
   return Math.round(n).toLocaleString("fr-FR") + " GNF";
 }
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://cod-crm-zeta.vercel.app";
+
 export function ConfirmationScript({
   customerName, customerPhone, orderCode, boutiqueName, agentName,
-  productsLabel, totalAmount, deliveryDays, city, address, status,
+  productsLabel, totalAmount, deliveryDays, city, address, status, orderId,
 }: Props) {
   const [open, setOpen] = useState(true);
   const [copied, setCopied] = useState(false);
@@ -57,9 +60,11 @@ Confirmez-vous cette commande ?
 Merci pour votre confiance avec HelpMeProcess. À très bientôt !`;
 
   // Messages pré-remplis (SMS + WhatsApp) selon le statut
+  const trackingLink = orderId ? `${SITE_URL}/suivi/${orderId}` : null;
+
   const smsBody = isInjoignable
     ? `Bonjour ${customerName}, nous essayons de vous joindre concernant votre commande ${orderCode} chez ${boutiqueName}. Merci de nous rappeler au plus vite. HelpMeProcess COD`
-    : `Bonjour ${customerName}, votre commande ${orderCode} chez ${boutiqueName} d'un montant de ${formatGNF(totalAmount)} est en cours de traitement. Nous vous contacterons prochainement. HelpMeProcess COD`;
+    : `Bonjour ${customerName}, votre commande ${orderCode} chez ${boutiqueName} d'un montant de ${formatGNF(totalAmount)} est en cours de traitement. Nous vous contacterons prochainement.${trackingLink ? `\n\nSuivez votre commande : ${trackingLink}` : ""} HelpMeProcess COD`;
 
   const waBody = smsBody;
 
