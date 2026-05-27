@@ -5,6 +5,7 @@ import { auth } from "@/auth";
 import { can } from "@/lib/rbac";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { createNotification, notifyRole } from "@/lib/notifications";
 
 export async function updateDeliveryStatusAction(formData: FormData): Promise<void> {
   const session = await auth();
@@ -35,6 +36,9 @@ export async function updateDeliveryStatusAction(formData: FormData): Promise<vo
     newStatus === "LIVRE"
       ? (actualAmount && actualAmount > 0 ? actualAmount : delivery.order.totalAmount)
       : null;
+
+  const orderCode = delivery.order.code;
+  const agentWhoConfirmed = (delivery.order as any).validatedById as string | null;
 
   await prisma.$transaction(async (tx) => {
     await tx.delivery.update({
@@ -96,6 +100,27 @@ export async function updateDeliveryStatusAction(formData: FormData): Promise<vo
 
   revalidatePath("/livraisons");
   revalidatePath(`/commandes/${orderId}`);
+
+  // Notifications livraison confirmée
+  if (newStatus === "LIVRE") {
+    const notifData = { orderId, orderCode };
+    await notifyRole(["ADMIN", "MANAGER"], {
+      type: "ORDER_DELIVERED",
+      title: `🚚 Commande ${orderCode} livrée`,
+      message: `Montant encaissé : ${Math.round(amountCollected ?? 0).toLocaleString("fr-FR")} GNF`,
+      data: notifData,
+    });
+    if (agentWhoConfirmed) {
+      await createNotification({
+        userId: agentWhoConfirmed,
+        type: "ORDER_DELIVERED",
+        title: `🎉 Commande ${orderCode} livrée`,
+        message: `La commande que vous avez confirmée a bien été livrée`,
+        data: notifData,
+      });
+    }
+  }
+
   redirect("/livraisons");
 }
 
@@ -176,6 +201,29 @@ export async function updateDeliveryMobileAction(
 
     revalidatePath("/livraisons");
     revalidatePath(`/commandes/${orderId}`);
+
+    // Notifications livraison mobile
+    if (status === "LIVRE") {
+      const code = delivery.order.code;
+      const agentId = (delivery.order as any).validatedById as string | null;
+      const notifData = { orderId, orderCode: code };
+      await notifyRole(["ADMIN", "MANAGER"], {
+        type: "ORDER_DELIVERED",
+        title: `🚚 Commande ${code} livrée`,
+        message: `Montant encaissé : ${Math.round(amountCollected ?? 0).toLocaleString("fr-FR")} GNF`,
+        data: notifData,
+      });
+      if (agentId) {
+        await createNotification({
+          userId: agentId,
+          type: "ORDER_DELIVERED",
+          title: `🎉 Commande ${code} livrée`,
+          message: `La commande que vous avez confirmée a bien été livrée`,
+          data: notifData,
+        });
+      }
+    }
+
     return { ok: true };
   } catch (e: any) {
     return { ok: false, error: e?.message ?? "Erreur serveur" };

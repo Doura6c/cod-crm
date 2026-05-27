@@ -5,6 +5,7 @@ import { auth } from "@/auth";
 import { can } from "@/lib/rbac";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { createNotification, notifyRole } from "@/lib/notifications";
 
 const ALLOWED_OUTCOMES = ["ANSWERED", "NO_ANSWER", "BUSY", "REPORTED", "CONFIRMED", "CANCELLED", "INJOIGNABLE"];
 
@@ -79,8 +80,14 @@ export async function logCallAction(formData: FormData): Promise<void> {
   revalidatePath(`/commandes/${orderId}`);
   revalidatePath("/commandes/confirmation");
 
-  // Feedback visuel : si confirmé, rediriger vers la liste avec un message de succès
+  // Notification superviseurs : commande confirmée, en attente livreur
   if (outcome === "CONFIRMED") {
+    await notifyRole(["ADMIN", "MANAGER"], {
+      type: "ORDER_CONFIRMED",
+      title: `✅ Commande ${order.code} confirmée`,
+      message: `En attente d'affectation d'un livreur`,
+      data: { orderId: order.id, orderCode: order.code },
+    });
     redirect(`/commandes/confirmation?confirmed=${encodeURIComponent(order.code)}`);
   }
   redirect(`/commandes/${orderId}`);
@@ -145,10 +152,22 @@ export async function reassignAgentAction(formData: FormData): Promise<void> {
 
   if (!orderId) return;
 
-  await prisma.order.update({
+  const updatedOrder = await prisma.order.update({
     where: { id: orderId },
     data: { assignedAgentId: agentId || null },
+    select: { code: true },
   });
+
+  // Notifier l'agent assigné
+  if (agentId) {
+    await createNotification({
+      userId: agentId,
+      type: "ORDER_ASSIGNED",
+      title: `📋 Nouvelle commande assignée`,
+      message: `La commande ${updatedOrder.code} vous a été affectée — appelez le client`,
+      data: { orderId, orderCode: updatedOrder.code },
+    });
+  }
 
   revalidatePath(`/commandes/${orderId}`);
   revalidatePath("/commandes/confirmation");
@@ -295,6 +314,17 @@ export async function expressCallAction(
 
     revalidatePath("/commandes/confirmation");
     revalidatePath("/commandes/express");
+
+    // Notification superviseurs si confirmé
+    if (outcome === "CONFIRMED") {
+      await notifyRole(["ADMIN", "MANAGER"], {
+        type: "ORDER_CONFIRMED",
+        title: `✅ Commande ${order.code} confirmée`,
+        message: `En attente d'affectation d'un livreur`,
+        data: { orderId: order.id, orderCode: order.code },
+      });
+    }
+
     return { ok: true, orderCode: order.code };
   } catch (e: any) {
     return { ok: false, error: e?.message ?? "Erreur serveur" };

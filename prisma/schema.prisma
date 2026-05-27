@@ -277,12 +277,15 @@ model Expense {
 // ============ NOTIFICATIONS ADMIN ============
 model Notification {
   id        String   @id @default(cuid())
-  type      String   // AMOUNT_EDITED, etc.
+  userId    String?  // null = admin global, sinon ciblé à un utilisateur précis
+  type      String   // ORDER_ASSIGNED, ORDER_CONFIRMED, ORDER_DELIVERED, AMOUNT_EDITED, etc.
   title     String
   message   String
-  data      String?  // JSON optionnel
+  data      String?  // JSON optionnel { orderId, ... }
   readAt    DateTime?
   createdAt DateTime @default(now())
+
+  @@index([userId, readAt])
 }
 
 // ============ DEMANDES D'ÉQUIPE (superviseur → admin) ============

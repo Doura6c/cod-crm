@@ -7,10 +7,11 @@ import { redirect } from "next/navigation";
 
 export async function markAllReadAction(): Promise<void> {
   const session = await auth();
-  if ((session?.user as any)?.role !== "ADMIN") redirect("/");
+  const userId = (session?.user as any)?.id;
+  if (!userId) redirect("/login");
 
   await prisma.notification.updateMany({
-    where: { readAt: null },
+    where: { userId, readAt: null },
     data: { readAt: new Date() },
   });
 
@@ -19,13 +20,14 @@ export async function markAllReadAction(): Promise<void> {
 
 export async function markOneReadAction(formData: FormData): Promise<void> {
   const session = await auth();
-  if ((session?.user as any)?.role !== "ADMIN") redirect("/");
+  const userId = (session?.user as any)?.id;
+  if (!userId) redirect("/login");
 
   const id = String(formData.get("id") ?? "");
   if (!id) return;
 
-  await prisma.notification.update({
-    where: { id },
+  await prisma.notification.updateMany({
+    where: { id, userId, readAt: null },
     data: { readAt: new Date() },
   });
 

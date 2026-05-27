@@ -44,9 +44,10 @@ async function fetchSidebarCounts(userId: string, userRole: string): Promise<Sid
             },
           })
         : Promise.resolve(0),
-      isAdmin
-        ? prisma.notification.count({ where: { readAt: null } })
-        : Promise.resolve(0),
+      // Chaque utilisateur voit ses propres notifs non lues
+      prisma.notification.count({
+        where: { readAt: null, userId },
+      }),
       isAdmin
         ? prisma.setting.findUnique({ where: { key: "crm_active" } })
         : Promise.resolve(null),

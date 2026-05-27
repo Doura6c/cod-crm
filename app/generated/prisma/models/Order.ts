@@ -51,6 +51,7 @@ export type OrderMinAggregateOutputType = {
   callCount: number | null
   notes: string | null
   reportDate: Date | null
+  deliveryScheduledAt: Date | null
   assignedAgentId: string | null
   validatedById: string | null
   validatedAt: Date | null
@@ -74,6 +75,7 @@ export type OrderMaxAggregateOutputType = {
   callCount: number | null
   notes: string | null
   reportDate: Date | null
+  deliveryScheduledAt: Date | null
   assignedAgentId: string | null
   validatedById: string | null
   validatedAt: Date | null
@@ -97,6 +99,7 @@ export type OrderCountAggregateOutputType = {
   callCount: number
   notes: number
   reportDate: number
+  deliveryScheduledAt: number
   assignedAgentId: number
   validatedById: number
   validatedAt: number
@@ -134,6 +137,7 @@ export type OrderMinAggregateInputType = {
   callCount?: true
   notes?: true
   reportDate?: true
+  deliveryScheduledAt?: true
   assignedAgentId?: true
   validatedById?: true
   validatedAt?: true
@@ -157,6 +161,7 @@ export type OrderMaxAggregateInputType = {
   callCount?: true
   notes?: true
   reportDate?: true
+  deliveryScheduledAt?: true
   assignedAgentId?: true
   validatedById?: true
   validatedAt?: true
@@ -180,6 +185,7 @@ export type OrderCountAggregateInputType = {
   callCount?: true
   notes?: true
   reportDate?: true
+  deliveryScheduledAt?: true
   assignedAgentId?: true
   validatedById?: true
   validatedAt?: true
@@ -290,6 +296,7 @@ export type OrderGroupByOutputType = {
   callCount: number
   notes: string | null
   reportDate: Date | null
+  deliveryScheduledAt: Date | null
   assignedAgentId: string | null
   validatedById: string | null
   validatedAt: Date | null
@@ -336,6 +343,7 @@ export type OrderWhereInput = {
   callCount?: Prisma.IntFilter<"Order"> | number
   notes?: Prisma.StringNullableFilter<"Order"> | string | null
   reportDate?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
+  deliveryScheduledAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
   assignedAgentId?: Prisma.StringNullableFilter<"Order"> | string | null
   validatedById?: Prisma.StringNullableFilter<"Order"> | string | null
   validatedAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
@@ -368,6 +376,7 @@ export type OrderOrderByWithRelationInput = {
   callCount?: Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   reportDate?: Prisma.SortOrderInput | Prisma.SortOrder
+  deliveryScheduledAt?: Prisma.SortOrderInput | Prisma.SortOrder
   assignedAgentId?: Prisma.SortOrderInput | Prisma.SortOrder
   validatedById?: Prisma.SortOrderInput | Prisma.SortOrder
   validatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -403,6 +412,7 @@ export type OrderWhereUniqueInput = Prisma.AtLeast<{
   callCount?: Prisma.IntFilter<"Order"> | number
   notes?: Prisma.StringNullableFilter<"Order"> | string | null
   reportDate?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
+  deliveryScheduledAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
   assignedAgentId?: Prisma.StringNullableFilter<"Order"> | string | null
   validatedById?: Prisma.StringNullableFilter<"Order"> | string | null
   validatedAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
@@ -435,6 +445,7 @@ export type OrderOrderByWithAggregationInput = {
   callCount?: Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   reportDate?: Prisma.SortOrderInput | Prisma.SortOrder
+  deliveryScheduledAt?: Prisma.SortOrderInput | Prisma.SortOrder
   assignedAgentId?: Prisma.SortOrderInput | Prisma.SortOrder
   validatedById?: Prisma.SortOrderInput | Prisma.SortOrder
   validatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -466,6 +477,7 @@ export type OrderScalarWhereWithAggregatesInput = {
   callCount?: Prisma.IntWithAggregatesFilter<"Order"> | number
   notes?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
   reportDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
+  deliveryScheduledAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
   assignedAgentId?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
   validatedById?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
   validatedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
@@ -486,6 +498,7 @@ export type OrderCreateInput = {
   callCount?: number
   notes?: string | null
   reportDate?: Date | string | null
+  deliveryScheduledAt?: Date | string | null
   validatedAt?: Date | string | null
   deliveryPaidByClient?: boolean
   source?: string
@@ -516,6 +529,7 @@ export type OrderUncheckedCreateInput = {
   callCount?: number
   notes?: string | null
   reportDate?: Date | string | null
+  deliveryScheduledAt?: Date | string | null
   assignedAgentId?: string | null
   validatedById?: string | null
   validatedAt?: Date | string | null
@@ -540,6 +554,7 @@ export type OrderUpdateInput = {
   callCount?: Prisma.IntFieldUpdateOperationsInput | number
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryPaidByClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   source?: Prisma.StringFieldUpdateOperationsInput | string
@@ -570,6 +585,7 @@ export type OrderUncheckedUpdateInput = {
   callCount?: Prisma.IntFieldUpdateOperationsInput | number
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assignedAgentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -597,6 +613,7 @@ export type OrderCreateManyInput = {
   callCount?: number
   notes?: string | null
   reportDate?: Date | string | null
+  deliveryScheduledAt?: Date | string | null
   assignedAgentId?: string | null
   validatedById?: string | null
   validatedAt?: Date | string | null
@@ -617,6 +634,7 @@ export type OrderUpdateManyMutationInput = {
   callCount?: Prisma.IntFieldUpdateOperationsInput | number
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryPaidByClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   source?: Prisma.StringFieldUpdateOperationsInput | string
@@ -638,6 +656,7 @@ export type OrderUncheckedUpdateManyInput = {
   callCount?: Prisma.IntFieldUpdateOperationsInput | number
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assignedAgentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -671,6 +690,7 @@ export type OrderCountOrderByAggregateInput = {
   callCount?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   reportDate?: Prisma.SortOrder
+  deliveryScheduledAt?: Prisma.SortOrder
   assignedAgentId?: Prisma.SortOrder
   validatedById?: Prisma.SortOrder
   validatedAt?: Prisma.SortOrder
@@ -700,6 +720,7 @@ export type OrderMaxOrderByAggregateInput = {
   callCount?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   reportDate?: Prisma.SortOrder
+  deliveryScheduledAt?: Prisma.SortOrder
   assignedAgentId?: Prisma.SortOrder
   validatedById?: Prisma.SortOrder
   validatedAt?: Prisma.SortOrder
@@ -723,6 +744,7 @@ export type OrderMinOrderByAggregateInput = {
   callCount?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   reportDate?: Prisma.SortOrder
+  deliveryScheduledAt?: Prisma.SortOrder
   assignedAgentId?: Prisma.SortOrder
   validatedById?: Prisma.SortOrder
   validatedAt?: Prisma.SortOrder
@@ -1020,6 +1042,7 @@ export type OrderCreateWithoutAssignedAgentInput = {
   callCount?: number
   notes?: string | null
   reportDate?: Date | string | null
+  deliveryScheduledAt?: Date | string | null
   validatedAt?: Date | string | null
   deliveryPaidByClient?: boolean
   source?: string
@@ -1049,6 +1072,7 @@ export type OrderUncheckedCreateWithoutAssignedAgentInput = {
   callCount?: number
   notes?: string | null
   reportDate?: Date | string | null
+  deliveryScheduledAt?: Date | string | null
   validatedById?: string | null
   validatedAt?: Date | string | null
   deliveryPaidByClient?: boolean
@@ -1082,6 +1106,7 @@ export type OrderCreateWithoutValidatedByInput = {
   callCount?: number
   notes?: string | null
   reportDate?: Date | string | null
+  deliveryScheduledAt?: Date | string | null
   validatedAt?: Date | string | null
   deliveryPaidByClient?: boolean
   source?: string
@@ -1111,6 +1136,7 @@ export type OrderUncheckedCreateWithoutValidatedByInput = {
   callCount?: number
   notes?: string | null
   reportDate?: Date | string | null
+  deliveryScheduledAt?: Date | string | null
   assignedAgentId?: string | null
   validatedAt?: Date | string | null
   deliveryPaidByClient?: boolean
@@ -1166,6 +1192,7 @@ export type OrderScalarWhereInput = {
   callCount?: Prisma.IntFilter<"Order"> | number
   notes?: Prisma.StringNullableFilter<"Order"> | string | null
   reportDate?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
+  deliveryScheduledAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
   assignedAgentId?: Prisma.StringNullableFilter<"Order"> | string | null
   validatedById?: Prisma.StringNullableFilter<"Order"> | string | null
   validatedAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
@@ -1202,6 +1229,7 @@ export type OrderCreateWithoutBoutiqueInput = {
   callCount?: number
   notes?: string | null
   reportDate?: Date | string | null
+  deliveryScheduledAt?: Date | string | null
   validatedAt?: Date | string | null
   deliveryPaidByClient?: boolean
   source?: string
@@ -1230,6 +1258,7 @@ export type OrderUncheckedCreateWithoutBoutiqueInput = {
   callCount?: number
   notes?: string | null
   reportDate?: Date | string | null
+  deliveryScheduledAt?: Date | string | null
   assignedAgentId?: string | null
   validatedById?: string | null
   validatedAt?: Date | string | null
@@ -1280,6 +1309,7 @@ export type OrderCreateWithoutCustomerInput = {
   callCount?: number
   notes?: string | null
   reportDate?: Date | string | null
+  deliveryScheduledAt?: Date | string | null
   validatedAt?: Date | string | null
   deliveryPaidByClient?: boolean
   source?: string
@@ -1308,6 +1338,7 @@ export type OrderUncheckedCreateWithoutCustomerInput = {
   callCount?: number
   notes?: string | null
   reportDate?: Date | string | null
+  deliveryScheduledAt?: Date | string | null
   assignedAgentId?: string | null
   validatedById?: string | null
   validatedAt?: Date | string | null
@@ -1358,6 +1389,7 @@ export type OrderCreateWithoutCityInput = {
   callCount?: number
   notes?: string | null
   reportDate?: Date | string | null
+  deliveryScheduledAt?: Date | string | null
   validatedAt?: Date | string | null
   deliveryPaidByClient?: boolean
   source?: string
@@ -1386,6 +1418,7 @@ export type OrderUncheckedCreateWithoutCityInput = {
   callCount?: number
   notes?: string | null
   reportDate?: Date | string | null
+  deliveryScheduledAt?: Date | string | null
   assignedAgentId?: string | null
   validatedById?: string | null
   validatedAt?: Date | string | null
@@ -1436,6 +1469,7 @@ export type OrderCreateWithoutItemsInput = {
   callCount?: number
   notes?: string | null
   reportDate?: Date | string | null
+  deliveryScheduledAt?: Date | string | null
   validatedAt?: Date | string | null
   deliveryPaidByClient?: boolean
   source?: string
@@ -1465,6 +1499,7 @@ export type OrderUncheckedCreateWithoutItemsInput = {
   callCount?: number
   notes?: string | null
   reportDate?: Date | string | null
+  deliveryScheduledAt?: Date | string | null
   assignedAgentId?: string | null
   validatedById?: string | null
   validatedAt?: Date | string | null
@@ -1504,6 +1539,7 @@ export type OrderUpdateWithoutItemsInput = {
   callCount?: Prisma.IntFieldUpdateOperationsInput | number
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryPaidByClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   source?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1533,6 +1569,7 @@ export type OrderUncheckedUpdateWithoutItemsInput = {
   callCount?: Prisma.IntFieldUpdateOperationsInput | number
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assignedAgentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1556,6 +1593,7 @@ export type OrderCreateWithoutCallLogsInput = {
   callCount?: number
   notes?: string | null
   reportDate?: Date | string | null
+  deliveryScheduledAt?: Date | string | null
   validatedAt?: Date | string | null
   deliveryPaidByClient?: boolean
   source?: string
@@ -1585,6 +1623,7 @@ export type OrderUncheckedCreateWithoutCallLogsInput = {
   callCount?: number
   notes?: string | null
   reportDate?: Date | string | null
+  deliveryScheduledAt?: Date | string | null
   assignedAgentId?: string | null
   validatedById?: string | null
   validatedAt?: Date | string | null
@@ -1624,6 +1663,7 @@ export type OrderUpdateWithoutCallLogsInput = {
   callCount?: Prisma.IntFieldUpdateOperationsInput | number
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryPaidByClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   source?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1653,6 +1693,7 @@ export type OrderUncheckedUpdateWithoutCallLogsInput = {
   callCount?: Prisma.IntFieldUpdateOperationsInput | number
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assignedAgentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1676,6 +1717,7 @@ export type OrderCreateWithoutDeliveryInput = {
   callCount?: number
   notes?: string | null
   reportDate?: Date | string | null
+  deliveryScheduledAt?: Date | string | null
   validatedAt?: Date | string | null
   deliveryPaidByClient?: boolean
   source?: string
@@ -1705,6 +1747,7 @@ export type OrderUncheckedCreateWithoutDeliveryInput = {
   callCount?: number
   notes?: string | null
   reportDate?: Date | string | null
+  deliveryScheduledAt?: Date | string | null
   assignedAgentId?: string | null
   validatedById?: string | null
   validatedAt?: Date | string | null
@@ -1744,6 +1787,7 @@ export type OrderUpdateWithoutDeliveryInput = {
   callCount?: Prisma.IntFieldUpdateOperationsInput | number
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryPaidByClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   source?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1773,6 +1817,7 @@ export type OrderUncheckedUpdateWithoutDeliveryInput = {
   callCount?: Prisma.IntFieldUpdateOperationsInput | number
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assignedAgentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1796,6 +1841,7 @@ export type OrderCreateWithoutInvoiceInput = {
   callCount?: number
   notes?: string | null
   reportDate?: Date | string | null
+  deliveryScheduledAt?: Date | string | null
   validatedAt?: Date | string | null
   deliveryPaidByClient?: boolean
   source?: string
@@ -1825,6 +1871,7 @@ export type OrderUncheckedCreateWithoutInvoiceInput = {
   callCount?: number
   notes?: string | null
   reportDate?: Date | string | null
+  deliveryScheduledAt?: Date | string | null
   assignedAgentId?: string | null
   validatedById?: string | null
   validatedAt?: Date | string | null
@@ -1864,6 +1911,7 @@ export type OrderUpdateWithoutInvoiceInput = {
   callCount?: Prisma.IntFieldUpdateOperationsInput | number
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryPaidByClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   source?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1893,6 +1941,7 @@ export type OrderUncheckedUpdateWithoutInvoiceInput = {
   callCount?: Prisma.IntFieldUpdateOperationsInput | number
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assignedAgentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1919,6 +1968,7 @@ export type OrderCreateManyAssignedAgentInput = {
   callCount?: number
   notes?: string | null
   reportDate?: Date | string | null
+  deliveryScheduledAt?: Date | string | null
   validatedById?: string | null
   validatedAt?: Date | string | null
   deliveryPaidByClient?: boolean
@@ -1941,6 +1991,7 @@ export type OrderCreateManyValidatedByInput = {
   callCount?: number
   notes?: string | null
   reportDate?: Date | string | null
+  deliveryScheduledAt?: Date | string | null
   assignedAgentId?: string | null
   validatedAt?: Date | string | null
   deliveryPaidByClient?: boolean
@@ -1960,6 +2011,7 @@ export type OrderUpdateWithoutAssignedAgentInput = {
   callCount?: Prisma.IntFieldUpdateOperationsInput | number
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryPaidByClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   source?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1989,6 +2041,7 @@ export type OrderUncheckedUpdateWithoutAssignedAgentInput = {
   callCount?: Prisma.IntFieldUpdateOperationsInput | number
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryPaidByClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2015,6 +2068,7 @@ export type OrderUncheckedUpdateManyWithoutAssignedAgentInput = {
   callCount?: Prisma.IntFieldUpdateOperationsInput | number
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryPaidByClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2034,6 +2088,7 @@ export type OrderUpdateWithoutValidatedByInput = {
   callCount?: Prisma.IntFieldUpdateOperationsInput | number
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryPaidByClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   source?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2063,6 +2118,7 @@ export type OrderUncheckedUpdateWithoutValidatedByInput = {
   callCount?: Prisma.IntFieldUpdateOperationsInput | number
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assignedAgentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryPaidByClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2089,6 +2145,7 @@ export type OrderUncheckedUpdateManyWithoutValidatedByInput = {
   callCount?: Prisma.IntFieldUpdateOperationsInput | number
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assignedAgentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryPaidByClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -2110,6 +2167,7 @@ export type OrderCreateManyBoutiqueInput = {
   callCount?: number
   notes?: string | null
   reportDate?: Date | string | null
+  deliveryScheduledAt?: Date | string | null
   assignedAgentId?: string | null
   validatedById?: string | null
   validatedAt?: Date | string | null
@@ -2130,6 +2188,7 @@ export type OrderUpdateWithoutBoutiqueInput = {
   callCount?: Prisma.IntFieldUpdateOperationsInput | number
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryPaidByClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   source?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2158,6 +2217,7 @@ export type OrderUncheckedUpdateWithoutBoutiqueInput = {
   callCount?: Prisma.IntFieldUpdateOperationsInput | number
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assignedAgentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2184,6 +2244,7 @@ export type OrderUncheckedUpdateManyWithoutBoutiqueInput = {
   callCount?: Prisma.IntFieldUpdateOperationsInput | number
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assignedAgentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2206,6 +2267,7 @@ export type OrderCreateManyCustomerInput = {
   callCount?: number
   notes?: string | null
   reportDate?: Date | string | null
+  deliveryScheduledAt?: Date | string | null
   assignedAgentId?: string | null
   validatedById?: string | null
   validatedAt?: Date | string | null
@@ -2226,6 +2288,7 @@ export type OrderUpdateWithoutCustomerInput = {
   callCount?: Prisma.IntFieldUpdateOperationsInput | number
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryPaidByClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   source?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2254,6 +2317,7 @@ export type OrderUncheckedUpdateWithoutCustomerInput = {
   callCount?: Prisma.IntFieldUpdateOperationsInput | number
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assignedAgentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2280,6 +2344,7 @@ export type OrderUncheckedUpdateManyWithoutCustomerInput = {
   callCount?: Prisma.IntFieldUpdateOperationsInput | number
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assignedAgentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2302,6 +2367,7 @@ export type OrderCreateManyCityInput = {
   callCount?: number
   notes?: string | null
   reportDate?: Date | string | null
+  deliveryScheduledAt?: Date | string | null
   assignedAgentId?: string | null
   validatedById?: string | null
   validatedAt?: Date | string | null
@@ -2322,6 +2388,7 @@ export type OrderUpdateWithoutCityInput = {
   callCount?: Prisma.IntFieldUpdateOperationsInput | number
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   validatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deliveryPaidByClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   source?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2350,6 +2417,7 @@ export type OrderUncheckedUpdateWithoutCityInput = {
   callCount?: Prisma.IntFieldUpdateOperationsInput | number
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assignedAgentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2376,6 +2444,7 @@ export type OrderUncheckedUpdateManyWithoutCityInput = {
   callCount?: Prisma.IntFieldUpdateOperationsInput | number
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reportDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveryScheduledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assignedAgentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   validatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2439,6 +2508,7 @@ export type OrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   callCount?: boolean
   notes?: boolean
   reportDate?: boolean
+  deliveryScheduledAt?: boolean
   assignedAgentId?: boolean
   validatedById?: boolean
   validatedAt?: boolean
@@ -2472,6 +2542,7 @@ export type OrderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   callCount?: boolean
   notes?: boolean
   reportDate?: boolean
+  deliveryScheduledAt?: boolean
   assignedAgentId?: boolean
   validatedById?: boolean
   validatedAt?: boolean
@@ -2500,6 +2571,7 @@ export type OrderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   callCount?: boolean
   notes?: boolean
   reportDate?: boolean
+  deliveryScheduledAt?: boolean
   assignedAgentId?: boolean
   validatedById?: boolean
   validatedAt?: boolean
@@ -2528,6 +2600,7 @@ export type OrderSelectScalar = {
   callCount?: boolean
   notes?: boolean
   reportDate?: boolean
+  deliveryScheduledAt?: boolean
   assignedAgentId?: boolean
   validatedById?: boolean
   validatedAt?: boolean
@@ -2538,7 +2611,7 @@ export type OrderSelectScalar = {
   updatedAt?: boolean
 }
 
-export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "boutiqueId" | "customerId" | "cityId" | "status" | "subStatus" | "totalAmount" | "deliveryFee" | "callCount" | "notes" | "reportDate" | "assignedAgentId" | "validatedById" | "validatedAt" | "deliveryPaidByClient" | "source" | "externalRef" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
+export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "boutiqueId" | "customerId" | "cityId" | "status" | "subStatus" | "totalAmount" | "deliveryFee" | "callCount" | "notes" | "reportDate" | "deliveryScheduledAt" | "assignedAgentId" | "validatedById" | "validatedAt" | "deliveryPaidByClient" | "source" | "externalRef" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
 export type OrderInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   boutique?: boolean | Prisma.BoutiqueDefaultArgs<ExtArgs>
   customer?: boolean | Prisma.CustomerDefaultArgs<ExtArgs>
@@ -2592,6 +2665,7 @@ export type $OrderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     callCount: number
     notes: string | null
     reportDate: Date | null
+    deliveryScheduledAt: Date | null
     assignedAgentId: string | null
     validatedById: string | null
     validatedAt: Date | null
@@ -3044,6 +3118,7 @@ export interface OrderFieldRefs {
   readonly callCount: Prisma.FieldRef<"Order", 'Int'>
   readonly notes: Prisma.FieldRef<"Order", 'String'>
   readonly reportDate: Prisma.FieldRef<"Order", 'DateTime'>
+  readonly deliveryScheduledAt: Prisma.FieldRef<"Order", 'DateTime'>
   readonly assignedAgentId: Prisma.FieldRef<"Order", 'String'>
   readonly validatedById: Prisma.FieldRef<"Order", 'String'>
   readonly validatedAt: Prisma.FieldRef<"Order", 'DateTime'>

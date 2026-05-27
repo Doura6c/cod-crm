@@ -1755,6 +1755,7 @@ export const OrderScalarFieldEnum = {
   callCount: 'callCount',
   notes: 'notes',
   reportDate: 'reportDate',
+  deliveryScheduledAt: 'deliveryScheduledAt',
   assignedAgentId: 'assignedAgentId',
   validatedById: 'validatedById',
   validatedAt: 'validatedAt',
@@ -1874,6 +1875,7 @@ export type ExpenseScalarFieldEnum = (typeof ExpenseScalarFieldEnum)[keyof typeo
 
 export const NotificationScalarFieldEnum = {
   id: 'id',
+  userId: 'userId',
   type: 'type',
   title: 'title',
   message: 'message',

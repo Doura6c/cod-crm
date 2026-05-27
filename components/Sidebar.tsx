@@ -129,7 +129,7 @@ export function Sidebar({
       ],
     },
     { href: "/boutiques", label: "Boutiques", icon: FileText, roles: ["ADMIN", "MANAGER"] },
-    { href: "/notifications", label: "Notifications", icon: Bell, badge: notificationCount || undefined, roles: ["ADMIN"] },
+    { href: "/notifications", label: "Notifications", icon: Bell, badge: notificationCount || undefined, roles: ["ADMIN", "MANAGER", "AGENT", "LIVREUR"] },
     { href: "/parametres", label: "Paramètres", icon: Settings, roles: ["ADMIN"] },
   ];
 
