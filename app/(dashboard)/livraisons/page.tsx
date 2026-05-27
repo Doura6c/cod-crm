@@ -8,6 +8,7 @@ import { getHmpCommission } from "@/lib/settings";
 import { updateDeliveryStatusAction } from "./actions";
 import { ReturnButton } from "./ReturnButton";
 import { EditAmountForm } from "./EditAmountForm";
+import { LivreurMobileApp } from "@/components/LivreurMobileApp";
 import {
   MapPin, Phone, Package, CheckCircle, Truck, Clock,
   TrendingUp, RotateCcw, AlertTriangle, Info,
@@ -76,8 +77,51 @@ export default async function LivraisonsPage() {
       ? Math.round((totalDone / (totalDone + totalRetourne)) * 100)
       : null;
 
+  // Sérialiser les données pour le composant client mobile
+  const mobileDeliveries = deliveries
+    .filter((d) => d.status === "ASSIGNED")
+    .map((d) => ({
+      id: d.id,
+      status: d.status,
+      notes: d.notes,
+      order: {
+        id: d.order.id,
+        code: d.order.code,
+        totalAmount: d.order.totalAmount,
+        deliveryFee: d.order.deliveryFee,
+        notes: d.order.notes,
+        boutique: d.order.boutique ? { name: d.order.boutique.name } : null,
+        customer: d.order.customer
+          ? { fullName: d.order.customer.fullName, phone: d.order.customer.phone, address: d.order.customer.address ?? null }
+          : null,
+        city: d.order.city ? { name: d.order.city.name } : null,
+        items: d.order.items.map((item) => ({
+          id: item.id,
+          quantity: item.quantity,
+          subtotal: item.subtotal,
+          product: item.product ? { name: item.product.name } : null,
+        })),
+      },
+    }));
+
+  const session2 = await auth();
+  const currentUser = (session2?.user as any);
+  const livreurName = currentUser?.name ?? currentUser?.email ?? "Livreur";
+
   return (
-    <div>
+    <>
+      {/* ── Vue mobile LIVREUR uniquement (caché sur desktop) ── */}
+      {isLivreur && (
+        <div className="lg:hidden">
+          <LivreurMobileApp
+            initialDeliveries={mobileDeliveries}
+            livreurName={livreurName}
+          />
+        </div>
+      )}
+
+      {/* ── Vue desktop (toujours visible sur lg+, cachée sur mobile pour livreur) ── */}
+      <div className={isLivreur ? "hidden lg:block" : ""}>
       <PageHeader
         title={isLivreur ? "Mes livraisons" : "Gestion livraisons"}
         badges={[
@@ -271,8 +315,9 @@ export default async function LivraisonsPage() {
             </div>
           </div>
         )}
-      </div>
-    </div>
+      </div>{/* fin p-6 */}
+    </div>{/* fin desktop wrapper */}
+    </>
   );
 }
 

@@ -3,7 +3,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { PageHeader } from "@/components/PageHeader";
 import { formatGNF } from "@/lib/utils";
-import { getHmpCommission } from "@/lib/settings";
+import { getHmpCommission, getAgentPrime, getLivreurPrime } from "@/lib/settings";
 import { Users, Truck, TrendingUp, Award } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -38,7 +38,11 @@ export default async function CommissionsPage({
   const period: Period = (params.period as Period) || "month";
   const { start, label } = getPeriodRange(period);
 
-  const hmpCommission = await getHmpCommission();
+  const [hmpCommission, COMMISSION_AGENT_PER_CONFIRM, COMMISSION_LIVREUR_PER_DELIVERY] = await Promise.all([
+    getHmpCommission(),
+    getAgentPrime(),
+    getLivreurPrime(),
+  ]);
 
   const dateFilter = start ? { gte: start } : undefined;
 
@@ -70,8 +74,7 @@ export default async function CommissionsPage({
   const callsMap: Record<string, number> = {};
   agentTotalCalls.forEach((r) => { callsMap[r.agentId] = r._count.id; });
 
-  // Commission agent : 5000 GNF par commande confirmée (configurable)
-  const COMMISSION_AGENT_PER_CONFIRM = 5000;
+  // Commission agent : taux configurable depuis Paramètres
 
   const agentRows = agentConfirms
     .map((a) => {
@@ -121,8 +124,7 @@ export default async function CommissionsPage({
   const retoursMap: Record<string, number> = {};
   livreurRetours.forEach((r) => { if (r.livreurId) retoursMap[r.livreurId] = r._count.id; });
 
-  // Commission livreur : 3000 GNF par livraison effectuée
-  const COMMISSION_LIVREUR_PER_DELIVERY = 3000;
+  // Commission livreur : taux configurable depuis Paramètres
 
   const livreurRows = livreurDeliveries
     .map((l) => {
