@@ -5,6 +5,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { PageHeader } from "@/components/PageHeader";
 import { CheckCircle2, Copy, ExternalLink, Globe, Key, ArrowLeft, Download } from "lucide-react";
+import { SendGuideButton } from "./SendGuideButton";
 
 export const dynamic = "force-dynamic";
 
@@ -215,6 +216,12 @@ async function envoyerCommande(commande) {
             {exampleBody}
           </pre>
         </div>
+
+        {/* Envoyer le guide par email */}
+        <SendGuideButton
+          boutiqueId={boutique.id}
+          defaultEmail={boutique.sellerEmail ?? ""}
+        />
 
         {/* Télécharger le catalogue produits */}
         <div className="bg-white border border-slate-200 rounded-lg p-6">
