@@ -8,6 +8,7 @@ import { CrmToggleButton } from "./CrmToggleButton";
 import {
   BarChart3,
   Users,
+  TrendingUp,
   Bike,
   UserCircle,
   Package,
@@ -114,6 +115,8 @@ export function Sidebar({
     { href: "/livraisons", label: "Livraisons", icon: Truck, badge: counts.livraisons, roles: ["ADMIN", "MANAGER", "LIVREUR"] },
     { href: "/performance", label: "Ma performance", icon: Trophy, roles: ["AGENT", "LIVREUR"] },
     { href: "/leaderboard", label: "Classement", icon: Medal, roles: ["ADMIN", "MANAGER", "AGENT", "LIVREUR"] },
+    { href: "/rapports", label: "Rapport journalier", icon: BarChart3, roles: ["ADMIN", "MANAGER"] },
+    { href: "/commissions", label: "Commissions", icon: TrendingUp, roles: ["ADMIN", "MANAGER"] },
     {
       href: "/factures",
       label: "Factures",
