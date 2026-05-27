@@ -10,6 +10,9 @@ interface Props {
   orderId: string;
   status: string;
   boutiqueName: string;
+  livreurName?: string | null;
+  deliveryScheduledAt?: string | null;  // ISO string
+  productsLabel?: string | null;
 }
 
 function toIntl(phone: string): string {
@@ -18,15 +21,63 @@ function toIntl(phone: string): string {
   return p;
 }
 
+function truncateProducts(label: string): string {
+  if (!label) return "";
+  const parts = label.split(", ");
+  if (parts.length <= 2) return label;
+  return parts.slice(0, 2).join(", ") + ` et ${parts.length - 2} autre${parts.length - 2 > 1 ? "s" : ""} article${parts.length - 2 > 1 ? "s" : ""}`;
+}
+
+function formatDeliveryTime(iso: string): string {
+  try {
+    return new Date(iso).toLocaleString("fr-FR", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  } catch {
+    return iso;
+  }
+}
+
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://cod-crm-zeta.vercel.app";
 
-export function WhatsAppSuiviButton({ phone, customerName, orderCode, orderId, status, boutiqueName }: Props) {
+export function WhatsAppSuiviButton({
+  phone, customerName, orderCode, orderId, status, boutiqueName,
+  livreurName, deliveryScheduledAt, productsLabel,
+}: Props) {
   const [copied, setCopied] = useState(false);
   const trackingLink = `${SITE_URL}/suivi/${orderId}`;
+  const productsShort = productsLabel ? truncateProducts(productsLabel) : null;
 
-  const message = status === "CONFIRME"
-    ? `Bonjour ${customerName} 👋\n\nVotre commande *${orderCode}* chez *${boutiqueName}* est confirmée ✅\n\nSuivez l'état de votre livraison en temps réel ici :\n👉 ${trackingLink}\n\nMerci pour votre confiance ! 🙏`
-    : `Bonjour ${customerName} 👋\n\nVotre commande *${orderCode}* est en cours de livraison 🚚\n\nSuivez votre livreur ici :\n👉 ${trackingLink}\n\nVotre colis arrive bientôt ! 😊`;
+  let message: string;
+  if (status === "EN_LIVRAISON") {
+    const parts = [
+      `Bonjour ${customerName} 👋`,
+      ``,
+      `Votre commande *${orderCode}* chez *${boutiqueName}* est en cours de livraison 🚚`,
+    ];
+    if (productsShort) parts.push(`\nArticles : ${productsShort}`);
+    if (livreurName) parts.push(`\n👤 Livreur : *${livreurName}*`);
+    if (deliveryScheduledAt) parts.push(`⏰ Heure de livraison prévue : *${formatDeliveryTime(deliveryScheduledAt)}*`);
+    parts.push(`\n🔎 Suivez votre commande en temps réel :\n👉 ${trackingLink}`);
+    parts.push(`\nVotre colis arrive bientôt ! 😊`);
+    message = parts.join("\n");
+  } else {
+    // CONFIRME
+    const parts = [
+      `Bonjour ${customerName} 👋`,
+      ``,
+      `Votre commande *${orderCode}* chez *${boutiqueName}* est confirmée ✅`,
+    ];
+    if (productsShort) parts.push(`\nArticles : ${productsShort}`);
+    parts.push(`\nSuivez l'état de votre livraison en temps réel ici :`);
+    parts.push(`👉 ${trackingLink}`);
+    parts.push(`\nMerci pour votre confiance ! 🙏`);
+    message = parts.join("\n");
+  }
 
   const waHref = `https://wa.me/${toIntl(phone)}?text=${encodeURIComponent(message)}`;
 

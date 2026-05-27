@@ -14,7 +14,7 @@ export const dynamic = "force-dynamic";
 export default async function ConfirmationPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string }>;
+  searchParams: Promise<{ status?: string; confirmed?: string }>;
 }) {
   const session = await auth();
   const userRole = (session?.user as any)?.role;
@@ -22,6 +22,7 @@ export default async function ConfirmationPage({
   const isAgent = userRole === "AGENT";
   const params = await searchParams;
   const currentStatus = params.status ?? "NOUVEAU";
+  const confirmedCode = params.confirmed ?? null;
 
   // Si l'utilisateur est un AGENT, on filtre par ses commandes affectées
   const agentFilter = isAgent && userId ? { assignedAgentId: userId } : {};
@@ -96,6 +97,21 @@ export default async function ConfirmationPage({
         ]}
       />
       <div className="p-4 lg:p-6">
+
+        {/* ── Bannière succès confirmation ── */}
+        {confirmedCode && (
+          <div className="mb-5 bg-emerald-50 border-2 border-emerald-400 rounded-2xl p-4 flex items-center gap-4">
+            <span className="text-3xl">🎉</span>
+            <div>
+              <div className="font-bold text-emerald-800 text-base">
+                Commande <span className="font-mono">{confirmedCode}</span> confirmée avec succès !
+              </div>
+              <div className="text-sm text-emerald-700 mt-0.5">
+                Le message a été envoyé au client. La commande est maintenant en attente d&apos;affectation livreur.
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* ── Bannière rappels du jour ── */}
         {rappelsAujourdHui.length > 0 && (

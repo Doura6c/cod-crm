@@ -5,9 +5,10 @@ import { prisma } from "@/lib/prisma";
 import { can } from "@/lib/rbac";
 import { PageHeader } from "@/components/PageHeader";
 import { formatGNF, formatDateTime, statusBadge } from "@/lib/utils";
-import { logCallAction, assignDeliveryAction, reassignAgentAction, toggleDeliveryFeeAction, reprocessReturnAction } from "./actions";
+import { assignDeliveryAction, reassignAgentAction, toggleDeliveryFeeAction, reprocessReturnAction } from "./actions";
 import { ConfirmationScript } from "@/components/ConfirmationScript";
 import { WhatsAppSuiviButton } from "@/components/WhatsAppSuiviButton";
+import { CallLogForm } from "@/components/CallLogForm";
 import {
   Phone,
   MapPin,
@@ -263,6 +264,11 @@ export default async function OrderDetailPage({
               orderId={order.id}
               status={order.status}
               boutiqueName={order.boutique.name}
+              livreurName={order.delivery?.livreur
+                ? `${order.delivery.livreur.firstName} ${order.delivery.livreur.lastName}`
+                : null}
+              deliveryScheduledAt={(order as any).deliveryScheduledAt?.toISOString() ?? null}
+              productsLabel={order.items.map(it => `${it.product.name} ×${it.quantity}`).join(", ")}
             />
           )}
 
@@ -273,42 +279,10 @@ export default async function OrderDetailPage({
             </h2>
 
             {/* Formulaire nouvel appel */}
-            <form action={logCallAction} className="bg-slate-50 border border-slate-200 rounded-lg p-4 mb-4 space-y-3">
-              <input type="hidden" name="orderId" value={order.id} />
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Résultat de l&apos;appel</label>
-                  <select name="outcome" required defaultValue="ANSWERED" className="input">
-                    <option value="ANSWERED">Client a répondu</option>
-                    <option value="NO_ANSWER">Pas de réponse</option>
-                    <option value="BUSY">Occupé</option>
-                    <option value="INJOIGNABLE">Injoignable</option>
-                    <option value="REPORTED">À reporter</option>
-                    <option value="CONFIRMED">✓ Confirmé — valider la commande</option>
-                    <option value="CANCELLED">✗ Annulé par client</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Si reporté, date de rappel</label>
-                  <input type="datetime-local" name="reportDate" className="input" />
-                </div>
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Note</label>
-                <textarea
-                  name="note"
-                  rows={2}
-                  placeholder="Ex: Client demande livraison demain matin"
-                  className="input resize-none"
-                />
-              </div>
-              <button
-                type="submit"
-                className="bg-sky-500 hover:bg-sky-600 text-white font-semibold px-5 py-2 rounded-lg text-sm"
-              >
-                Enregistrer l&apos;appel
-              </button>
-            </form>
+            <CallLogForm
+              orderId={order.id}
+              requireMessageSent={["NOUVEAU", "REPORTE", "PDR", "INJOIGNABLE"].includes(order.status)}
+            />
 
             {/* Timeline des appels */}
             {order.callLogs.length === 0 ? (

@@ -23,6 +23,7 @@ export async function logCallAction(formData: FormData): Promise<void> {
   const outcome = String(formData.get("outcome") ?? "");
   const note = String(formData.get("note") ?? "").trim() || null;
   const reportDate = String(formData.get("reportDate") ?? "");
+  const deliveryScheduledAt = String(formData.get("deliveryScheduledAt") ?? "");
 
   if (!orderId || !ALLOWED_OUTCOMES.includes(outcome)) {
     redirect(`/commandes/${orderId}?error=invalid`);
@@ -46,6 +47,7 @@ export async function logCallAction(formData: FormData): Promise<void> {
       updates.status = "CONFIRME";
       updates.validatedById = userId;
       updates.validatedAt = new Date();
+      if (deliveryScheduledAt) updates.deliveryScheduledAt = new Date(deliveryScheduledAt);
     } else if (outcome === "CANCELLED") {
       updates.status = "ANNULE";
     } else if (outcome === "INJOIGNABLE") {
@@ -76,6 +78,11 @@ export async function logCallAction(formData: FormData): Promise<void> {
 
   revalidatePath(`/commandes/${orderId}`);
   revalidatePath("/commandes/confirmation");
+
+  // Feedback visuel : si confirmé, rediriger vers la liste avec un message de succès
+  if (outcome === "CONFIRMED") {
+    redirect(`/commandes/confirmation?confirmed=${encodeURIComponent(order.code)}`);
+  }
   redirect(`/commandes/${orderId}`);
 }
 
