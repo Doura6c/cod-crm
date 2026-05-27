@@ -62,7 +62,7 @@ export default function ImporterClient({ boutiqueId, boutiqueName }: { boutiqueI
       if (category && !CATS_OK.includes(category)) errors.push(`Catégorie invalide: "${category}"`);
       if (EXEMPLES.includes(sku)) errors.push("Ligne d'exemple — à supprimer");
 
-      parsed.push({ sku, name, description, price, costPrice, stock, stockAlert, imageUrl, category, tags, _valid: errors.length === 0, _errors: errors });
+      parsed.push({ sku, name, description, price, costPrice, stock, stockAlert, imageUrl, category, tags: "", _valid: errors.length === 0, _errors: errors });
     }
 
     return parsed;
