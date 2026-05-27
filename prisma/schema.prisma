@@ -141,7 +141,8 @@ model Order {
   deliveryFee      Float    @default(0)
   callCount        Int      @default(0)
   notes            String?  // Note interne (ex: "À livrer demain matin")
-  reportDate       DateTime? // Date programmée si reporté
+  reportDate          DateTime? // Date programmée si reporté
+  deliveryScheduledAt DateTime? // Heure de livraison promise au client
 
   assignedAgentId  String?
   assignedAgent    User?    @relation("AssignedAgent", fields: [assignedAgentId], references: [id])

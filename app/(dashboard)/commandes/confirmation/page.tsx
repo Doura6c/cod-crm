@@ -7,7 +7,7 @@ import { OrderTable } from "@/components/OrderTable";
 import { StatusTabs } from "@/components/StatusTabs";
 import { TeamStatus } from "@/components/TeamStatus";
 import Link from "next/link";
-import { Bell, Phone } from "lucide-react";
+import { Bell, Phone, Zap } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -95,6 +95,17 @@ export default async function ConfirmationPage({
           { label: `${reportedTotal} REPORTÉ`, color: "bg-red-500 text-white" },
           { label: `${pdrTotal} PDR & INJOIGNABLE`, color: "bg-red-500 text-white" },
         ]}
+        actions={
+          (nouveauCount + reporteCount + pdrCount) > 0 ? (
+            <Link
+              href="/commandes/express"
+              className="inline-flex items-center gap-2 bg-yellow-400 hover:bg-yellow-500 text-slate-900 font-bold px-4 py-2 rounded-xl text-sm transition shadow-sm"
+            >
+              <Zap className="w-4 h-4" />
+              Mode Express — {nouveauCount + reporteCount + pdrCount} à traiter
+            </Link>
+          ) : null
+        }
       />
       <div className="p-4 lg:p-6">
 

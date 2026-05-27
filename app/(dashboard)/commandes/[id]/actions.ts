@@ -223,6 +223,84 @@ export async function reprocessReturnAction(formData: FormData): Promise<void> {
   redirect(`/commandes/${orderId}`);
 }
 
+/**
+ * Version "Express" du logCallAction — pas de redirect, retourne un résultat
+ * Utilisé par le Mode Express Appel pour avancer automatiquement entre commandes
+ */
+export async function expressCallAction(
+  formData: FormData
+): Promise<{ ok: boolean; orderCode?: string; error?: string }> {
+  const session = await auth();
+  const role = (session?.user as any)?.role;
+  const userId = (session?.user as any)?.id;
+
+  if (!can(role, "CALL_LOG") || !userId) return { ok: false, error: "Non autorisé" };
+
+  const orderId = String(formData.get("orderId") ?? "");
+  const outcome = String(formData.get("outcome") ?? "");
+  const note = String(formData.get("note") ?? "").trim() || null;
+  const reportDate = String(formData.get("reportDate") ?? "");
+  const deliveryScheduledAt = String(formData.get("deliveryScheduledAt") ?? "");
+
+  if (!orderId || !ALLOWED_OUTCOMES.includes(outcome)) {
+    return { ok: false, error: "Données invalides" };
+  }
+
+  const order = await prisma.order.findUnique({ where: { id: orderId } });
+  if (!order) return { ok: false, error: "Commande introuvable" };
+
+  try {
+    await prisma.$transaction(async (tx) => {
+      await tx.callLog.create({
+        data: { orderId, agentId: userId, outcome, note },
+      });
+
+      const updates: any = { callCount: { increment: 1 } };
+      if (outcome === "REPORTED") {
+        updates.status = "REPORTE";
+        if (reportDate) updates.reportDate = new Date(reportDate);
+      } else if (outcome === "NO_ANSWER" || outcome === "BUSY") {
+        updates.status = "PDR";
+      } else if (outcome === "CONFIRMED") {
+        updates.status = "CONFIRME";
+        updates.validatedById = userId;
+        updates.validatedAt = new Date();
+        if (deliveryScheduledAt) updates.deliveryScheduledAt = new Date(deliveryScheduledAt);
+      } else if (outcome === "CANCELLED") {
+        updates.status = "ANNULE";
+      } else if (outcome === "INJOIGNABLE") {
+        updates.status = "INJOIGNABLE";
+      }
+      await tx.order.update({ where: { id: orderId }, data: updates });
+
+      if (outcome === "CONFIRMED") {
+        const items = await tx.orderItem.findMany({ where: { orderId } });
+        for (const item of items) {
+          await tx.product.update({
+            where: { id: item.productId },
+            data: { stock: { decrement: item.quantity } },
+          });
+          await tx.stockMovement.create({
+            data: {
+              productId: item.productId,
+              type: "OUT",
+              quantity: item.quantity,
+              reason: `Commande ${order.code} confirmée (Express)`,
+              orderId: order.id,
+            },
+          });
+        }
+      }
+    });
+
+    revalidatePath("/commandes/confirmation");
+    revalidatePath("/commandes/express");
+    return { ok: true, orderCode: order.code };
+  } catch (e: any) {
+    return { ok: false, error: e?.message ?? "Erreur serveur" };
+  }
+}
+
 export async function updateOrderStatusAction(formData: FormData): Promise<void> {
   const session = await auth();
   const role = (session?.user as any)?.role;
