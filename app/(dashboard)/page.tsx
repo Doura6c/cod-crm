@@ -108,6 +108,27 @@ export default async function DashboardPage({
     }),
   ]);
 
+  // Graphique tendance 14 jours
+  const trendDays = 14;
+  const trendData: { date: string; label: string; recu: number; livre: number }[] = [];
+  for (let i = trendDays - 1; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const dayStart = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    const dayEnd = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59);
+    const [recu, livre] = await Promise.all([
+      prisma.order.count({ where: { createdAt: { gte: dayStart, lte: dayEnd } } }),
+      prisma.delivery.count({ where: { status: "LIVRE", deliveredAt: { gte: dayStart, lte: dayEnd } } }),
+    ]);
+    trendData.push({
+      date: dayStart.toISOString().slice(0, 10),
+      label: dayStart.toLocaleDateString("fr-FR", { day: "numeric", month: "short" }),
+      recu,
+      livre,
+    });
+  }
+  const maxTrend = Math.max(...trendData.map((d) => Math.max(d.recu, d.livre)), 1);
+
   // Résoudre les noms de villes et produits
   const cityIds = topCities.map((c) => c.cityId).filter(Boolean) as string[];
   const productIds = topProducts.map((p) => p.productId);
@@ -307,6 +328,73 @@ export default async function DashboardPage({
                 <div className="text-xs text-slate-400 mt-1">{m.sub}</div>
               </div>
             ))}
+          </div>
+        </div>
+
+        {/* ────── GRAPHIQUE 14 JOURS ────── */}
+        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+          <div className="flex items-center justify-between mb-5">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-violet-100 rounded-lg flex items-center justify-center">
+                <BarChart2 className="w-4 h-4 text-violet-600" />
+              </div>
+              <div>
+                <div className="font-bold text-slate-800">Tendance — 14 derniers jours</div>
+                <div className="text-xs text-slate-400">Commandes reçues vs livrées</div>
+              </div>
+            </div>
+            <div className="flex items-center gap-4 text-xs">
+              <div className="flex items-center gap-1.5">
+                <div className="w-3 h-3 rounded-sm bg-sky-500" />
+                <span className="text-slate-500">Reçues</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <div className="w-3 h-3 rounded-sm bg-emerald-500" />
+                <span className="text-slate-500">Livrées</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Barres */}
+          <div className="flex items-end gap-1 h-36 overflow-x-auto pb-2">
+            {trendData.map((d) => {
+              const recuH = maxTrend > 0 ? Math.round((d.recu / maxTrend) * 100) : 0;
+              const livreH = maxTrend > 0 ? Math.round((d.livre / maxTrend) * 100) : 0;
+              const isToday = d.date === new Date().toISOString().slice(0, 10);
+              return (
+                <div key={d.date} className={`flex flex-col items-center gap-1 flex-1 min-w-[32px] group ${isToday ? "relative" : ""}`}>
+                  {isToday && (
+                    <div className="absolute -top-5 text-[10px] font-bold text-sky-600 bg-sky-50 px-1.5 py-0.5 rounded-full whitespace-nowrap">
+                      Auj.
+                    </div>
+                  )}
+                  {/* Barres groupées */}
+                  <div className="flex items-end gap-0.5 w-full justify-center" style={{ height: "120px" }}>
+                    {/* Reçues */}
+                    <div
+                      className="w-2/5 rounded-t-sm bg-sky-400 group-hover:bg-sky-500 transition-all relative"
+                      style={{ height: `${recuH}%`, minHeight: d.recu > 0 ? "4px" : "0" }}
+                      title={`${d.recu} reçues`}
+                    />
+                    {/* Livrées */}
+                    <div
+                      className="w-2/5 rounded-t-sm bg-emerald-400 group-hover:bg-emerald-500 transition-all"
+                      style={{ height: `${livreH}%`, minHeight: d.livre > 0 ? "4px" : "0" }}
+                      title={`${d.livre} livrées`}
+                    />
+                  </div>
+                  {/* Label date */}
+                  <div className={`text-[9px] font-medium whitespace-nowrap ${isToday ? "text-sky-600 font-bold" : "text-slate-400"}`}>
+                    {d.label}
+                  </div>
+                  {/* Valeurs au hover */}
+                  <div className="hidden group-hover:flex flex-col items-center absolute bottom-8 bg-slate-800 text-white text-[10px] rounded px-2 py-1 z-10 shadow-lg whitespace-nowrap">
+                    <span className="text-sky-300">{d.recu} reçues</span>
+                    <span className="text-emerald-300">{d.livre} livrées</span>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 

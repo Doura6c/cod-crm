@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { generateOrderCode } from "@/lib/utils";
+import { generateOrderCode, formatGNF } from "@/lib/utils";
 
 /**
  * Endpoint public — appelé par les boutiques e-commerce des clients.
@@ -183,6 +183,19 @@ export async function POST(req: Request) {
       },
       include: { items: true },
     });
+
+    // Créer une notification pour les admins
+    const productNames = orderItemsData.length > 0
+      ? items.slice(0, 2).map((it: any) => it.name ?? it.sku ?? "Produit").join(", ")
+      : "Commande";
+    await prisma.notification.create({
+      data: {
+        type: "NEW_ORDER",
+        title: `Nouvelle commande — ${boutique.name}`,
+        message: `${customer.fullName ?? "Client"} (${customer.phone}) — ${productNames} — ${formatGNF(subtotal + Number(deliveryFee ?? 0))} GNF`,
+        data: JSON.stringify({ orderId: order.id, orderCode: order.code }),
+      },
+    }).catch(() => {}); // silencieux si la table n'a pas le bon format
 
     return NextResponse.json({
       ok: true,
