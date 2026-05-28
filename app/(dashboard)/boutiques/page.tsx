@@ -8,13 +8,18 @@ import { can } from "@/lib/rbac";
 
 export const dynamic = "force-dynamic";
 
-export default async function BoutiquesPage() {
+export default async function BoutiquesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ deleted?: string; deactivated?: string }>;
+}) {
   const session = await auth();
   if (!can((session?.user as any)?.role, "VIEW_BOUTIQUES")) redirect("/");
   const boutiques = await prisma.boutique.findMany({
     include: { orders: { select: { id: true, status: true } } },
     orderBy: { createdAt: "desc" },
   });
+  const { deleted, deactivated } = await searchParams;
 
   return (
     <div>
@@ -31,6 +36,16 @@ export default async function BoutiquesPage() {
         }
       />
       <div className="p-6">
+        {deleted === "1" && (
+          <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm font-medium">
+            🗑️ Boutique supprimée définitivement.
+          </div>
+        )}
+        {deactivated === "1" && (
+          <div className="mb-4 bg-amber-50 border border-amber-200 text-amber-700 px-4 py-3 rounded-lg text-sm font-medium">
+            ⏸️ Boutique désactivée. Elle n&apos;apparaîtra plus dans les listes actives.
+          </div>
+        )}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {boutiques.map((b) => (
             <div key={b.id} className="bg-white border border-slate-200 rounded-lg p-5">

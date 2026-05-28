@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { PageHeader } from "@/components/PageHeader";
 import { CheckCircle2, Copy, ExternalLink, Globe, Key, ArrowLeft, Download } from "lucide-react";
 import { SendGuideButton } from "./SendGuideButton";
+import { DeleteBoutiqueButton } from "../DeleteBoutiqueButton";
 
 export const dynamic = "force-dynamic";
 
@@ -16,9 +17,14 @@ export default async function IntegrationPage({
 }) {
   const session = await auth();
   if (!session?.user) redirect("/login");
+  const sessionUser = session.user as any;
+  const isSuperAdmin = sessionUser?.isSuperAdmin === true;
 
   const { id } = await params;
-  const boutique = await prisma.boutique.findUnique({ where: { id } });
+  const boutique = await prisma.boutique.findUnique({
+    where: { id },
+    include: { _count: { select: { orders: true, products: true } } },
+  });
   if (!boutique) notFound();
 
   const h = await headers();
@@ -91,12 +97,22 @@ async function envoyerCommande(commande) {
         title="Boutique créée"
         badges={[{ label: "ACTIVE", color: "bg-emerald-500 text-white" }]}
         actions={
-          <Link
-            href="/boutiques"
-            className="inline-flex items-center gap-2 bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded text-sm font-medium"
-          >
-            <ArrowLeft className="w-4 h-4" /> Toutes les boutiques
-          </Link>
+          <div className="flex gap-2 flex-wrap">
+            <Link
+              href="/boutiques"
+              className="inline-flex items-center gap-2 bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded text-sm font-medium"
+            >
+              <ArrowLeft className="w-4 h-4" /> Toutes les boutiques
+            </Link>
+            {isSuperAdmin && (
+              <DeleteBoutiqueButton
+                boutiqueId={id}
+                boutiqueName={boutique.name}
+                orderCount={boutique._count.orders}
+                productCount={boutique._count.products}
+              />
+            )}
+          </div>
         }
       />
       <div className="p-6 max-w-4xl space-y-6">

@@ -12,6 +12,7 @@ import {
 import Link from "next/link";
 import { generateMerchantInvoicesAction } from "@/app/(dashboard)/factures/marchands/actions";
 import { getHmpCommission } from "@/lib/settings";
+import { DeleteBoutiqueButton } from "./DeleteBoutiqueButton";
 
 export const dynamic = "force-dynamic";
 
@@ -23,7 +24,9 @@ export default async function BoutiqueProductionPage({
   searchParams: Promise<{ period?: string }>;
 }) {
   const session = await auth();
-  if (!can((session?.user as any)?.role, "VIEW_BOUTIQUES")) redirect("/");
+  const sessionUser = session?.user as any;
+  if (!can(sessionUser?.role, "VIEW_BOUTIQUES")) redirect("/");
+  const isSuperAdmin = sessionUser?.isSuperAdmin === true;
 
   const { id } = await params;
   const { period = "month" } = await searchParams;
@@ -114,13 +117,21 @@ export default async function BoutiqueProductionPage({
           { label: boutique.active ? "Actif" : "Inactif", color: boutique.active ? "bg-emerald-600 text-white" : "bg-red-600 text-white" },
         ]}
         actions={
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
             <Link href="/boutiques" className="inline-flex items-center gap-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 px-3 py-2 rounded text-sm font-medium">
               <ArrowLeft className="w-4 h-4" /> Retour
             </Link>
             <Link href={`/boutiques/${id}/reglement`} className="inline-flex items-center gap-1.5 bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-2 rounded text-sm font-semibold">
               <Receipt className="w-4 h-4" /> Règlement
             </Link>
+            {isSuperAdmin && (
+              <DeleteBoutiqueButton
+                boutiqueId={id}
+                boutiqueName={boutique.name}
+                orderCount={orders.length}
+                productCount={boutique.products.length}
+              />
+            )}
           </div>
         }
       />
