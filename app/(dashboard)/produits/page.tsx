@@ -9,26 +9,43 @@ import { can } from "@/lib/rbac";
 
 export const dynamic = "force-dynamic";
 
-export default async function ProduitsPage() {
+export default async function ProduitsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ boutiqueId?: string }>;
+}) {
   const session = await auth();
   if (!can((session?.user as any)?.role, "VIEW_PRODUCTS")) redirect("/");
 
-  const products = await prisma.product.findMany({
-    include: {
-      boutique: true,
-      stockMovements: true,
-      orderItems: {
-        include: {
-          order: { select: { status: true } },
+  const params = await searchParams;
+  const boutiqueFilter = params.boutiqueId ?? "";
+
+  const [products, boutiques] = await Promise.all([
+    prisma.product.findMany({
+      where: boutiqueFilter ? { boutiqueId: boutiqueFilter } : {},
+      include: {
+        boutique: true,
+        stockMovements: true,
+        orderItems: {
+          include: {
+            order: { select: { status: true } },
+          },
         },
       },
-    },
-    orderBy: { createdAt: "desc" },
-  });
+      orderBy: { createdAt: "desc" },
+    }),
+    prisma.boutique.findMany({
+      where: { active: true },
+      select: { id: true, name: true },
+      orderBy: { name: "asc" },
+    }),
+  ]);
 
   const lowStock = products.filter((p) => p.stock <= p.stockAlert).length;
   const totalValue = products.reduce((sum, p) => sum + p.stock * p.price, 0);
   const totalUnits = products.reduce((sum, p) => sum + p.stock, 0);
+
+  const selectedBoutique = boutiques.find((b) => b.id === boutiqueFilter);
 
   return (
     <div>
@@ -36,6 +53,9 @@ export default async function ProduitsPage() {
         title="Stock & Produits"
         badges={[
           { label: `${products.length} produits`, color: "bg-slate-700 text-white" },
+          ...(boutiqueFilter && selectedBoutique
+            ? [{ label: `🏪 ${selectedBoutique.name}`, color: "bg-sky-600 text-white" }]
+            : []),
           ...(lowStock > 0
             ? [{ label: `${lowStock} en alerte`, color: "bg-orange-500 text-white" }]
             : []),
@@ -51,6 +71,34 @@ export default async function ProduitsPage() {
       />
 
       <div className="p-6 space-y-6">
+
+        {/* Filtre par boutique */}
+        <div className="flex items-center gap-2 flex-wrap">
+          <a
+            href="/produits"
+            className={`px-3 py-1.5 rounded-full text-sm font-semibold transition ${
+              !boutiqueFilter
+                ? "bg-slate-800 text-white"
+                : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
+            }`}
+          >
+            Toutes les boutiques
+          </a>
+          {boutiques.map((b) => (
+            <a
+              key={b.id}
+              href={`/produits?boutiqueId=${b.id}`}
+              className={`px-3 py-1.5 rounded-full text-sm font-semibold transition ${
+                boutiqueFilter === b.id
+                  ? "bg-sky-600 text-white"
+                  : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
+              }`}
+            >
+              {b.name}
+            </a>
+          ))}
+        </div>
+
         {/* KPI Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="bg-white border border-slate-200 rounded-xl p-4">

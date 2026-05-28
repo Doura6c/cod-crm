@@ -14,6 +14,11 @@ export const authConfig: NextAuthConfig = {
       if (isPublicApi) return true;
       if (!isLoggedIn && !isOnLogin) return false;
       if (isOnLogin && isLoggedIn) {
+        const role = (auth?.user as any)?.role;
+        // Rediriger les boutique owners vers leur espace dédié
+        if (role === "BOUTIQUE_OWNER") {
+          return Response.redirect(new URL("/mon-espace", nextUrl));
+        }
         return Response.redirect(new URL("/", nextUrl));
       }
       return true;
@@ -23,6 +28,7 @@ export const authConfig: NextAuthConfig = {
         token.id = user.id;
         token.role = (user as any).role;
         token.isSuperAdmin = (user as any).isSuperAdmin ?? false;
+        token.boutiqueId = (user as any).boutiqueId ?? null;
       }
       return token;
     },
@@ -31,6 +37,7 @@ export const authConfig: NextAuthConfig = {
         (session.user as any).id = token.id ?? token.sub;
         (session.user as any).role = token.role;
         (session.user as any).isSuperAdmin = token.isSuperAdmin ?? false;
+        (session.user as any).boutiqueId = token.boutiqueId ?? null;
       }
       return session;
     },

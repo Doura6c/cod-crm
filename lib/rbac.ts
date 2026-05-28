@@ -1,10 +1,11 @@
-export type Role = "ADMIN" | "MANAGER" | "AGENT" | "LIVREUR";
+export type Role = "ADMIN" | "MANAGER" | "AGENT" | "LIVREUR" | "BOUTIQUE_OWNER";
 
 export const ROLE_LABELS: Record<Role, string> = {
   ADMIN: "Administrateur",
   MANAGER: "Superviseur",
   AGENT: "Agent",
   LIVREUR: "Livreur",
+  BOUTIQUE_OWNER: "Client Boutique",
 };
 
 /**
@@ -25,6 +26,8 @@ export const PERMISSIONS = {
   VIEW_INVOICES: ["ADMIN", "MANAGER"] as Role[],
   VIEW_BOUTIQUES: ["ADMIN", "MANAGER"] as Role[],
   VIEW_SETTINGS: ["ADMIN"] as Role[],
+  // Portail boutique
+  VIEW_OWN_BOUTIQUE: ["BOUTIQUE_OWNER", "ADMIN", "MANAGER"] as Role[],
 
   // Actions
   CREATE_BOUTIQUE: ["ADMIN", "MANAGER"] as Role[],

@@ -15,13 +15,15 @@ model User {
   firstName    String
   lastName     String
   phone        String?
-  role         String   @default("AGENT") // ADMIN, MANAGER, AGENT, LIVREUR
+  role         String   @default("AGENT") // ADMIN, MANAGER, AGENT, LIVREUR, BOUTIQUE_OWNER
   active       Boolean  @default(true)
   avatarUrl      String?
   isSuperAdmin   Boolean  @default(false)
   assignedCityId String?
   assignedCity   City?    @relation("AssignedLivreur", fields: [assignedCityId], references: [id])
   subZone        String?  // Commune pour livreurs Conakry (Kaloum, Ratoma, Dixinn...)
+  boutiqueId     String?  // Pour le rôle BOUTIQUE_OWNER : boutique associée
+  ownedBoutique  Boutique? @relation("BoutiqueOwners", fields: [boutiqueId], references: [id])
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
@@ -49,6 +51,7 @@ model Boutique {
   orders           Order[]
   products         Product[]
   merchantInvoices MerchantInvoice[]
+  owners           User[]            @relation("BoutiqueOwners")
 }
 
 // ============ CLIENTS FINAUX (acheteurs) ============

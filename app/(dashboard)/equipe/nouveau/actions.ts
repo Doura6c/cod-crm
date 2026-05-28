@@ -13,12 +13,13 @@ export async function createUserAction(formData: FormData): Promise<void> {
   const role = (session?.user as any)?.role;
   if (!can(role, "CREATE_USER")) redirect("/");
 
-  const firstName = clean(formData.get("firstName"), 50);
-  const lastName  = clean(formData.get("lastName"), 50);
-  const email     = clean(formData.get("email"), 254).toLowerCase();
-  const phone     = clean(formData.get("phone"), 20) || null;
-  const newRole   = clean(formData.get("role"), 20) || "AGENT";
-  const password  = String(formData.get("password") ?? "").slice(0, 200);
+  const firstName  = clean(formData.get("firstName"), 50);
+  const lastName   = clean(formData.get("lastName"), 50);
+  const email      = clean(formData.get("email"), 254).toLowerCase();
+  const phone      = clean(formData.get("phone"), 20) || null;
+  const newRole    = clean(formData.get("role"), 20) || "AGENT";
+  const password   = String(formData.get("password") ?? "").slice(0, 200);
+  const boutiqueId = clean(formData.get("boutiqueId"), 50) || null;
 
   // Validation
   if (!firstName || !lastName || !email || !password) {
@@ -33,8 +34,8 @@ export async function createUserAction(formData: FormData): Promise<void> {
   if (!isValidRole(newRole)) {
     redirect("/equipe/nouveau?error=forbidden-role");
   }
-  // Seul un Admin peut créer un Admin
-  if (newRole === "ADMIN" && !can(role, "CREATE_ADMIN")) {
+  // Seul un Admin peut créer un Admin ou un BOUTIQUE_OWNER
+  if ((newRole === "ADMIN" || newRole === "BOUTIQUE_OWNER") && !can(role, "CREATE_ADMIN")) {
     redirect("/equipe/nouveau?error=forbidden-role");
   }
 
@@ -53,6 +54,7 @@ export async function createUserAction(formData: FormData): Promise<void> {
       phone,
       role: newRole,
       passwordHash,
+      ...(newRole === "BOUTIQUE_OWNER" && boutiqueId ? { boutiqueId } : {}),
     },
   });
 

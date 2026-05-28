@@ -18,7 +18,7 @@ export function isEmail(value: string): boolean {
 }
 
 /** Valide qu'un rôle est dans la liste autorisée */
-const VALID_ROLES = ["ADMIN", "MANAGER", "AGENT", "LIVREUR"];
+const VALID_ROLES = ["ADMIN", "MANAGER", "AGENT", "LIVREUR", "BOUTIQUE_OWNER"];
 export function isValidRole(role: string): boolean {
   return VALID_ROLES.includes(role);
 }

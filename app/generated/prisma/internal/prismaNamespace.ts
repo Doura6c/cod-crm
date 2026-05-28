@@ -1655,6 +1655,7 @@ export const UserScalarFieldEnum = {
   isSuperAdmin: 'isSuperAdmin',
   assignedCityId: 'assignedCityId',
   subZone: 'subZone',
+  boutiqueId: 'boutiqueId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

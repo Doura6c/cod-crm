@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
 import { PageHeader } from "@/components/PageHeader";
 import { can } from "@/lib/rbac";
 import { createUserAction } from "./actions";
@@ -17,6 +18,11 @@ export default async function NouveauMembrePage({
   if (!can(role, "CREATE_USER")) redirect("/");
   const isAdmin = role === "ADMIN";
   const { error } = await searchParams;
+
+  // Boutiques pour le rôle BOUTIQUE_OWNER
+  const boutiques = isAdmin
+    ? await prisma.boutique.findMany({ select: { id: true, name: true }, orderBy: { name: "asc" } })
+    : [];
 
   const errors: Record<string, string> = {
     missing: "Tous les champs marqués sont obligatoires.",
@@ -112,10 +118,11 @@ export default async function NouveauMembrePage({
                 <label className="block text-sm font-medium text-slate-700 mb-1.5">
                   Rôle <span className="text-red-500">*</span>
                 </label>
-                <select name="role" required defaultValue="AGENT" className="input" disabled={!isAdmin}>
+                <select name="role" required defaultValue="AGENT" className="input" disabled={!isAdmin} id="roleSelect">
                   <option value="AGENT">Agent (téléopérateur)</option>
                   {isAdmin && <option value="MANAGER">Superviseur</option>}
                   {isAdmin && <option value="LIVREUR">Livreur</option>}
+                  {isAdmin && <option value="BOUTIQUE_OWNER">Client Boutique</option>}
                   {isAdmin && <option value="ADMIN">Administrateur</option>}
                 </select>
                 {!isAdmin && <p className="text-xs text-slate-400 mt-1">Les superviseurs peuvent uniquement demander la création d&apos;agents.</p>}
@@ -138,12 +145,34 @@ export default async function NouveauMembrePage({
               </div>
             </div>
 
+            {/* Sélection boutique pour BOUTIQUE_OWNER (admin seulement) */}
+            {isAdmin && boutiques.length > 0 && (
+              <div id="boutiqueSection" className="p-4 bg-sky-50 border border-sky-200 rounded-lg">
+                <label className="block text-sm font-semibold text-sky-800 mb-2">
+                  🏪 Boutique associée <span className="text-red-500">*</span>
+                  <span className="text-xs font-normal text-sky-600 ml-2">(obligatoire si rôle = Client Boutique)</span>
+                </label>
+                <select name="boutiqueId" className="input border-sky-300">
+                  <option value="">— Aucune (pas un client boutique) —</option>
+                  {boutiques.map((b) => (
+                    <option key={b.id} value={b.id}>{b.name}</option>
+                  ))}
+                </select>
+                <p className="text-xs text-sky-600 mt-1.5">
+                  Le client se connectera avec son email/mot de passe et accédera uniquement à son tableau de bord boutique.
+                </p>
+              </div>
+            )}
+
             <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 text-xs text-slate-600">
               <div className="font-semibold mb-1">Quel rôle choisir ?</div>
               <ul className="space-y-0.5">
                 <li><strong>Agent</strong> — voit uniquement ses commandes affectées, peut confirmer/reporter/logger appels.</li>
                 <li><strong>Superviseur</strong> — accès complet à la gestion : affectation commandes, factures, dépenses, statistiques.</li>
-                <li><strong>Livreur</strong> — voit uniquement ses livraisons assignées (module mobile à venir).</li>
+                <li><strong>Livreur</strong> — voit uniquement ses livraisons assignées.</li>
+                {isAdmin && (
+                  <li><strong>Client Boutique</strong> — portail dédié : ses commandes, son stock, ses finances. Accès lecture seule.</li>
+                )}
                 {isAdmin && (
                   <li><strong>Administrateur</strong> — pouvoir total, y compris paramètres système et gestion des admins.</li>
                 )}

@@ -20,6 +20,11 @@ export default async function DashboardLayout({
   const userId = (session.user as any).id as string | undefined;
   const isSuperAdmin = (session.user as any).isSuperAdmin === true;
   const isAdmin = userRole === "ADMIN";
+
+  // Les BOUTIQUE_OWNER ont leur propre portail
+  if (userRole === "BOUTIQUE_OWNER") {
+    redirect("/mon-espace");
+  }
   const isAgentOnly = userRole === "AGENT";
   const isLivreur = userRole === "LIVREUR";
 
