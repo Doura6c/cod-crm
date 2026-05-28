@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Phone, Activity, CheckCircle, XCircle, Clock, AlertCircle, Users } from "lucide-react";
+import { ArrowLeft, Phone, Activity, CheckCircle, Clock, Users } from "lucide-react";
 
 type AgentActivity = {
   id: string;
@@ -275,12 +275,6 @@ export function SupervisorExpressView({
             className="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition"
           >
             <CheckCircle className="w-4 h-4" /> En attente de livraison ({deliveredToday})
-          </Link>
-          <Link
-            href="/equipe"
-            className="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-sm font-semibold px-4 py-2.5 rounded-xl transition"
-          >
-            <Users className="w-4 h-4" /> Gérer les agents
           </Link>
         </div>
       </div>
