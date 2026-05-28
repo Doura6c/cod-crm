@@ -4,6 +4,39 @@ import Link from "next/link";
 import { Edit, Printer, Trash2, Check, Copy } from "lucide-react";
 import { formatGNF, formatDateTime, statusBadge } from "@/lib/utils";
 
+// Génère une couleur déterministe à partir du nom de la boutique
+function boutiquePalette(name: string): { bg: string; text: string; border: string } {
+  const palettes = [
+    { bg: "bg-sky-100",     text: "text-sky-700",     border: "border-sky-200" },
+    { bg: "bg-violet-100",  text: "text-violet-700",  border: "border-violet-200" },
+    { bg: "bg-emerald-100", text: "text-emerald-700", border: "border-emerald-200" },
+    { bg: "bg-amber-100",   text: "text-amber-700",   border: "border-amber-200" },
+    { bg: "bg-rose-100",    text: "text-rose-700",    border: "border-rose-200" },
+    { bg: "bg-orange-100",  text: "text-orange-700",  border: "border-orange-200" },
+    { bg: "bg-teal-100",    text: "text-teal-700",    border: "border-teal-200" },
+    { bg: "bg-indigo-100",  text: "text-indigo-700",  border: "border-indigo-200" },
+  ];
+  const hash = [...name].reduce((acc, c) => acc + c.charCodeAt(0), 0);
+  return palettes[hash % palettes.length];
+}
+
+function BoutiqueBadge({ name }: { name: string }) {
+  const { bg, text, border } = boutiquePalette(name);
+  const initials = name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((w) => w[0]?.toUpperCase() ?? "")
+    .join("");
+  return (
+    <div className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-full border text-xs font-semibold ${bg} ${text} ${border}`}>
+      <span className="w-4 h-4 rounded-full bg-current/20 flex items-center justify-center text-[10px] font-black">
+        {initials}
+      </span>
+      <span className="truncate max-w-[90px]">{name}</span>
+    </div>
+  );
+}
+
 type Order = {
   id: string;
   code: string;
@@ -114,7 +147,9 @@ export function OrderTable({ orders }: { orders: Order[] }) {
                     )}
                     {o.notes && <div className="text-xs text-slate-500 mt-0.5">{o.notes}</div>}
                   </td>
-                  <td className="px-3 py-3 text-xs text-slate-700">{o.boutique.name}</td>
+                  <td className="px-3 py-3">
+                    <BoutiqueBadge name={o.boutique.name} />
+                  </td>
                   <td className="px-3 py-3 text-xs">
                     <div className="text-slate-600">
                       <span className="font-semibold">Ajout:</span> {formatDateTime(o.createdAt)}

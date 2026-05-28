@@ -14,7 +14,7 @@ export const dynamic = "force-dynamic";
 export default async function ConfirmationPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string; confirmed?: string }>;
+  searchParams: Promise<{ status?: string; confirmed?: string; boutiqueId?: string; q?: string; agentId?: string; city?: string }>;
 }) {
   const session = await auth();
   const userRole = (session?.user as any)?.role;
@@ -23,6 +23,9 @@ export default async function ConfirmationPage({
   const params = await searchParams;
   const currentStatus = params.status ?? "NOUVEAU";
   const confirmedCode = params.confirmed ?? null;
+  const boutiqueId = params.boutiqueId ?? "";
+  const q = params.q ?? "";
+  const agentId = params.agentId ?? "";
 
   // Si l'utilisateur est un AGENT, on filtre par ses commandes affectées
   const agentFilter = isAgent && userId ? { assignedAgentId: userId } : {};
@@ -32,13 +35,25 @@ export default async function ConfirmationPage({
     ? { status: { in: ["PDR", "INJOIGNABLE"] } }
     : { status: currentStatus };
 
+  // Filtres additionnels
+  const extraFilters: Record<string, unknown> = {};
+  if (boutiqueId) extraFilters.boutiqueId = boutiqueId;
+  if (agentId && !isAgent) extraFilters.assignedAgentId = agentId;
+  if (q) {
+    (extraFilters as any).OR = [
+      { code: { contains: q } },
+      { customer: { fullName: { contains: q } } },
+      { customer: { phone: { contains: q } } },
+    ];
+  }
+
   // Reportés à rappeler AUJOURD'HUI
   const todayStart = new Date(); todayStart.setHours(0, 0, 0, 0);
   const todayEnd   = new Date(); todayEnd.setHours(23, 59, 59, 999);
 
   const [orders, nouveauCount, reporteCount, pdrCount, boutiques, cities, agents, reportedTotal, pdrTotal, rappelsAujourdHui] = await Promise.all([
     prisma.order.findMany({
-      where: { ...statusFilter, ...agentFilter },
+      where: { ...statusFilter, ...agentFilter, ...extraFilters },
       include: {
         boutique: true,
         customer: true,
@@ -162,9 +177,11 @@ export default async function ConfirmationPage({
 
         <TeamStatus agents={teamAgents} />
         <OrderFilters
+          basePath="/commandes/confirmation"
           boutiques={boutiques}
           cities={cities}
           agents={agents.map((a) => ({ id: a.id, name: `${a.firstName} ${a.lastName}` }))}
+          currentFilters={{ boutiqueId, q, agentId }}
         />
         <OrderActions
           agents={agents.map((a) => ({ id: a.id, name: `${a.firstName} ${a.lastName}` }))}
