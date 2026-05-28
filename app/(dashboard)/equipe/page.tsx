@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { PageHeader } from "@/components/PageHeader";
-import { Plus, Edit, UserCheck, UserX, Bike, ClipboardCheck, ShieldCheck, Crown } from "lucide-react";
+import { Plus, Edit, UserCheck, UserX, Bike, ClipboardCheck, ShieldCheck, Crown, Store } from "lucide-react";
 import { can } from "@/lib/rbac";
 import Link from "next/link";
 
@@ -23,17 +23,20 @@ export default async function EquipePage({
 
   const users = await prisma.user.findMany({
     orderBy: [{ active: "desc" }, { firstName: "asc" }],
+    include: { ownedBoutique: { select: { id: true, name: true } } },
   });
 
   const managers = users.filter((u) => u.role === "MANAGER" || u.role === "ADMIN");
   const agents = users.filter((u) => u.role === "AGENT");
   const livreurs = users.filter((u) => u.role === "LIVREUR");
+  const boutiqueOwners = users.filter((u) => u.role === "BOUTIQUE_OWNER");
 
   const roleColors: Record<string, string> = {
     ADMIN: "bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300",
     MANAGER: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300",
     AGENT: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300",
     LIVREUR: "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300",
+    BOUTIQUE_OWNER: "bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300",
   };
 
   const ROLE_LABEL: Record<string, string> = {
@@ -41,6 +44,7 @@ export default async function EquipePage({
     MANAGER: "Superviseur",
     AGENT: "Agent",
     LIVREUR: "Livreur",
+    BOUTIQUE_OWNER: "Client Boutique",
   };
 
   type User = (typeof users)[0];
@@ -77,10 +81,22 @@ export default async function EquipePage({
           </div>
           <div className="text-xs text-slate-500 dark:text-slate-400 truncate">{u.email}</div>
           {u.phone && <div className="text-xs text-slate-400 dark:text-slate-500">{u.phone}</div>}
-          <div className="mt-1.5">
+          <div className="mt-1.5 flex items-center gap-1.5 flex-wrap">
             <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${roleColors[u.role] ?? "bg-slate-100 text-slate-600"}`}>
               {ROLE_LABEL[u.role] ?? u.role}
             </span>
+            {u.role === "BOUTIQUE_OWNER" && (u as any).ownedBoutique && (
+              <Link
+                href={`/boutiques/${(u as any).ownedBoutique.id}`}
+                className="inline-flex items-center gap-1 text-xs text-sky-600 hover:text-sky-800 hover:underline"
+              >
+                <Store className="w-3 h-3" />
+                {(u as any).ownedBoutique.name}
+              </Link>
+            )}
+            {u.role === "BOUTIQUE_OWNER" && !(u as any).ownedBoutique && (
+              <span className="text-xs text-slate-400 italic">Aucune boutique liée</span>
+            )}
           </div>
         </div>
         {isAdmin && (!u.isSuperAdmin || sessionIsSuperAdmin) ? (
@@ -176,6 +192,12 @@ export default async function EquipePage({
           icon={Bike}
           color="bg-amber-500"
           users={livreurs}
+        />
+        <Section
+          title="Clients Boutique"
+          icon={Store}
+          color="bg-sky-500"
+          users={boutiqueOwners}
         />
       </div>
     </div>
