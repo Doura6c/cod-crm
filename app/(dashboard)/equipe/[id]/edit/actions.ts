@@ -30,9 +30,15 @@ export async function updateCollaboratorAction(formData: FormData): Promise<void
   const newPassword = String(formData.get("password") ?? "").trim();
   const assignedCityId = String(formData.get("assignedCityId") ?? "").trim() || null;
   const subZone = String(formData.get("subZone") ?? "").trim() || null;
+  const boutiqueId = String(formData.get("boutiqueId") ?? "").trim() || null;
 
   if (!firstName || !lastName || !email || !newRole) {
     redirect(`/equipe/${userId}/edit?error=missing`);
+  }
+
+  // Un Client Boutique doit être rattaché à une boutique
+  if (newRole === "BOUTIQUE_OWNER" && !boutiqueId) {
+    redirect(`/equipe/${userId}/edit?error=boutique-required`);
   }
 
   // Check email uniqueness (exclude current user)
@@ -52,6 +58,8 @@ export async function updateCollaboratorAction(formData: FormData): Promise<void
     active,
     assignedCityId: newRole === "LIVREUR" ? assignedCityId : null,
     subZone: newRole === "LIVREUR" ? subZone : null,
+    // boutiqueId conservé uniquement pour les Clients Boutique, sinon détaché
+    boutiqueId: newRole === "BOUTIQUE_OWNER" ? boutiqueId : null,
   };
 
   if (newPassword) {

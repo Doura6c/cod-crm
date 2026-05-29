@@ -13,6 +13,7 @@ const ROLE_LABEL: Record<string, string> = {
   MANAGER: "Superviseur",
   AGENT: "Agent de confirmation",
   LIVREUR: "Livreur",
+  BOUTIQUE_OWNER: "Client Boutique",
 };
 
 export default async function EditCollaboratorPage({
@@ -29,9 +30,10 @@ export default async function EditCollaboratorPage({
   const { id } = await params;
   const { error } = await searchParams;
 
-  const [user, cities] = await Promise.all([
+  const [user, cities, boutiques] = await Promise.all([
     prisma.user.findUnique({ where: { id } }),
     prisma.city.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } }),
+    prisma.boutique.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } }),
   ]);
   if (!user) redirect("/equipe");
 
@@ -41,6 +43,7 @@ export default async function EditCollaboratorPage({
     missing: "Tous les champs obligatoires doivent être remplis.",
     "email-exists": "Cet email est déjà utilisé par un autre compte.",
     "password-short": "Le mot de passe doit contenir au moins 6 caractères.",
+    "boutique-required": "Un Client Boutique doit être rattaché à une boutique.",
   };
 
   return (
@@ -116,6 +119,7 @@ export default async function EditCollaboratorPage({
                   <option value="AGENT">Agent de confirmation</option>
                   <option value="MANAGER">Superviseur</option>
                   <option value="LIVREUR">Livreur</option>
+                  <option value="BOUTIQUE_OWNER">Client Boutique</option>
                   <option value="ADMIN">Administrateur</option>
                 </select>
               </div>
@@ -141,6 +145,20 @@ export default async function EditCollaboratorPage({
                 placeholder="Laisser vide pour ne pas modifier"
               />
               <p className="text-xs text-slate-400 mt-1">Laissez vide pour conserver le mot de passe actuel. Min. 6 caractères.</p>
+            </div>
+
+            {/* Boutique associée — clients boutique. Toujours rendu pour conserver le lien si rôle inchangé */}
+            <div className="bg-sky-50 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-700/40 rounded-xl p-4 space-y-2">
+              <p className="text-xs font-bold text-sky-700 dark:text-sky-400 uppercase tracking-wide">🏪 Boutique associée (rôle Client Boutique)</p>
+              <select name="boutiqueId" defaultValue={user.boutiqueId ?? ""} className="input border-sky-300">
+                <option value="">— Aucune boutique —</option>
+                {boutiques.map((b) => (
+                  <option key={b.id} value={b.id}>{b.name}</option>
+                ))}
+              </select>
+              <p className="text-xs text-sky-600 dark:text-sky-400">
+                Obligatoire si le rôle est « Client Boutique ». Le client accède alors à son portail dédié <code>/mon-espace</code>.
+              </p>
             </div>
 
             {/* Zone d'affectation — livreurs uniquement */}
