@@ -52,7 +52,8 @@ export async function GET() {
 export async function DELETE(req: Request) {
   const session = await auth();
   const user = session?.user as any;
-  if (!session?.user || user?.role !== "ADMIN") {
+  // Suppression massive : réservée au super-admin (action irréversible)
+  if (!session?.user || user?.role !== "ADMIN" || user?.isSuperAdmin !== true) {
     return NextResponse.json({ error: "Accès interdit" }, { status: 403 });
   }
 

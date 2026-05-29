@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { generateOrderCode } from "@/lib/utils";
+import { requireRole } from "@/lib/apiAuth";
 
 export async function GET(req: Request) {
-  const session = await auth();
-  if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const { response } = await requireRole(["ADMIN", "MANAGER", "AGENT"]);
+  if (response) return response;
 
   const url = new URL(req.url);
   const status = url.searchParams.get("status");
@@ -30,8 +30,8 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-  const session = await auth();
-  if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const { response } = await requireRole(["ADMIN", "MANAGER"]);
+  if (response) return response;
 
   const body = await req.json();
   const { boutiqueId, customer, items, notes, cityId } = body;

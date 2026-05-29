@@ -13,6 +13,7 @@ export const dynamic = "force-dynamic";
 export default async function ParametresPage() {
   const session = await auth();
   if (!can((session?.user as any)?.role, "VIEW_SETTINGS")) redirect("/");
+  const isSuperAdmin = (session?.user as any)?.isSuperAdmin === true;
 
   const [hmpCommission, agentPrime, livreurPrime, companyName, currency] = await Promise.all([
     getHmpCommission(),
@@ -178,25 +179,27 @@ export default async function ParametresPage() {
           </form>
         </div>
 
-        {/* Zone de danger — Reset données fictives */}
-        <div className="bg-white border-2 border-red-300 rounded-2xl overflow-hidden">
-          <div className="bg-red-50 px-6 py-4 border-b border-red-200 flex items-center gap-3">
-            <div className="w-9 h-9 bg-red-500 rounded-xl flex items-center justify-center">
-              <Trash2 className="w-5 h-5 text-white" />
+        {/* Zone de danger — Reset données fictives (super-admin uniquement) */}
+        {isSuperAdmin && (
+          <div className="bg-white border-2 border-red-300 rounded-2xl overflow-hidden">
+            <div className="bg-red-50 px-6 py-4 border-b border-red-200 flex items-center gap-3">
+              <div className="w-9 h-9 bg-red-500 rounded-xl flex items-center justify-center">
+                <Trash2 className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <div className="font-bold text-red-900">Zone de danger — Réinitialisation</div>
+                <div className="text-xs text-red-600">Supprime toutes les données fictives / de test. Réservé au super-administrateur.</div>
+              </div>
             </div>
-            <div>
-              <div className="font-bold text-red-900">Zone de danger — Réinitialisation</div>
-              <div className="text-xs text-red-600">Supprime toutes les données fictives / de test. Réservé à l&apos;administrateur.</div>
+            <div className="px-6 py-5">
+              <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-4 text-sm text-red-800">
+                <strong>⚠️ Action irréversible.</strong> Cela supprimera toutes les commandes, clients, produits et boutiques.<br />
+                Les comptes utilisateurs et les villes seront conservés.
+              </div>
+              <ResetDataButton />
             </div>
           </div>
-          <div className="px-6 py-5">
-            <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-4 text-sm text-red-800">
-              <strong>⚠️ Action irréversible.</strong> Cela supprimera toutes les commandes, clients, produits et boutiques.<br />
-              Les comptes utilisateurs et les villes seront conservés.
-            </div>
-            <ResetDataButton />
-          </div>
-        </div>
+        )}
 
       </div>
     </div>

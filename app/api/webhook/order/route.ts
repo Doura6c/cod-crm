@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { generateOrderCode, formatGNF } from "@/lib/utils";
+import { isRateLimited } from "@/lib/rateLimit";
+
+// Limite de taille du corps de requête (anti-DoS) : 100 Ko
+const MAX_BODY_BYTES = 100 * 1024;
 
 /**
  * Endpoint public — appelé par les boutiques e-commerce des clients.
@@ -49,7 +53,36 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Boutique inconnue ou inactive" }, { status: 401, headers: CORS });
     }
 
-    const body = await req.json();
+    // Rate-limiting par boutique : max 300 commandes / 15 min (anti-spam / DoS)
+    if (isRateLimited(`webhook:${boutique.id}`, 300, 15 * 60 * 1000)) {
+      return NextResponse.json(
+        { error: "Trop de requêtes, réessayez plus tard" },
+        { status: 429, headers: CORS }
+      );
+    }
+
+    // Limite de taille du payload
+    const contentLength = Number(req.headers.get("content-length") ?? 0);
+    if (contentLength > MAX_BODY_BYTES) {
+      return NextResponse.json(
+        { error: "Payload trop volumineux" },
+        { status: 413, headers: CORS }
+      );
+    }
+
+    const rawBody = await req.text();
+    if (rawBody.length > MAX_BODY_BYTES) {
+      return NextResponse.json(
+        { error: "Payload trop volumineux" },
+        { status: 413, headers: CORS }
+      );
+    }
+    let body: any;
+    try {
+      body = JSON.parse(rawBody);
+    } catch {
+      return NextResponse.json({ error: "JSON invalide" }, { status: 400, headers: CORS });
+    }
     const { externalRef, items, deliveryFee = 0, notes, source } = body;
 
     // Support deux formats : customer.city OU top-level cityName/address
