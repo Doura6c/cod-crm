@@ -6,6 +6,28 @@
 
 ---
 
+## ✅ Suivi des corrections (mise à jour post-audit)
+
+Les correctifs suivants ont été **implémentés, testés (build OK) et déployés** :
+
+| Constat | Statut | Commit |
+|---|---|---|
+| S1 — `GET /api/products` public | ✅ Corrigé | `8b7333d` |
+| S2 — IDOR commandes (GET/PATCH/DELETE) | ✅ Corrigé | `8b7333d` |
+| S3 — Factures inter-boutiques | ✅ Corrigé | `8b7333d` |
+| S4 — XSS stocké facture | ✅ Corrigé | `8b7333d` |
+| T1 — CI bloquante (+ tests) | ✅ En place | `8b7333d`, `8530e56` |
+| A1 — Gardes API unifiées | ✅ Généralisé | `8b7333d`, `fd0d42b` |
+| S6 — Webhook (rate-limit + taille) | ✅ Corrigé | `fd0d42b` |
+| D1 — `reset` réservé super-admin | ✅ Corrigé | `fd0d42b` |
+| A2 — Codes/clés cryptographiquement sûrs | ✅ Corrigé | `7a00d7f` |
+| S8 — Session boutique re-vérifiée | ✅ Corrigé | `7a00d7f` |
+| Tests automatisés (Vitest, 12 tests) | ✅ Ajouté | `8530e56` |
+
+**Restant (décision/infra requise)** : S5 (rate-limit distribué via Upstash Redis), S7 (durcissement CSP), C1 (journal d'audit — nécessite migration BDD), U1 (accessibilité).
+
+---
+
 ## 📑 Table des matières
 
 1. [Résumé exécutif & Verdict](#1-résumé-exécutif--verdict)
