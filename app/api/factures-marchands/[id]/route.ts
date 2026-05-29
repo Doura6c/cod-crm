@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/auth";
+import { getSessionUser, unauthorized, forbidden } from "@/lib/apiAuth";
 import { getHmpCommission } from "@/lib/settings";
+import { escapeHtml } from "@/lib/utils";
 
 function fmt(n: number) {
   return Math.round(n).toLocaleString("fr-FR") + " GNF";
@@ -12,8 +13,8 @@ function fmtDate(d: Date | null | undefined) {
 }
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const session = await auth();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const user = await getSessionUser();
+  if (!user) return unauthorized();
 
   const HMP_FEE = await getHmpCommission();
   const { id } = await params;
@@ -24,7 +25,12 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       boutique: true,
     },
   });
-  if (!invoice) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  if (!invoice) return NextResponse.json({ error: "Introuvable" }, { status: 404 });
+
+  // Cloisonnement : ADMIN/MANAGER voient tout ; un BOUTIQUE_OWNER ne voit que sa boutique
+  const isStaff = user.role === "ADMIN" || user.role === "MANAGER";
+  const ownsInvoice = user.role === "BOUTIQUE_OWNER" && user.boutiqueId === invoice.boutiqueId;
+  if (!isStaff && !ownsInvoice) return forbidden();
 
   // Récupérer les commandes livrées sur cette période pour le détail
   const deliveries = await prisma.delivery.findMany({
@@ -55,9 +61,9 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       const net = Math.max(0, produits - HMP_FEE);
       return `
       <tr>
-        <td>${d.order.code}</td>
-        <td>${d.order.customer.fullName}<br/><small style="color:#64748b">${d.order.city?.name ?? "—"}</small></td>
-        <td>${d.order.items.map((it) => `${it.product.name} ×${it.quantity}`).join("<br/>")}</td>
+        <td>${escapeHtml(d.order.code)}</td>
+        <td>${escapeHtml(d.order.customer.fullName)}<br/><small style="color:#64748b">${escapeHtml(d.order.city?.name ?? "—")}</small></td>
+        <td>${d.order.items.map((it) => `${escapeHtml(it.product.name)} ×${it.quantity}`).join("<br/>")}</td>
         <td style="text-align:right">${fmt(produits)}</td>
         <td style="text-align:right;color:#dc2626">−${fmt(HMP_FEE)}</td>
         <td style="text-align:right;font-weight:700;color:#059669">${fmt(net)}</td>
@@ -78,7 +84,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Facture Marchand ${invoice.reference}</title>
+  <title>Facture Marchand ${escapeHtml(invoice.reference)}</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Arial', sans-serif; padding: 36px; color: #1e293b; font-size: 13px; background: #fff; }
@@ -112,7 +118,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     <div>
       <div class="logo">HelpMe<span>Process</span> COD</div>
       <div class="logo-sub">Gestionnaire COD — helpmeprocess.gn</div>
-      <div class="ref">Facture Marchand : <strong>${invoice.reference}</strong></div>
+      <div class="ref">Facture Marchand : <strong>${escapeHtml(invoice.reference)}</strong></div>
       <div class="ref">Générée le ${fmtDate(new Date())}</div>
       <div style="margin-top:12px">${statusBadge}</div>
     </div>
@@ -125,9 +131,9 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   <div class="merchant-box">
     <div>
       <div class="info-label">Commerçant / Boutique</div>
-      <div class="info-val">${invoice.boutique.name}</div>
-      <div style="color:#64748b;font-size:12px;margin-top:2px">${invoice.boutique.sellerName}</div>
-      ${invoice.boutique.sellerPhone ? `<div style="color:#64748b;font-size:12px">${invoice.boutique.sellerPhone}</div>` : ""}
+      <div class="info-val">${escapeHtml(invoice.boutique.name)}</div>
+      <div style="color:#64748b;font-size:12px;margin-top:2px">${escapeHtml(invoice.boutique.sellerName)}</div>
+      ${invoice.boutique.sellerPhone ? `<div style="color:#64748b;font-size:12px">${escapeHtml(invoice.boutique.sellerPhone)}</div>` : ""}
     </div>
     <div>
       <div class="info-label">Période de vente</div>

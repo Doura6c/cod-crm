@@ -1,15 +1,27 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { getSessionUser, unauthorized, forbidden } from "@/lib/apiAuth";
 
 export async function GET() {
+  const user = await getSessionUser();
+  if (!user) return unauthorized();
+
   const products = await prisma.product.findMany({ include: { boutique: true } });
-  return NextResponse.json(products);
+
+  // Seuls ADMIN/MANAGER voient les coûts d'achat (marges sensibles)
+  const canSeeCost = user.role === "ADMIN" || user.role === "MANAGER";
+  const result = canSeeCost
+    ? products
+    : products.map((p) => ({ ...p, costPrice: null }));
+
+  return NextResponse.json(result);
 }
 
 export async function POST(req: Request) {
-  const session = await auth();
-  if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const user = await getSessionUser();
+  if (!user) return unauthorized();
+  // Création de produit réservée ADMIN/MANAGER
+  if (user.role !== "ADMIN" && user.role !== "MANAGER") return forbidden();
   const body = await req.json();
 
   const product = await prisma.product.create({

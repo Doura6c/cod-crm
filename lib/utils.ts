@@ -1,3 +1,18 @@
+/**
+ * Échappe une valeur destinée à être interpolée dans du HTML brut.
+ * Indispensable pour neutraliser les XSS stockés (noms clients/produits
+ * provenant du webhook ou des imports CSV).
+ */
+export function escapeHtml(value: unknown): string {
+  if (value === null || value === undefined) return "";
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 export function formatGNF(amount: number): string {
   return new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 0 }).format(amount) + " GNF";
 }
