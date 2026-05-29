@@ -22,6 +22,20 @@ export default async function BoutiqueLayout({
     redirect("/");
   }
 
+  // Sécurité : vérifier que le compte est toujours actif en base.
+  // Le JWT peut rester valide après désactivation par un admin.
+  if (userId) {
+    const dbUser = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { active: true, role: true },
+    });
+    if (!dbUser || !dbUser.active) redirect("/login");
+    // Si le rôle a changé en base (ex: n'est plus BOUTIQUE_OWNER), on quitte le portail
+    if (dbUser.role !== "BOUTIQUE_OWNER" && dbUser.role !== "ADMIN" && dbUser.role !== "MANAGER") {
+      redirect("/login");
+    }
+  }
+
   // Récupérer la boutique liée
   let boutique: { id: string; name: string; sellerName: string; active: boolean } | null = null;
   if (boutiqueId) {

@@ -35,12 +35,28 @@ export function formatDateTime(date: Date | string | null | undefined): string {
   });
 }
 
+/**
+ * Génère une chaîne aléatoire cryptographiquement sûre à partir d'un alphabet.
+ * Utilise Web Crypto (`crypto.getRandomValues`), disponible côté serveur (Node 20+)
+ * comme côté navigateur — pas d'import Node spécifique (compatible bundle client).
+ */
+function secureRandomString(length: number, alphabet: string): string {
+  const bytes = new Uint32Array(length);
+  crypto.getRandomValues(bytes);
+  let result = "";
+  for (let i = 0; i < length; i++) {
+    result += alphabet.charAt(bytes[i] % alphabet.length);
+  }
+  return result;
+}
+
 export function generateOrderCode(): string {
   const now = new Date();
   const dd = String(now.getDate()).padStart(2, "0");
   const mm = String(now.getMonth() + 1).padStart(2, "0");
   const yyyy = now.getFullYear();
-  const rand = Math.floor(10000 + Math.random() * 90000);
+  // 6 caractères aléatoires sûrs (~2 milliards de combinaisons) → collisions négligeables
+  const rand = secureRandomString(6, "ABCDEFGHJKLMNPQRSTUVWXYZ23456789");
   return `CMD-${dd}${mm}${yyyy}-${rand}`;
 }
 
@@ -49,17 +65,15 @@ export function generateInvoiceReference(): string {
   const yyyy = now.getFullYear();
   const mm = String(now.getMonth() + 1).padStart(2, "0");
   const dd = String(now.getDate()).padStart(2, "0");
-  const rand = Math.floor(10000 + Math.random() * 90000);
+  const rand = secureRandomString(6, "ABCDEFGHJKLMNPQRSTUVWXYZ23456789");
   return `FACT-${yyyy}${mm}${dd}-${rand}`;
 }
 
 export function randomKey(length = 32): string {
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let result = "";
-  for (let i = 0; i < length; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return result;
+  return secureRandomString(
+    length,
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+  );
 }
 
 export const ORDER_STATUS_LABELS: Record<string, { label: string; color: string }> = {
