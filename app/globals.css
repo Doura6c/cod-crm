@@ -74,6 +74,13 @@ body {
   box-sizing: border-box;
 }
 
+/* ─── Focus clavier (WCAG 2.4.7) ─────── */
+*:focus-visible {
+  outline: 2px solid var(--acc-500);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
 /* ─── Scrollbars ──────────────────────── */
 ::-webkit-scrollbar {
   width: 6px;
