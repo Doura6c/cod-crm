@@ -55,7 +55,7 @@ export async function POST(req: Request) {
     }
 
     // Rate-limiting par boutique : max 300 commandes / 15 min (anti-spam / DoS)
-    if (isRateLimited(`webhook:${boutique.id}`, 300, 15 * 60 * 1000)) {
+    if (await isRateLimited(`webhook:${boutique.id}`, 300, 15 * 60 * 1000)) {
       return NextResponse.json(
         { error: "Trop de requêtes, réessayez plus tard" },
         { status: 429, headers: CORS }

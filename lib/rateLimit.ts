@@ -1,61 +1,70 @@
 /**
- * Rate limiter en mémoire — protège les endpoints sensibles (login, actions critiques).
- * En production sur Vercel (serverless), chaque instance a son propre état —
- * pour une protection multi-instance, utiliser Upstash Redis.
- * Ici c'est déjà efficace contre les attaques de force brute mono-instance.
+ * Rate limiter distribué via Upstash Redis en production (serverless-safe),
+ * avec fallback en mémoire pour le développement local.
  */
 
-interface Bucket {
-  count: number;
-  resetAt: number;
-}
+// ─── Fallback en mémoire (dev local) ────────────────────────────────────────
 
-const store = new Map<string, Bucket>();
+interface Bucket { count: number; resetAt: number; }
+const memStore = new Map<string, Bucket>();
 
-/** Nettoyage périodique des buckets expirés (évite les fuites mémoire) */
-function cleanup() {
+function memIsRateLimited(key: string, limit: number, windowMs: number): boolean {
   const now = Date.now();
-  for (const [key, bucket] of store) {
-    if (bucket.resetAt < now) store.delete(key);
+  const bucket = memStore.get(key);
+  if (!bucket || bucket.resetAt < now) {
+    memStore.set(key, { count: 1, resetAt: now + windowMs });
+    return false;
   }
+  bucket.count += 1;
+  return bucket.count > limit;
 }
 
-let cleanupTimer: ReturnType<typeof setInterval> | null = null;
-function ensureCleanup() {
-  if (!cleanupTimer) {
-    cleanupTimer = setInterval(cleanup, 60_000); // toutes les minutes
-  }
+function memResetRateLimit(key: string) {
+  memStore.delete(key);
 }
 
-/**
- * Vérifie si une clé dépasse la limite autorisée.
- * @param key     Identifiant (ex: IP ou email)
- * @param limit   Nombre max de tentatives
- * @param windowMs Fenêtre de temps en ms (défaut: 15 minutes)
- * @returns true si la limite est dépassée (bloquer la requête)
- */
-export function isRateLimited(
+// ─── Upstash Redis (production) ──────────────────────────────────────────────
+
+function getRedis() {
+  const url   = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (!url || !token) return null;
+  const { Redis } = require("@upstash/redis");
+  return new Redis({ url, token });
+}
+
+async function redisIsRateLimited(
+  key: string,
+  limit: number,
+  windowMs: number
+): Promise<boolean> {
+  const redis = getRedis();
+  if (!redis) return memIsRateLimited(key, limit, windowMs);
+
+  const redisKey = `rl:${key}`;
+  const count: number = await redis.incr(redisKey);
+  if (count === 1) {
+    await redis.pexpire(redisKey, windowMs);
+  }
+  return count > limit;
+}
+
+async function redisResetRateLimit(key: string): Promise<void> {
+  const redis = getRedis();
+  if (!redis) { memResetRateLimit(key); return; }
+  await redis.del(`rl:${key}`);
+}
+
+// ─── API publique ────────────────────────────────────────────────────────────
+
+export async function isRateLimited(
   key: string,
   limit: number,
   windowMs = 15 * 60 * 1000
-): boolean {
-  ensureCleanup();
-  const now = Date.now();
-  const bucket = store.get(key);
-
-  if (!bucket || bucket.resetAt < now) {
-    store.set(key, { count: 1, resetAt: now + windowMs });
-    return false;
-  }
-
-  bucket.count += 1;
-  if (bucket.count > limit) return true;
-  return false;
+): Promise<boolean> {
+  return redisIsRateLimited(key, limit, windowMs);
 }
 
-/**
- * Réinitialise le compteur d'une clé (ex: après login réussi)
- */
-export function resetRateLimit(key: string) {
-  store.delete(key);
+export async function resetRateLimit(key: string): Promise<void> {
+  return redisResetRateLimit(key);
 }

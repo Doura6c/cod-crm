@@ -21,7 +21,7 @@ export async function loginAction(formData: FormData): Promise<void> {
   const ip = headersList.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
   const limitKey = `login:${email}:${ip}`;
 
-  if (isRateLimited(limitKey, 5, 15 * 60 * 1000)) {
+  if (await isRateLimited(limitKey, 5, 15 * 60 * 1000)) {
     redirect("/login?error=rate_limit");
   }
 
@@ -40,6 +40,6 @@ export async function loginAction(formData: FormData): Promise<void> {
   }
 
   // Login réussi — réinitialiser le compteur
-  resetRateLimit(limitKey);
+  await resetRateLimit(limitKey);
   redirect("/");
 }
