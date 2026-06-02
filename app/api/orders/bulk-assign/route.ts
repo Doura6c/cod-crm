@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { getSessionUser, unauthorized, forbidden } from "@/lib/apiAuth";
 
 /**
  * POST /api/orders/bulk-assign
@@ -8,11 +8,9 @@ import { prisma } from "@/lib/prisma";
  * Auth: ADMIN ou MANAGER
  */
 export async function POST(req: Request) {
-  const session = await auth();
-  const role = (session?.user as any)?.role;
-  if (!session?.user || !["ADMIN", "MANAGER"].includes(role)) {
-    return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
-  }
+  const user = await getSessionUser();
+  if (!user) return unauthorized();
+  if (!["ADMIN", "MANAGER"].includes(user.role)) return forbidden();
 
   const { orderIds, agentId } = await req.json();
   if (!Array.isArray(orderIds) || orderIds.length === 0) {

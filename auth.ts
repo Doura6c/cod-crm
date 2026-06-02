@@ -3,6 +3,7 @@ import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { authConfig } from "./auth.config";
 import { prisma } from "./lib/prisma";
+import { isRateLimited } from "./lib/rateLimit";
 
 const isProd = process.env.NODE_ENV === "production";
 
@@ -79,8 +80,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
 
+        // Rate-limit par email (backstop pour les appels directs au callback NextAuth)
+        const email = String(credentials.email).toLowerCase();
+        if (await isRateLimited(`login:${email}`, 10, 15 * 60 * 1000)) return null;
+
         const user = await prisma.user.findUnique({
-          where: { email: String(credentials.email).toLowerCase() },
+          where: { email },
         });
 
         if (!user || !user.active) return null;

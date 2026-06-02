@@ -548,7 +548,6 @@ export type TeamRequestCreateOrConnectWithoutRequestedByInput = {
 
 export type TeamRequestCreateManyRequestedByInputEnvelope = {
   data: Prisma.TeamRequestCreateManyRequestedByInput | Prisma.TeamRequestCreateManyRequestedByInput[]
-  skipDuplicates?: boolean
 }
 
 export type TeamRequestUpsertWithWhereUniqueWithoutRequestedByInput = {
@@ -1405,7 +1404,6 @@ export type TeamRequestCreateManyArgs<ExtArgs extends runtime.Types.Extensions.I
    * The data used to create many TeamRequests.
    */
   data: Prisma.TeamRequestCreateManyInput | Prisma.TeamRequestCreateManyInput[]
-  skipDuplicates?: boolean
 }
 
 /**
@@ -1424,7 +1422,6 @@ export type TeamRequestCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Ext
    * The data used to create many TeamRequests.
    */
   data: Prisma.TeamRequestCreateManyInput | Prisma.TeamRequestCreateManyInput[]
-  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

@@ -1434,7 +1434,6 @@ export type InvoiceCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * The data used to create many Invoices.
    */
   data: Prisma.InvoiceCreateManyInput | Prisma.InvoiceCreateManyInput[]
-  skipDuplicates?: boolean
 }
 
 /**
@@ -1453,7 +1452,6 @@ export type InvoiceCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensi
    * The data used to create many Invoices.
    */
   data: Prisma.InvoiceCreateManyInput | Prisma.InvoiceCreateManyInput[]
-  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

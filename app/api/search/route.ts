@@ -15,10 +15,10 @@ export async function GET(req: Request) {
     prisma.order.findMany({
       where: {
         OR: [
-          { code: { contains: q, mode: "insensitive" } },
-          { customer: { fullName: { contains: q, mode: "insensitive" } } },
+          { code: { contains: q } },
+          { customer: { fullName: { contains: q } } },
           { customer: { phone: { contains: q } } },
-          { notes: { contains: q, mode: "insensitive" } },
+          { notes: { contains: q } },
         ],
       },
       include: {
@@ -31,7 +31,7 @@ export async function GET(req: Request) {
     prisma.customer.findMany({
       where: {
         OR: [
-          { fullName: { contains: q, mode: "insensitive" } },
+          { fullName: { contains: q } },
           { phone: { contains: q } },
         ],
       },

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { generateOrderCode } from "@/lib/utils";
+import { getSessionUser, unauthorized, forbidden } from "@/lib/apiAuth";
 
 /**
  * POST /api/import/orders
@@ -9,12 +9,10 @@ import { generateOrderCode } from "@/lib/utils";
  * Auth: ADMIN ou MANAGER requis
  */
 export async function POST(req: Request) {
-  const session = await auth();
-  const role = (session?.user as any)?.role;
-  const userId = (session?.user as any)?.id;
-  if (!session?.user || !["ADMIN", "MANAGER"].includes(role)) {
-    return NextResponse.json({ error: "Non autorisé" }, { status: 403 });
-  }
+  const user = await getSessionUser();
+  if (!user) return unauthorized();
+  if (!["ADMIN", "MANAGER"].includes(user.role)) return forbidden();
+  const userId = user.id;
 
   let body: { rows: any[]; boutiqueId?: string };
   try {

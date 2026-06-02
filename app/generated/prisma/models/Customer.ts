@@ -604,7 +604,6 @@ export type CustomerCreateOrConnectWithoutCityInput = {
 
 export type CustomerCreateManyCityInputEnvelope = {
   data: Prisma.CustomerCreateManyCityInput | Prisma.CustomerCreateManyCityInput[]
-  skipDuplicates?: boolean
 }
 
 export type CustomerUpsertWithWhereUniqueWithoutCityInput = {
@@ -1589,7 +1588,6 @@ export type CustomerCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * The data used to create many Customers.
    */
   data: Prisma.CustomerCreateManyInput | Prisma.CustomerCreateManyInput[]
-  skipDuplicates?: boolean
 }
 
 /**
@@ -1608,7 +1606,6 @@ export type CustomerCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extens
    * The data used to create many Customers.
    */
   data: Prisma.CustomerCreateManyInput | Prisma.CustomerCreateManyInput[]
-  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

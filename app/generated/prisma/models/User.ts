@@ -811,7 +811,6 @@ export type UserCreateOrConnectWithoutOwnedBoutiqueInput = {
 
 export type UserCreateManyOwnedBoutiqueInputEnvelope = {
   data: Prisma.UserCreateManyOwnedBoutiqueInput | Prisma.UserCreateManyOwnedBoutiqueInput[]
-  skipDuplicates?: boolean
 }
 
 export type UserUpsertWithWhereUniqueWithoutOwnedBoutiqueInput = {
@@ -902,7 +901,6 @@ export type UserCreateOrConnectWithoutAssignedCityInput = {
 
 export type UserCreateManyAssignedCityInputEnvelope = {
   data: Prisma.UserCreateManyAssignedCityInput | Prisma.UserCreateManyAssignedCityInput[]
-  skipDuplicates?: boolean
 }
 
 export type UserUpsertWithWhereUniqueWithoutAssignedCityInput = {
@@ -2474,7 +2472,6 @@ export type UserCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * The data used to create many Users.
    */
   data: Prisma.UserCreateManyInput | Prisma.UserCreateManyInput[]
-  skipDuplicates?: boolean
 }
 
 /**
@@ -2493,7 +2490,6 @@ export type UserCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions
    * The data used to create many Users.
    */
   data: Prisma.UserCreateManyInput | Prisma.UserCreateManyInput[]
-  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

@@ -1172,7 +1172,6 @@ export type ExpenseCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * The data used to create many Expenses.
    */
   data: Prisma.ExpenseCreateManyInput | Prisma.ExpenseCreateManyInput[]
-  skipDuplicates?: boolean
 }
 
 /**
@@ -1191,7 +1190,6 @@ export type ExpenseCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensi
    * The data used to create many Expenses.
    */
   data: Prisma.ExpenseCreateManyInput | Prisma.ExpenseCreateManyInput[]
-  skipDuplicates?: boolean
 }
 
 /**

@@ -11,7 +11,7 @@ function createPrismaClient() {
     // SQLite (dev local)
     const { PrismaBetterSqlite3 } = require("@prisma/adapter-better-sqlite3");
     const path = require("path");
-    const dbPath = path.resolve(process.cwd(), "prisma/dev.db");
+    const dbPath = path.resolve(process.cwd(), "dev.db");
     const adapter = new PrismaBetterSqlite3({ url: dbPath });
     return new PrismaClient({ adapter } as any);
   } else {

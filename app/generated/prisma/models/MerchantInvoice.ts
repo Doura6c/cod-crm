@@ -350,6 +350,7 @@ export type MerchantInvoiceOrderByWithRelationInput = {
 export type MerchantInvoiceWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   reference?: string
+  boutiqueId_periodStart?: Prisma.MerchantInvoiceBoutiqueIdPeriodStartCompoundUniqueInput
   AND?: Prisma.MerchantInvoiceWhereInput | Prisma.MerchantInvoiceWhereInput[]
   OR?: Prisma.MerchantInvoiceWhereInput[]
   NOT?: Prisma.MerchantInvoiceWhereInput | Prisma.MerchantInvoiceWhereInput[]
@@ -368,7 +369,7 @@ export type MerchantInvoiceWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"MerchantInvoice"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"MerchantInvoice"> | Date | string
   boutique?: Prisma.XOR<Prisma.BoutiqueScalarRelationFilter, Prisma.BoutiqueWhereInput>
-}, "id" | "reference">
+}, "id" | "reference" | "boutiqueId_periodStart">
 
 export type MerchantInvoiceOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -558,6 +559,11 @@ export type MerchantInvoiceOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
+export type MerchantInvoiceBoutiqueIdPeriodStartCompoundUniqueInput = {
+  boutiqueId: string
+  periodStart: Date | string
+}
+
 export type MerchantInvoiceCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   reference?: Prisma.SortOrder
@@ -718,7 +724,6 @@ export type MerchantInvoiceCreateOrConnectWithoutBoutiqueInput = {
 
 export type MerchantInvoiceCreateManyBoutiqueInputEnvelope = {
   data: Prisma.MerchantInvoiceCreateManyBoutiqueInput | Prisma.MerchantInvoiceCreateManyBoutiqueInput[]
-  skipDuplicates?: boolean
 }
 
 export type MerchantInvoiceUpsertWithWhereUniqueWithoutBoutiqueInput = {
@@ -1619,7 +1624,6 @@ export type MerchantInvoiceCreateManyArgs<ExtArgs extends runtime.Types.Extensio
    * The data used to create many MerchantInvoices.
    */
   data: Prisma.MerchantInvoiceCreateManyInput | Prisma.MerchantInvoiceCreateManyInput[]
-  skipDuplicates?: boolean
 }
 
 /**
@@ -1638,7 +1642,6 @@ export type MerchantInvoiceCreateManyAndReturnArgs<ExtArgs extends runtime.Types
    * The data used to create many MerchantInvoices.
    */
   data: Prisma.MerchantInvoiceCreateManyInput | Prisma.MerchantInvoiceCreateManyInput[]
-  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

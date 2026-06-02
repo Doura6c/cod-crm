@@ -1093,7 +1093,6 @@ export type OrderCreateOrConnectWithoutAssignedAgentInput = {
 
 export type OrderCreateManyAssignedAgentInputEnvelope = {
   data: Prisma.OrderCreateManyAssignedAgentInput | Prisma.OrderCreateManyAssignedAgentInput[]
-  skipDuplicates?: boolean
 }
 
 export type OrderCreateWithoutValidatedByInput = {
@@ -1157,7 +1156,6 @@ export type OrderCreateOrConnectWithoutValidatedByInput = {
 
 export type OrderCreateManyValidatedByInputEnvelope = {
   data: Prisma.OrderCreateManyValidatedByInput | Prisma.OrderCreateManyValidatedByInput[]
-  skipDuplicates?: boolean
 }
 
 export type OrderUpsertWithWhereUniqueWithoutAssignedAgentInput = {
@@ -1280,7 +1278,6 @@ export type OrderCreateOrConnectWithoutBoutiqueInput = {
 
 export type OrderCreateManyBoutiqueInputEnvelope = {
   data: Prisma.OrderCreateManyBoutiqueInput | Prisma.OrderCreateManyBoutiqueInput[]
-  skipDuplicates?: boolean
 }
 
 export type OrderUpsertWithWhereUniqueWithoutBoutiqueInput = {
@@ -1360,7 +1357,6 @@ export type OrderCreateOrConnectWithoutCustomerInput = {
 
 export type OrderCreateManyCustomerInputEnvelope = {
   data: Prisma.OrderCreateManyCustomerInput | Prisma.OrderCreateManyCustomerInput[]
-  skipDuplicates?: boolean
 }
 
 export type OrderUpsertWithWhereUniqueWithoutCustomerInput = {
@@ -1440,7 +1436,6 @@ export type OrderCreateOrConnectWithoutCityInput = {
 
 export type OrderCreateManyCityInputEnvelope = {
   data: Prisma.OrderCreateManyCityInput | Prisma.OrderCreateManyCityInput[]
-  skipDuplicates?: boolean
 }
 
 export type OrderUpsertWithWhereUniqueWithoutCityInput = {
@@ -3361,7 +3356,6 @@ export type OrderCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * The data used to create many Orders.
    */
   data: Prisma.OrderCreateManyInput | Prisma.OrderCreateManyInput[]
-  skipDuplicates?: boolean
 }
 
 /**
@@ -3380,7 +3374,6 @@ export type OrderCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extension
    * The data used to create many Orders.
    */
   data: Prisma.OrderCreateManyInput | Prisma.OrderCreateManyInput[]
-  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

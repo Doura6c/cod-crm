@@ -1,14 +1,12 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { can } from "@/lib/rbac";
+import { getSessionUser, unauthorized, forbidden } from "@/lib/apiAuth";
 
 export async function POST(req: Request) {
-  const session = await auth();
-  const role = (session?.user as any)?.role;
-  if (!can(role, "ASSIGN_ORDER")) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
+  const user = await getSessionUser();
+  if (!user) return unauthorized();
+  if (!can(user.role, "ASSIGN_ORDER")) return forbidden();
 
   let orderIds: string[] = [];
   let agentId: string | null = null;

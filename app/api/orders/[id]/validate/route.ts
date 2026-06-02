@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getSessionUser } from "@/lib/apiAuth";
+import { getSessionUser, unauthorized } from "@/lib/apiAuth";
 import { can } from "@/lib/rbac";
 
 export async function POST(_req: Request, context: { params: Promise<{ id: string }> }) {
   const user = await getSessionUser();
   if (!user) {
-    return NextResponse.redirect(new URL("/login", _req.url));
+    return unauthorized();
   }
   if (!can(user.role, "VALIDATE_ORDER")) {
     return NextResponse.json({ error: "Accès interdit" }, { status: 403 });
@@ -49,6 +49,5 @@ export async function POST(_req: Request, context: { params: Promise<{ id: strin
     }
   });
 
-  const referer = _req.headers.get("referer") ?? "/commandes/confirmation";
-  return NextResponse.redirect(referer, 303);
+  return NextResponse.json({ ok: true });
 }
