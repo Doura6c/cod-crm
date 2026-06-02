@@ -77,8 +77,9 @@ export function GlobalSearch() {
         {loading && <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 animate-spin" />}
         {!loading && query && (
           <button onClick={() => { setQuery(""); setResults(null); setOpen(false); }}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
-            <X className="w-4 h-4" />
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+            aria-label="Effacer la recherche">
+            <X className="w-4 h-4" aria-hidden="true" />
           </button>
         )}
       </div>

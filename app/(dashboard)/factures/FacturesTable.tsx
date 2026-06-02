@@ -160,9 +160,9 @@ export function FacturesTable({ invoices }: { invoices: InvoiceRow[] }) {
                     <button
                       onClick={() => printInvoice(inv)}
                       className="w-8 h-8 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded inline-flex items-center justify-center"
-                      title="Imprimer la facture"
+                      aria-label="Imprimer la facture"
                     >
-                      <Printer className="w-4 h-4" />
+                      <Printer className="w-4 h-4" aria-hidden="true" />
                     </button>
                   </td>
                 </tr>

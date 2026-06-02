@@ -57,8 +57,8 @@ export function AssignBar({ agents }: { agents: Agent[] }) {
           <div className="bg-white rounded-xl shadow-2xl max-w-md w-full">
             <div className="flex items-center justify-between p-5 border-b border-slate-200">
               <h2 className="text-lg font-semibold">Affecter des commandes</h2>
-              <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-slate-700">
-                <X className="w-5 h-5" />
+              <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-slate-700" aria-label="Fermer">
+                <X className="w-5 h-5" aria-hidden="true" />
               </button>
             </div>
 
