@@ -97,3 +97,8 @@ export type TeamRequest = Prisma.TeamRequestModel
  * 
  */
 export type Setting = Prisma.SettingModel
+/**
+ * Model AuditLog
+ * 
+ */
+export type AuditLog = Prisma.AuditLogModel
