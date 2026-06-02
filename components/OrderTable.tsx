@@ -105,8 +105,8 @@ export function OrderTable({ orders }: { orders: Order[] }) {
                   <td className="px-3 py-3 max-w-[180px]">
                     <div className="flex items-center gap-1">
                       <span className="font-mono text-xs font-semibold text-slate-700">{o.code}</span>
-                      <button className="text-slate-400 hover:text-slate-600" title="Copier">
-                        <Copy className="w-3 h-3" />
+                      <button className="text-slate-400 hover:text-slate-600" aria-label="Copier le code">
+                        <Copy className="w-3 h-3" aria-hidden="true" />
                       </button>
                     </div>
                     <div className="font-medium text-slate-800 mt-1">{o.customer.fullName}</div>
@@ -163,9 +163,9 @@ export function OrderTable({ orders }: { orders: Order[] }) {
                       <form action={`/api/orders/${o.id}/validate`} method="POST">
                         <button
                           className="inline-flex items-center justify-center w-8 h-8 bg-emerald-500 hover:bg-emerald-600 text-white rounded transition"
-                          title="Valider"
+                          aria-label="Valider la commande"
                         >
-                          <Check className="w-4 h-4" />
+                          <Check className="w-4 h-4" aria-hidden="true" />
                         </button>
                       </form>
                     )}
@@ -175,15 +175,15 @@ export function OrderTable({ orders }: { orders: Order[] }) {
                       <Link
                         href={`/commandes/${o.id}`}
                         className="inline-flex items-center justify-center w-8 h-8 bg-sky-500 hover:bg-sky-600 text-white rounded"
-                        title="Éditer"
+                        aria-label="Éditer la commande"
                       >
-                        <Edit className="w-4 h-4" />
+                        <Edit className="w-4 h-4" aria-hidden="true" />
                       </Link>
-                      <button className="inline-flex items-center justify-center w-8 h-8 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded" title="Imprimer">
-                        <Printer className="w-4 h-4" />
+                      <button className="inline-flex items-center justify-center w-8 h-8 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded" aria-label="Imprimer la commande">
+                        <Printer className="w-4 h-4" aria-hidden="true" />
                       </button>
-                      <button className="inline-flex items-center justify-center w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded" title="Supprimer">
-                        <Trash2 className="w-4 h-4" />
+                      <button className="inline-flex items-center justify-center w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded" aria-label="Supprimer la commande">
+                        <Trash2 className="w-4 h-4" aria-hidden="true" />
                       </button>
                     </div>
                   </td>
