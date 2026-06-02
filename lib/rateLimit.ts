@@ -1,5 +1,5 @@
 /**
- * Rate limiter distribué via Upstash Redis en production (serverless-safe),
+ * Rate limiter distribué via Redis (REDIS_URL) en production,
  * avec fallback en mémoire pour le développement local.
  */
 
@@ -23,36 +23,45 @@ function memResetRateLimit(key: string) {
   memStore.delete(key);
 }
 
-// ─── Upstash Redis (production) ──────────────────────────────────────────────
-
-function getRedis() {
-  const url   = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (!url || !token) return null;
-  const { Redis } = require("@upstash/redis");
-  return new Redis({ url, token });
-}
+// ─── Redis distribué (production) ───────────────────────────────────────────
 
 async function redisIsRateLimited(
   key: string,
   limit: number,
   windowMs: number
 ): Promise<boolean> {
-  const redis = getRedis();
-  if (!redis) return memIsRateLimited(key, limit, windowMs);
+  const url = process.env.REDIS_URL;
+  if (!url) return memIsRateLimited(key, limit, windowMs);
 
-  const redisKey = `rl:${key}`;
-  const count: number = await redis.incr(redisKey);
-  if (count === 1) {
-    await redis.pexpire(redisKey, windowMs);
+  const { createClient } = await import("redis");
+  const client = createClient({ url });
+  try {
+    await client.connect();
+    const redisKey = `rl:${key}`;
+    const count = await client.incr(redisKey);
+    if (count === 1) await client.pExpire(redisKey, windowMs);
+    return count > limit;
+  } catch {
+    return memIsRateLimited(key, limit, windowMs);
+  } finally {
+    await client.disconnect().catch(() => {});
   }
-  return count > limit;
 }
 
 async function redisResetRateLimit(key: string): Promise<void> {
-  const redis = getRedis();
-  if (!redis) { memResetRateLimit(key); return; }
-  await redis.del(`rl:${key}`);
+  const url = process.env.REDIS_URL;
+  if (!url) { memResetRateLimit(key); return; }
+
+  const { createClient } = await import("redis");
+  const client = createClient({ url });
+  try {
+    await client.connect();
+    await client.del(`rl:${key}`);
+  } catch {
+    memResetRateLimit(key);
+  } finally {
+    await client.disconnect().catch(() => {});
+  }
 }
 
 // ─── API publique ────────────────────────────────────────────────────────────
