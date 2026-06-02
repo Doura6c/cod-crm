@@ -62,6 +62,18 @@ export async function PATCH(req: Request, context: { params: Promise<{ id: strin
 
   const body = await req.json();
 
+  // L1 — Validation des champs modifiables
+  const VALID_STATUSES = [
+    "NOUVEAU", "PDR", "REPORTE", "CONFIRME", "EN_LIVRAISON",
+    "LIVRE", "RETOURNE", "ANNULE", "INJOIGNABLE",
+  ];
+  if (body.status !== undefined && !VALID_STATUSES.includes(body.status)) {
+    return NextResponse.json({ error: "Statut invalide" }, { status: 400 });
+  }
+  if (body.callCount !== undefined && (typeof body.callCount !== "number" || body.callCount < 0 || !Number.isInteger(body.callCount))) {
+    return NextResponse.json({ error: "callCount invalide" }, { status: 400 });
+  }
+
   // Un AGENT ne peut pas se réaffecter / réaffecter les commandes
   const assignedAgentId =
     user.role === "ADMIN" || user.role === "MANAGER" ? body.assignedAgentId : undefined;

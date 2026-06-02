@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { Resend } from "resend";
+import { escapeHtml } from "@/lib/utils";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const WEBHOOK_URL = "https://cod-crm-zeta.vercel.app/api/webhook/order";
@@ -26,7 +27,7 @@ export async function POST(
     return NextResponse.json({ error: "Email invalide" }, { status: 400 });
   }
 
-  const html = buildGuideEmail(boutique.name, boutique.webhookKey, WEBHOOK_URL);
+  const html = buildGuideEmail(escapeHtml(boutique.name), boutique.webhookKey, WEBHOOK_URL);
 
   try {
     await resend.emails.send({

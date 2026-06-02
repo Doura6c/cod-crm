@@ -32,9 +32,18 @@ export async function GET(req: Request) {
   if (status && status !== "all") where.status = status;
   if (boutiqueId) where.boutiqueId = boutiqueId;
   if (from || to) {
+    // K2 — Valider les dates avant usage (new Date("invalid") = Invalid Date silencieux)
+    const gte = from ? new Date(from) : null;
+    const lte = to   ? new Date(to + "T23:59:59") : null;
+    if (gte && isNaN(gte.getTime())) {
+      return NextResponse.json({ error: "Date 'from' invalide" }, { status: 400 });
+    }
+    if (lte && isNaN(lte.getTime())) {
+      return NextResponse.json({ error: "Date 'to' invalide" }, { status: 400 });
+    }
     where.createdAt = {};
-    if (from) where.createdAt.gte = new Date(from);
-    if (to)   where.createdAt.lte = new Date(to + "T23:59:59");
+    if (gte) where.createdAt.gte = gte;
+    if (lte) where.createdAt.lte = lte;
   }
 
   const orders = await prisma.order.findMany({

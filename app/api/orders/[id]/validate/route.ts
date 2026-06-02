@@ -16,6 +16,12 @@ export async function POST(_req: Request, context: { params: Promise<{ id: strin
   const order = await prisma.order.findUnique({ where: { id }, include: { items: true } });
   if (!order) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
+  // L2 — Bloquer la double-confirmation (évite double décrémentation de stock)
+  const TERMINAL = ["CONFIRME", "EN_LIVRAISON", "LIVRE", "RETOURNE", "ANNULE"];
+  if (TERMINAL.includes(order.status)) {
+    return NextResponse.json({ error: "Commande déjà traitée" }, { status: 409 });
+  }
+
   await prisma.$transaction(async (tx) => {
     await tx.order.update({
       where: { id },

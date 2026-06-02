@@ -19,10 +19,10 @@ export async function GET(req: Request) {
   });
   if (byCode) return NextResponse.json({ orderId: byCode.id });
 
-  // Chercher par numéro de téléphone (dernière commande active)
+  // Chercher par numéro de téléphone (correspondance exacte — M1 : évite l'énumération partielle)
   const phone = q.replace(/\s+/g, "");
   const byPhone = await prisma.order.findFirst({
-    where: { customer: { phone: { contains: phone } } },
+    where: { customer: { phone: { equals: phone } } },
     orderBy: { createdAt: "desc" },
     select: { id: true },
   });
