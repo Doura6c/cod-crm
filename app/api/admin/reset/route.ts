@@ -57,6 +57,15 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ error: "Accès interdit" }, { status: 403 });
   }
 
+  // Re-vérification en base (ne pas se fier uniquement au token JWT qui peut être forgé)
+  const dbUser = await prisma.user.findUnique({
+    where: { id: user.id },
+    select: { isSuperAdmin: true, active: true },
+  });
+  if (!dbUser?.isSuperAdmin || !dbUser.active) {
+    return NextResponse.json({ error: "Accès interdit" }, { status: 403 });
+  }
+
   const confirm = req.headers.get("x-confirm-reset");
   if (confirm !== "RESET_CONFIRMED") {
     return NextResponse.json({ error: "Header de confirmation manquant" }, { status: 400 });

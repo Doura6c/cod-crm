@@ -117,7 +117,7 @@ export default async function CommissionsPage({
     where: {
       status: "RETOURNE",
       livreurId: { in: livreurIds },
-      ...(dateFilter ? { updatedAt: dateFilter } : {}),
+      ...(dateFilter ? { updatedAt: dateFilter } : {}), // retours sans deliveredAt : updatedAt comme proxy
     },
     _count: { id: true },
   });

@@ -33,6 +33,12 @@ export async function logCallAction(formData: FormData): Promise<void> {
   const order = await prisma.order.findUnique({ where: { id: orderId } });
   if (!order) redirect("/commandes/liste");
 
+  // Bloquer la re-confirmation d'une commande déjà dans un état terminal
+  const TERMINAL = ["CONFIRME", "EN_LIVRAISON", "LIVRE", "RETOURNE", "ANNULE"];
+  if (outcome === "CONFIRMED" && TERMINAL.includes(order.status)) {
+    redirect(`/commandes/${orderId}?error=already_processed`);
+  }
+
   await prisma.$transaction(async (tx) => {
     await tx.callLog.create({
       data: { orderId, agentId: userId, outcome, note },
@@ -268,6 +274,12 @@ export async function expressCallAction(
   const order = await prisma.order.findUnique({ where: { id: orderId } });
   if (!order) return { ok: false, error: "Commande introuvable" };
 
+  // Bloquer la re-confirmation d'une commande déjà dans un état terminal
+  const TERMINAL_EXPRESS = ["CONFIRME", "EN_LIVRAISON", "LIVRE", "RETOURNE", "ANNULE"];
+  if (outcome === "CONFIRMED" && TERMINAL_EXPRESS.includes(order.status)) {
+    return { ok: false, error: "Commande déjà traitée" };
+  }
+
   try {
     await prisma.$transaction(async (tx) => {
       await tx.callLog.create({
@@ -339,6 +351,15 @@ export async function updateOrderStatusAction(formData: FormData): Promise<void>
   const orderId = String(formData.get("orderId") ?? "");
   const status = String(formData.get("status") ?? "");
   const notes = String(formData.get("notes") ?? "").trim() || null;
+
+  // Validation stricte : seuls les statuts connus sont acceptés
+  const VALID_STATUSES = [
+    "NOUVEAU", "PDR", "REPORTE", "CONFIRME",
+    "EN_LIVRAISON", "LIVRE", "RETOURNE", "ANNULE", "INJOIGNABLE",
+  ];
+  if (!orderId || !VALID_STATUSES.includes(status)) {
+    redirect(`/commandes/${orderId}?error=invalid_status`);
+  }
 
   await prisma.order.update({
     where: { id: orderId },

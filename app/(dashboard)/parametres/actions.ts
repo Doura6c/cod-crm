@@ -16,7 +16,7 @@ export async function saveSettingsAction(formData: FormData): Promise<void> {
 
   if (commission) {
     const val = parseFloat(String(commission));
-    if (!isNaN(val) && val > 0) {
+    if (!isNaN(val) && val >= 0) {
       await setSetting("hmp_commission", String(Math.round(val)));
     }
   }

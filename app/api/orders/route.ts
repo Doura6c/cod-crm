@@ -4,7 +4,7 @@ import { generateOrderCode } from "@/lib/utils";
 import { requireRole } from "@/lib/apiAuth";
 
 export async function GET(req: Request) {
-  const { response } = await requireRole(["ADMIN", "MANAGER", "AGENT"]);
+  const { response, user } = await requireRole(["ADMIN", "MANAGER", "AGENT"]);
   if (response) return response;
 
   const url = new URL(req.url);
@@ -13,6 +13,8 @@ export async function GET(req: Request) {
 
   const orders = await prisma.order.findMany({
     where: {
+      // Un AGENT ne voit que les commandes qui lui sont assignées
+      ...(user.role === "AGENT" && { assignedAgentId: user.id }),
       ...(status && { status }),
       ...(boutiqueId && { boutiqueId }),
     },

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { generateOrderCode, formatGNF } from "@/lib/utils";
 import { isRateLimited } from "@/lib/rateLimit";
+import { notifyRole } from "@/lib/notifications";
 
 // Limite de taille du corps de requête (anti-DoS) : 100 Ko
 const MAX_BODY_BYTES = 100 * 1024;
@@ -217,18 +218,16 @@ export async function POST(req: Request) {
       include: { items: true },
     });
 
-    // Créer une notification pour les admins
+    // Notifier tous les ADMIN et MANAGER actifs de la nouvelle commande
     const productNames = orderItemsData.length > 0
       ? items.slice(0, 2).map((it: any) => it.name ?? it.sku ?? "Produit").join(", ")
       : "Commande";
-    await prisma.notification.create({
-      data: {
-        type: "NEW_ORDER",
-        title: `Nouvelle commande — ${boutique.name}`,
-        message: `${customer.fullName ?? "Client"} (${customer.phone}) — ${productNames} — ${formatGNF(subtotal + Number(deliveryFee ?? 0))} GNF`,
-        data: JSON.stringify({ orderId: order.id, orderCode: order.code }),
-      },
-    }).catch(() => {}); // silencieux si la table n'a pas le bon format
+    await notifyRole(["ADMIN", "MANAGER"], {
+      type: "NEW_ORDER",
+      title: `Nouvelle commande — ${boutique.name}`,
+      message: `${customer.fullName ?? "Client"} (${customer.phone}) — ${productNames} — ${formatGNF(subtotal + Number(deliveryFee ?? 0))} GNF`,
+      data: { orderId: order.id, orderCode: order.code },
+    }).catch(() => {});
 
     return NextResponse.json({
       ok: true,

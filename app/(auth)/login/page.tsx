@@ -81,7 +81,6 @@ export default async function LoginPage({
                   id="email"
                   name="email"
                   type="email"
-                  defaultValue="admin@codcrm.gn"
                   required
                   autoComplete="username"
                   className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 bg-slate-50 text-sm"
@@ -124,11 +123,6 @@ export default async function LoginPage({
               </button>
             </form>
 
-            <div className="mt-6 pt-5 border-t border-slate-100 text-center">
-              <p className="text-xs text-slate-400">
-                Compte démo : <code className="bg-slate-100 px-1.5 py-0.5 rounded font-mono">admin@codcrm.gn</code> / <code className="bg-slate-100 px-1.5 py-0.5 rounded font-mono">password123</code>
-              </p>
-            </div>
           </div>
         </div>
       </div>

@@ -1,7 +1,7 @@
 import type { NextAuthConfig } from "next-auth";
 
 export const authConfig: NextAuthConfig = {
-  session: { strategy: "jwt" },
+  session: { strategy: "jwt", maxAge: 8 * 60 * 60 }, // 8 heures max (au lieu de 30 jours par défaut)
   pages: { signIn: "/login" },
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {

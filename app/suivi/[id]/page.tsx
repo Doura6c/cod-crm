@@ -49,7 +49,7 @@ export default async function SuiviDetailPage({
       boutique: true,
       city: true,
       items: { include: { product: true } },
-      delivery: { include: { livreur: { select: { firstName: true, lastName: true, phone: true } } } },
+      delivery: { include: { livreur: { select: { firstName: true, lastName: true } } } },
     },
   });
 
@@ -143,14 +143,7 @@ export default async function SuiviDetailPage({
               <div className="font-bold text-sky-800 text-sm">Votre livreur</div>
               <div className="font-black text-slate-800">{order.delivery.livreur.firstName} {order.delivery.livreur.lastName}</div>
             </div>
-            {order.delivery.livreur.phone && (
-              <a
-                href={`tel:${order.delivery.livreur.phone}`}
-                className="bg-sky-600 text-white px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-sky-700 transition"
-              >
-                <Phone className="w-4 h-4" /> Appeler
-              </a>
-            )}
+            {/* Téléphone du livreur non exposé publiquement — contact via la boutique */}
           </div>
         )}
 

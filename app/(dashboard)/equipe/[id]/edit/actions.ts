@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { hash } from "bcryptjs";
+import { isValidRole } from "@/lib/validate";
 
 export async function updateCollaboratorAction(formData: FormData): Promise<void> {
   const session = await auth();
@@ -34,6 +35,10 @@ export async function updateCollaboratorAction(formData: FormData): Promise<void
 
   if (!firstName || !lastName || !email || !newRole) {
     redirect(`/equipe/${userId}/edit?error=missing`);
+  }
+  // E1 — Valider que le rôle est dans la liste autorisée (protection contre injection via formulaire)
+  if (!isValidRole(newRole)) {
+    redirect(`/equipe/${userId}/edit?error=forbidden-role`);
   }
 
   // Un Client Boutique doit être rattaché à une boutique

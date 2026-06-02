@@ -6,11 +6,13 @@ import { can } from "@/lib/rbac";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { getHmpCommission } from "@/lib/settings";
-const PERIOD_DAYS = 2; // facture générée toutes les N jours
+import { randomBytes } from "crypto";
+
+const PERIOD_DAYS = 7; // facture hebdomadaire (était 2 — trop granulaire)
 
 function makeRef(): string {
   const d = new Date().toISOString().slice(0, 10).replace(/-/g, "");
-  const s = Math.random().toString(36).substring(2, 7).toUpperCase();
+  const s = randomBytes(4).toString("hex").toUpperCase(); // 8 chars hex crypto-safe
   return `FACM-${d}-${s}`;
 }
 
@@ -130,6 +132,7 @@ export async function updateMerchantInvoiceStatusAction(formData: FormData): Pro
 
   const invoiceId = String(formData.get("invoiceId") ?? "");
   const newStatus = String(formData.get("status") ?? "");
+  if (!invoiceId) return;
   if (!["EN_ATTENTE", "PAYEE", "ANNULEE"].includes(newStatus)) return;
 
   await prisma.merchantInvoice.update({

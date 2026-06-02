@@ -6,9 +6,50 @@ import { prisma } from "./lib/prisma";
 
 const isProd = process.env.NODE_ENV === "production";
 
+// Intervalle de re-vérification du compte en base (15 min)
+const RECHECK_MS = 15 * 60 * 1000;
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
   trustHost: true,
+  callbacks: {
+    // Conserver le callback `authorized` de auth.config (compatibilité Edge/middleware)
+    ...authConfig.callbacks,
+
+    // Surcharge du callback JWT avec re-vérification Prisma (Node.js uniquement)
+    async jwt({ token, user }) {
+      // Enrichissement initial à la connexion
+      if (user) {
+        token.id = user.id;
+        token.role = (user as any).role;
+        token.isSuperAdmin = (user as any).isSuperAdmin ?? false;
+        token.boutiqueId = (user as any).boutiqueId ?? null;
+        token.checkedAt = Date.now();
+        return token;
+      }
+
+      // Re-vérification périodique : compte toujours actif ?
+      const checkedAt = (token.checkedAt as number) ?? 0;
+      if (Date.now() - checkedAt > RECHECK_MS) {
+        try {
+          const dbUser = await prisma.user.findUnique({
+            where: { id: (token.id ?? token.sub) as string },
+            select: { active: true, role: true, isSuperAdmin: true },
+          });
+          // Compte désactivé ou supprimé → invalider le token (session détruite)
+          if (!dbUser || !dbUser.active) return null as any;
+          // Synchroniser le rôle si modifié par un admin
+          token.role = dbUser.role;
+          token.isSuperAdmin = dbUser.isSuperAdmin;
+        } catch {
+          // Fail-open en cas de coupure BDD temporaire
+        }
+        token.checkedAt = Date.now();
+      }
+
+      return token;
+    },
+  },
   cookies: {
     sessionToken: {
       name: isProd ? "__Secure-authjs.session-token" : "authjs.session-token",

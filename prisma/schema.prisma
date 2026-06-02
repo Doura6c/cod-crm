@@ -262,6 +262,8 @@ model MerchantInvoice {
   note         String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+
+  @@unique([boutiqueId, periodStart]) // F1 — empêche doublons en cas de génération simultanée
 }
 
 model Expense {

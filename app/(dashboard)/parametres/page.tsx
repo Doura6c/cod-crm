@@ -101,7 +101,7 @@ export default async function ParametresPage() {
                 <div className="font-semibold text-slate-800">Agent de confirmation</div>
               </div>
               <label className="block text-xs font-semibold text-slate-600 mb-1">
-                Prime par produit livré (GNF)
+                Prime par commande confirmée (GNF)
               </label>
               <div className="flex gap-3 items-center">
                 <input
@@ -115,7 +115,7 @@ export default async function ParametresPage() {
                 <span className="text-sm text-slate-500">GNF / produit livré</span>
               </div>
               <p className="text-xs text-slate-400 mt-1">
-                Actuellement <strong>{formatGNF(agentPrime)}</strong> — versé à l&apos;agent ayant confirmé la commande, uniquement si elle est livrée.
+                Actuellement <strong>{formatGNF(agentPrime)}</strong> — versé à l&apos;agent ayant confirmé la commande.
               </p>
             </div>
 

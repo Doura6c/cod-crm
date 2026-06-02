@@ -34,7 +34,7 @@ export async function updateDeliveryStatusAction(formData: FormData): Promise<vo
   // Montant collecté : utiliser le tarif saisi ou le montant de la commande
   const amountCollected =
     newStatus === "LIVRE"
-      ? (actualAmount && actualAmount > 0 ? actualAmount : delivery.order.totalAmount)
+      ? (actualAmount !== null && actualAmount >= 0 ? actualAmount : delivery.order.totalAmount)
       : null;
 
   const orderCode = delivery.order.code;
@@ -148,7 +148,7 @@ export async function updateDeliveryMobileAction(
 
     const amountCollected =
       status === "LIVRE"
-        ? (actualAmount && actualAmount > 0 ? actualAmount : delivery.order.totalAmount)
+        ? (actualAmount !== undefined && actualAmount >= 0 ? actualAmount : delivery.order.totalAmount)
         : null;
 
     await prisma.$transaction(async (tx) => {

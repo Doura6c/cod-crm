@@ -81,7 +81,7 @@ export default async function DashboardPage({
     prisma.user.findMany({ where: { role: { in: ["AGENT", "MANAGER"] }, active: true }, select: { id: true, firstName: true, lastName: true } }),
     prisma.user.findMany({ where: { role: "LIVREUR", active: true }, select: { id: true, firstName: true, lastName: true } }),
     prisma.delivery.findMany({
-      where: { updatedAt: { gte: since, lte: until } },
+      where: { deliveredAt: { gte: since, lte: until } },
       select: { livreurId: true, status: true, amountCollected: true },
     }),
     prisma.callLog.groupBy({
@@ -108,25 +108,28 @@ export default async function DashboardPage({
     }),
   ]);
 
-  // Graphique tendance 14 jours
+  // Graphique tendance 14 jours — ancré sur `until` (D2) + requêtes parallèles (D1)
   const trendDays = 14;
-  const trendData: { date: string; label: string; recu: number; livre: number }[] = [];
-  for (let i = trendDays - 1; i >= 0; i--) {
-    const d = new Date();
-    d.setDate(d.getDate() - i);
-    const dayStart = new Date(d.getFullYear(), d.getMonth(), d.getDate());
-    const dayEnd = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59);
-    const [recu, livre] = await Promise.all([
-      prisma.order.count({ where: { createdAt: { gte: dayStart, lte: dayEnd } } }),
-      prisma.delivery.count({ where: { status: "LIVRE", deliveredAt: { gte: dayStart, lte: dayEnd } } }),
-    ]);
-    trendData.push({
-      date: dayStart.toISOString().slice(0, 10),
-      label: dayStart.toLocaleDateString("fr-FR", { day: "numeric", month: "short" }),
-      recu,
-      livre,
-    });
-  }
+  const trendBase = until ?? new Date(); // D2 : ancré sur la fin de la période filtrée
+  const trendData = await Promise.all(
+    Array.from({ length: trendDays }, async (_, idx) => {
+      const i = trendDays - 1 - idx; // i = 13 → 0 (du plus ancien au plus récent)
+      const d = new Date(trendBase);
+      d.setDate(d.getDate() - i);
+      const dayStart = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+      const dayEnd   = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59);
+      const [recu, livre] = await Promise.all([
+        prisma.order.count({ where: { createdAt: { gte: dayStart, lte: dayEnd } } }),
+        prisma.delivery.count({ where: { status: "LIVRE", deliveredAt: { gte: dayStart, lte: dayEnd } } }),
+      ]);
+      return {
+        date:  dayStart.toISOString().slice(0, 10),
+        label: dayStart.toLocaleDateString("fr-FR", { day: "numeric", month: "short" }),
+        recu,
+        livre,
+      };
+    })
+  ); // D1 : 14 paires en parallèle au lieu de 14 paires séquentielles
   const maxTrend = Math.max(...trendData.map((d) => Math.max(d.recu, d.livre)), 1);
 
   // Résoudre les noms de villes et produits
