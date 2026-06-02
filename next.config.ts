@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { withSentryConfig } from "@sentry/nextjs";
 
 /** ─── Security Headers ────────────────────────────────────── */
 const securityHeaders = [
@@ -74,4 +75,10 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withSentryConfig(nextConfig, {
+  org: "helpmeprocess",
+  project: "javascript-nextjs",
+  silent: true,          // pas de logs Sentry au build
+  disableLogger: true,
+  telemetry: false,
+});
