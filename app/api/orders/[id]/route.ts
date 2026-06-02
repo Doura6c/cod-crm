@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSessionUser, unauthorized, forbidden, type SessionUser } from "@/lib/apiAuth";
+import { writeAuditLog } from "@/lib/auditLog";
 
 /**
  * Détermine si `user` a le droit d'accéder à la commande `order`.
@@ -98,6 +99,18 @@ export async function DELETE(_req: Request, context: { params: Promise<{ id: str
   // Suppression définitive réservée aux ADMIN
   if (user.role !== "ADMIN") return forbidden();
   const { id } = await context.params;
+  const order = await prisma.order.findUnique({
+    where: { id },
+    select: { code: true, boutiqueId: true },
+  });
   await prisma.order.delete({ where: { id } });
+  await writeAuditLog({
+    userId: user.id,
+    userEmail: user.email,
+    action: "ORDER_DELETED",
+    entity: "Order",
+    entityId: id,
+    details: { code: order?.code, boutiqueId: order?.boutiqueId },
+  });
   return NextResponse.json({ ok: true });
 }
