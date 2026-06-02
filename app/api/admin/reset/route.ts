@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { writeAuditLog } from "@/lib/auditLog";
 
 // GET — retourne les compteurs pour chaque catégorie
 export async function GET() {
@@ -125,6 +126,14 @@ export async function DELETE(req: Request) {
     // Toujours nettoyer notifications + team requests
     await prisma.notification.deleteMany({});
     await prisma.teamRequest.deleteMany({});
+
+    await writeAuditLog({
+      userId: user?.id,
+      userEmail: user?.email,
+      action: "RESET_EXECUTED",
+      entity: "Database",
+      details: { categories: body, deleted },
+    });
 
     return NextResponse.json({ ok: true, deleted });
   } catch (err: any) {

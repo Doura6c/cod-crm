@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { writeAuditLog } from "@/lib/auditLog";
 
 export async function editDeliveryAmountAction(formData: FormData): Promise<void> {
   const session = await auth();
@@ -64,6 +65,21 @@ export async function editDeliveryAmountAction(formData: FormData): Promise<void
         },
       });
     }
+  });
+
+  await writeAuditLog({
+    userId,
+    userEmail: session?.user?.email ?? undefined,
+    action: "AMOUNT_EDITED",
+    entity: "Delivery",
+    entityId: deliveryId,
+    details: {
+      orderId: delivery.order.id,
+      orderCode: delivery.order.code,
+      oldAmount,
+      newAmount,
+      editNote,
+    },
   });
 
   revalidatePath("/livraisons");

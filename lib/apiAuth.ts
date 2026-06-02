@@ -8,6 +8,7 @@ import { auth } from "@/auth";
 
 export type SessionUser = {
   id: string;
+  email?: string;
   role: string;
   isSuperAdmin: boolean;
   boutiqueId: string | null;
@@ -21,6 +22,7 @@ export async function getSessionUser(): Promise<SessionUser | null> {
   const u = session.user as any;
   return {
     id: u.id,
+    email: session.user.email ?? undefined,
     role: u.role,
     isSuperAdmin: u.isSuperAdmin === true,
     boutiqueId: u.boutiqueId ?? null,
