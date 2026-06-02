@@ -318,3 +318,18 @@ model Setting {
   value     String
   updatedAt DateTime @updatedAt
 }
+
+// ============ JOURNAL D'AUDIT ============
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  userEmail String?
+  action    String   // ORDER_DELETED, AMOUNT_EDITED, RESET_EXECUTED
+  entity    String?
+  entityId  String?
+  details   String?  // JSON sérialisé
+  createdAt DateTime @default(now())
+
+  @@index([action])
+  @@index([createdAt])
+}
