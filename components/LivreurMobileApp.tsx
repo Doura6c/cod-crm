@@ -422,7 +422,7 @@ export function LivreurMobileApp({
       {/* ── Modal LIVRÉ ────────────────────────────────────────── */}
       {modal.type === "livre" && (
         <div className="fixed inset-0 z-50 flex items-end justify-center">
-          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setModal({ type: "none" })} />
+          <button type="button" className="absolute inset-0 bg-black/50 backdrop-blur-sm border-0 p-0 cursor-pointer" aria-label="Fermer" onClick={() => setModal({ type: "none" })} />
           <div className="relative w-full max-w-lg bg-white rounded-t-3xl px-6 pt-6 pb-8 shadow-2xl animate-slide-up">
             <div className="w-10 h-1 bg-slate-200 rounded-full mx-auto mb-6" />
             <h3 className="text-lg font-black text-slate-800 mb-1">Confirmer la livraison</h3>
@@ -467,7 +467,7 @@ export function LivreurMobileApp({
       {/* ── Modal RETOUR ───────────────────────────────────────── */}
       {modal.type === "retour" && (
         <div className="fixed inset-0 z-50 flex items-end justify-center">
-          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setModal({ type: "none" })} />
+          <button type="button" className="absolute inset-0 bg-black/50 backdrop-blur-sm border-0 p-0 cursor-pointer" aria-label="Fermer" onClick={() => setModal({ type: "none" })} />
           <div className="relative w-full max-w-lg bg-white rounded-t-3xl px-6 pt-6 pb-8 shadow-2xl">
             <div className="w-10 h-1 bg-slate-200 rounded-full mx-auto mb-6" />
             <h3 className="text-lg font-black text-slate-800 mb-1">Raison du retour</h3>
