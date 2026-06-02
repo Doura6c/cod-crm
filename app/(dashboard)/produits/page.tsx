@@ -230,9 +230,9 @@ export default async function ProduitsPage({
                           <Link
                             href={`/produits/${p.id}`}
                             className="inline-flex items-center justify-center w-7 h-7 bg-sky-500 hover:bg-sky-600 text-white rounded transition"
-                            title="Modifier"
+                            aria-label="Modifier le produit"
                           >
-                            <Edit className="w-3.5 h-3.5" />
+                            <Edit className="w-3.5 h-3.5" aria-hidden="true" />
                           </Link>
                           {p.imageUrl && (
                             <a
@@ -240,9 +240,9 @@ export default async function ProduitsPage({
                               target="_blank"
                               rel="noopener noreferrer"
                               className="inline-flex items-center justify-center w-7 h-7 bg-slate-200 hover:bg-slate-300 text-slate-600 rounded transition"
-                              title="Voir image"
+                              aria-label="Voir l'image du produit"
                             >
-                              <ExternalLink className="w-3.5 h-3.5" />
+                              <ExternalLink className="w-3.5 h-3.5" aria-hidden="true" />
                             </a>
                           )}
                         </div>

@@ -115,7 +115,7 @@ export default async function EquipePage({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5 flex-wrap">
             <span className="font-semibold text-slate-800 truncate">{u.firstName} {u.lastName}</span>
-            {u.isSuperAdmin && <span title="Super Admin"><Crown className="w-3.5 h-3.5 text-yellow-500 flex-shrink-0" /></span>}
+            {u.isSuperAdmin && <span role="img" aria-label="Super Admin"><Crown className="w-3.5 h-3.5 text-yellow-500 flex-shrink-0" aria-hidden="true" /></span>}
             {u.active
               ? <UserCheck className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0" />
               : <UserX    className="w-3.5 h-3.5 text-red-400 flex-shrink-0" />}
@@ -131,8 +131,8 @@ export default async function EquipePage({
         {isAdmin && (!u.isSuperAdmin || sessionIsSuperAdmin) ? (
           <Link href={`/equipe/${u.id}/edit`}
             className="text-slate-400 hover:text-sky-600 transition p-1 rounded hover:bg-slate-100 flex-shrink-0"
-            title="Modifier">
-            <Edit className="w-4 h-4" />
+            aria-label="Modifier le membre">
+            <Edit className="w-4 h-4" aria-hidden="true" />
           </Link>
         ) : isAdmin && u.isSuperAdmin && !sessionIsSuperAdmin ? (
           <span className="p-1 text-yellow-400 flex-shrink-0"><Crown className="w-4 h-4" /></span>
@@ -175,8 +175,8 @@ export default async function EquipePage({
         {isAdmin && (
           <Link href={`/equipe/${u.id}/edit`}
             className="text-slate-400 hover:text-sky-600 transition p-1 rounded hover:bg-slate-100 flex-shrink-0"
-            title="Modifier">
-            <Edit className="w-4 h-4" />
+            aria-label="Modifier le membre">
+            <Edit className="w-4 h-4" aria-hidden="true" />
           </Link>
         )}
       </div>

@@ -170,16 +170,16 @@ export function CityTable({ cities: initialCities }: { cities: City[] }) {
                         onClick={() => handleSaveEdit(c)}
                         disabled={isPending}
                         className="p-1.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition"
-                        title="Enregistrer"
+                        aria-label="Enregistrer les modifications"
                       >
-                        {isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
+                        {isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" /> : <Check className="w-3.5 h-3.5" aria-hidden="true" />}
                       </button>
                       <button
                         onClick={cancelEdit}
                         className="p-1.5 bg-slate-200 hover:bg-slate-300 text-slate-600 rounded-lg transition"
-                        title="Annuler"
+                        aria-label="Annuler les modifications"
                       >
-                        <X className="w-3.5 h-3.5" />
+                        <X className="w-3.5 h-3.5" aria-hidden="true" />
                       </button>
                     </div>
                   </td>
@@ -202,16 +202,16 @@ export function CityTable({ cities: initialCities }: { cities: City[] }) {
                       <button
                         onClick={() => startEdit(c)}
                         className="p-1.5 hover:bg-sky-100 text-sky-600 rounded-lg transition"
-                        title="Modifier"
+                        aria-label="Modifier la ville"
                       >
-                        <Edit className="w-3.5 h-3.5" />
+                        <Edit className="w-3.5 h-3.5" aria-hidden="true" />
                       </button>
                       <button
                         onClick={() => handleDelete(c.id, c.name)}
                         className="p-1.5 hover:bg-red-100 text-red-500 rounded-lg transition"
-                        title="Supprimer"
+                        aria-label="Supprimer la ville"
                       >
-                        <Trash2 className="w-3.5 h-3.5" />
+                        <Trash2 className="w-3.5 h-3.5" aria-hidden="true" />
                       </button>
                     </div>
                   </td>
@@ -263,15 +263,16 @@ export function CityTable({ cities: initialCities }: { cities: City[] }) {
                       onClick={handleCreate}
                       disabled={isPending || !newValues.name}
                       className="p-1.5 bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 text-white rounded-lg transition"
-                      title="Créer"
+                      aria-label="Créer la ville"
                     >
-                      {isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
+                      {isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" /> : <Check className="w-3.5 h-3.5" aria-hidden="true" />}
                     </button>
                     <button
                       onClick={() => { setShowNewForm(false); setError(null); }}
                       className="p-1.5 bg-slate-200 hover:bg-slate-300 text-slate-600 rounded-lg transition"
+                      aria-label="Annuler"
                     >
-                      <X className="w-3.5 h-3.5" />
+                      <X className="w-3.5 h-3.5" aria-hidden="true" />
                     </button>
                   </div>
                 </td>
