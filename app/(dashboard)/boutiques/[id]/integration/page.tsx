@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { PageHeader } from "@/components/PageHeader";
 import { CheckCircle2, Copy, ExternalLink, Globe, Key, ArrowLeft, Download } from "lucide-react";
 import { SendGuideButton } from "./SendGuideButton";
+import { RegenerateKeyButton } from "./RegenerateKeyButton";
 import { DeleteBoutiqueButton } from "../DeleteBoutiqueButton";
 
 export const dynamic = "force-dynamic";
@@ -186,11 +187,11 @@ async function envoyerCommande(commande) {
               <div className="flex items-center justify-between mb-1">
                 <label className="text-xs font-semibold text-slate-600 uppercase">Clé Webhook (X-Webhook-Key)</label>
               </div>
-              <div className="flex items-center gap-2">
-                <Key className="w-4 h-4 text-amber-500 flex-shrink-0" />
-                <code className="flex-1 font-mono text-xs bg-amber-50 border border-amber-200 px-3 py-2.5 rounded select-all break-all">
-                  {boutique.webhookKey}
-                </code>
+              <div className="flex items-start gap-2">
+                <Key className="w-4 h-4 text-amber-500 flex-shrink-0 mt-2.5" />
+                <div className="flex-1">
+                  <RegenerateKeyButton boutiqueId={boutique.id} currentKey={boutique.webhookKey} />
+                </div>
               </div>
               <p className="text-xs text-red-600 mt-1.5">
                 ⚠️ Cette clé donne accès à votre CRM. Ne la partagez qu&apos;avec le vendeur autorisé.
