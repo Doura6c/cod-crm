@@ -235,7 +235,7 @@ export async function POST(req: Request) {
         totalAmount: subtotal + Number(deliveryFee ?? 0),
         deliveryFee: Number(deliveryFee ?? 0),
         notes,
-        source: "WEBHOOK",
+        source: (source && typeof source === 'string') ? source.trim().slice(0, 50) : "WEBHOOK",
         externalRef,
         status: "NOUVEAU",
         items: { create: orderItemsData },
