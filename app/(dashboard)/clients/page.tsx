@@ -27,7 +27,7 @@ export default async function ClientsPage({
   const where: any = {};
   if (q) {
     where.OR = [
-      { fullName: { contains: q, mode: "insensitive" } },
+      { fullName: { contains: q } },
       { phone: { contains: q } },
     ];
   }

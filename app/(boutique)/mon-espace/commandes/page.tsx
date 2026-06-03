@@ -49,8 +49,8 @@ export default async function MonEspaceCommandesPage({
   if (status) where.status = status;
   if (q) {
     where.OR = [
-      { code: { contains: q, mode: "insensitive" } },
-      { customer: { fullName: { contains: q, mode: "insensitive" } } },
+      { code: { contains: q } },
+      { customer: { fullName: { contains: q } } },
       { customer: { phone: { contains: q } } },
     ];
   }

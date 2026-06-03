@@ -103,6 +103,7 @@ export async function DELETE(_req: Request, context: { params: Promise<{ id: str
     where: { id },
     select: { code: true, boutiqueId: true },
   });
+  if (!order) return NextResponse.json({ error: "Introuvable" }, { status: 404 });
   await prisma.order.delete({ where: { id } });
   await writeAuditLog({
     userId: user.id,

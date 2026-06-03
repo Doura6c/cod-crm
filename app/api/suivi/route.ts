@@ -14,7 +14,7 @@ export async function GET(req: Request) {
 
   // Chercher par code commande (ex: HMP-2024-XXXX)
   const byCode = await prisma.order.findFirst({
-    where: { code: { equals: q, mode: "insensitive" } },
+    where: { code: { equals: q } },
     select: { id: true },
   });
   if (byCode) return NextResponse.json({ orderId: byCode.id });

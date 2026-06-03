@@ -56,7 +56,7 @@ async function main() {
 
   // Trouver la boutique ASMA SHOP
   const boutique = await prisma.boutique.findFirst({
-    where: { name: { contains: "ASMA", mode: "insensitive" } },
+    where: { name: { contains: "ASMA" } },
   });
 
   if (!boutique) {
