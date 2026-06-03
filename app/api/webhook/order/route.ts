@@ -31,34 +31,56 @@ const MAX_BODY_BYTES = 100 * 1024;
  *   "notes": "Livrer demain matin"
  * }
  */
-const CORS = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, X-Webhook-Key",
-};
+// Origines navigateur autorisées (les appels serveur-à-serveur via proxy
+// n'envoient pas d'Origin et restent protégés par la clé webhook secrète).
+const ALLOWED_ORIGINS = ["https://hpshop-afrique.vercel.app"];
+
+function cors(origin: string | null) {
+  const allowOrigin = origin && ALLOWED_ORIGINS.includes(origin)
+    ? origin
+    : ALLOWED_ORIGINS[0];
+  return {
+    "Access-Control-Allow-Origin": allowOrigin,
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, X-Webhook-Key",
+  };
+}
 
 // Preflight CORS
-export async function OPTIONS() {
-  return new Response(null, { status: 204, headers: CORS });
+export async function OPTIONS(req: Request) {
+  return new Response(null, { status: 204, headers: cors(req.headers.get("origin")) });
 }
 
 export async function POST(req: Request) {
+  const origin = req.headers.get("origin");
   try {
+    // Origin allowlist : bloque les appels navigateur d'origines non autorisées.
+    // Un appel sans Origin (serveur-à-serveur via proxy) est autorisé (protégé par la clé).
+    if (origin && !ALLOWED_ORIGINS.includes(origin)) {
+      return NextResponse.json({ error: "Origine non autorisée" }, { status: 403, headers: cors(origin) });
+    }
+
+    // Rate-limit par IP (complète la limite par boutique) : 20 req / min
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+    if (await isRateLimited(`webhook:ip:${ip}`, 20, 60 * 1000)) {
+      return NextResponse.json({ error: "Trop de requêtes" }, { status: 429, headers: cors(origin) });
+    }
+
     const key = req.headers.get("x-webhook-key") || new URL(req.url).searchParams.get("key");
     if (!key) {
-      return NextResponse.json({ error: "Webhook key manquante" }, { status: 401, headers: CORS });
+      return NextResponse.json({ error: "Webhook key manquante" }, { status: 401, headers: cors(origin) });
     }
 
     const boutique = await prisma.boutique.findUnique({ where: { webhookKey: key } });
     if (!boutique || !boutique.active) {
-      return NextResponse.json({ error: "Boutique inconnue ou inactive" }, { status: 401, headers: CORS });
+      return NextResponse.json({ error: "Boutique inconnue ou inactive" }, { status: 401, headers: cors(origin) });
     }
 
     // Rate-limiting par boutique : max 300 commandes / 15 min (anti-spam / DoS)
     if (await isRateLimited(`webhook:${boutique.id}`, 300, 15 * 60 * 1000)) {
       return NextResponse.json(
         { error: "Trop de requêtes, réessayez plus tard" },
-        { status: 429, headers: CORS }
+        { status: 429, headers: cors(origin) }
       );
     }
 
@@ -67,7 +89,7 @@ export async function POST(req: Request) {
     if (contentLength > MAX_BODY_BYTES) {
       return NextResponse.json(
         { error: "Payload trop volumineux" },
-        { status: 413, headers: CORS }
+        { status: 413, headers: cors(origin) }
       );
     }
 
@@ -75,14 +97,14 @@ export async function POST(req: Request) {
     if (rawBody.length > MAX_BODY_BYTES) {
       return NextResponse.json(
         { error: "Payload trop volumineux" },
-        { status: 413, headers: CORS }
+        { status: 413, headers: cors(origin) }
       );
     }
     let body: any;
     try {
       body = JSON.parse(rawBody);
     } catch {
-      return NextResponse.json({ error: "JSON invalide" }, { status: 400, headers: CORS });
+      return NextResponse.json({ error: "JSON invalide" }, { status: 400, headers: cors(origin) });
     }
     const { externalRef, items, deliveryFee = 0, notes, source } = body;
 
@@ -98,7 +120,7 @@ export async function POST(req: Request) {
     };
 
     if (!customer?.phone || !items?.length) {
-      return NextResponse.json({ error: "customer.phone et items requis" }, { status: 400, headers: CORS });
+      return NextResponse.json({ error: "customer.phone et items requis" }, { status: 400, headers: cors(origin) });
     }
 
     // Idempotence : si externalRef existe déjà, on renvoie la commande existante
@@ -121,7 +143,7 @@ export async function POST(req: Request) {
         error: "Client blacklisté",
         reason: existingCustCheck.blacklistReason ?? "Client sur liste noire",
         code: "BLACKLISTED_CUSTOMER",
-      }, { status: 403, headers: CORS });
+      }, { status: 403, headers: cors(origin) });
     }
 
     // Détection doublon actif (commande en cours pour ce numéro)
@@ -235,14 +257,14 @@ export async function POST(req: Request) {
       warning: activeDuplicate
         ? `Ce client a déjà une commande active : ${activeDuplicate.code} (${activeDuplicate.status})`
         : undefined,
-    }, { status: 201, headers: CORS });
+    }, { status: 201, headers: cors(origin) });
   } catch (err: any) {
     // Ne jamais exposer les détails d'erreur internes en production
     console.error("[webhook] error:", err);
     const isDev = process.env.NODE_ENV !== "production";
     return NextResponse.json(
       { error: isDev ? (err.message ?? "Erreur serveur") : "Erreur interne du serveur" },
-      { status: 500, headers: CORS }
+      { status: 500, headers: cors(origin) }
     );
   }
 }
