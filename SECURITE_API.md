@@ -56,11 +56,29 @@ par le proxy, à partir d'une variable d'environnement chiffrée.
 
 ---
 
+## Côté ASMASHOP (`/Users/mac/ASMASHOP`)
+
+**Boutique n°2** connectée au CRM. Mise en place **identique** à HPSHOP :
+
+- `api/submit-order.js` — proxy serverless, `ALLOWED_ORIGIN = "https://asma-shop.vercel.app"`,
+  injecte `X-Webhook-Key` depuis `process.env.CRMCOD_API_KEY`, rate-limit 10/min/IP, headers sécurité
+- `index.html` — clé retirée du `CONFIG` et des 2 appels `fetch`, `webhookUrl` → `/api/submit-order`
+- `vercel.json` — route `/api/(.*)` ajoutée avant le rewrite catch-all
+- Variable Vercel `CRMCOD_API_KEY` (Production + Development) sur le projet `asma-shop`
+
+> ⚠️ L'ancienne clé ASMA (`0YsAAo…`) ayant été exposée dans l'historique Git public,
+> elle doit être régénérée (voir « Procédure de rotation de clé »).
+
+---
+
 ## Côté CRMCOD (`/Users/mac/CRMCOD`)
 
 ### Protection 1 — Origin allowlist (`app/api/webhook/order/route.ts`)
 ```ts
-const ALLOWED_ORIGINS = ["https://hpshop-afrique.vercel.app"];
+const ALLOWED_ORIGINS = [
+  "https://hpshop-afrique.vercel.app",
+  "https://asma-shop.vercel.app",
+];
 // Un appel navigateur d'origine non autorisée → 403.
 // Un appel serveur-à-serveur (proxy, sans header Origin) → autorisé,
 // protégé par la clé webhook secrète.
