@@ -33,7 +33,10 @@ const MAX_BODY_BYTES = 100 * 1024;
  */
 // Origines navigateur autorisées (les appels serveur-à-serveur via proxy
 // n'envoient pas d'Origin et restent protégés par la clé webhook secrète).
-const ALLOWED_ORIGINS = ["https://hpshop-afrique.vercel.app"];
+const ALLOWED_ORIGINS = [
+  "https://hpshop-afrique.vercel.app",
+  "https://asma-shop.vercel.app",
+];
 
 function cors(origin: string | null) {
   const allowOrigin = origin && ALLOWED_ORIGINS.includes(origin)
