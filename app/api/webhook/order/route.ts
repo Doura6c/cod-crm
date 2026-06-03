@@ -194,25 +194,39 @@ export async function POST(req: Request) {
           },
         });
 
-    // Produits : upsert par SKU (création auto si la boutique envoie un produit inconnu)
+    // Produits : lookup scopé boutique pour éviter les collisions inter-boutiques.
+    // Ordre : (1) chercher par (sku, boutiqueId), (2) create brut, (3) préfixe si collision.
     let subtotal = 0;
     const orderItemsData = await Promise.all(
       items.map(async (it: any) => {
         const sku = it.sku ?? `EXT-${it.name?.toUpperCase().replace(/\s+/g, "-")}`;
-        const product = await prisma.product.upsert({
-          where: { sku },
-          create: {
-            sku,
-            name: it.name ?? sku,
-            price: Number(it.price ?? 0),
-            stock: 0,
-            boutiqueId: boutique.id,
-          },
-          update: {
-            name: it.name ?? sku,
-            price: Number(it.price ?? 0),
-          },
+        const name = it.name ?? sku;
+        const price = Number(it.price ?? 0);
+
+        let product = await prisma.product.findFirst({
+          where: { sku, boutiqueId: boutique.id },
         });
+
+        if (product) {
+          product = await prisma.product.update({
+            where: { id: product.id },
+            data: { name, price },
+          });
+        } else {
+          try {
+            product = await prisma.product.create({
+              data: { sku, name, price, stock: 0, boutiqueId: boutique.id },
+            });
+          } catch {
+            // SKU déjà pris par une autre boutique — créer avec préfixe boutique
+            const safeSku = `${boutique.id.slice(0, 8)}_${sku}`;
+            product = await prisma.product.upsert({
+              where: { sku: safeSku },
+              create: { sku: safeSku, name, price, stock: 0, boutiqueId: boutique.id },
+              update: { name, price },
+            });
+          }
+        }
         const qty = Number(it.quantity ?? 1);
         const unitPrice = Number(it.price ?? product.price);
         const lineTotal = unitPrice * qty;
