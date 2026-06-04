@@ -1,29 +1,49 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Search, Package, Phone } from "lucide-react";
 
 export default function SuiviPage() {
   const [query, setQuery] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const q = query.trim();
+  const doSearch = useCallback(async (raw: string) => {
+    const q = raw.trim();
     if (!q) return;
     setError("");
-
-    // Chercher par code commande ou numéro de téléphone
-    const res = await fetch(`/api/suivi?q=${encodeURIComponent(q)}`);
-    const data = await res.json();
-
-    if (data.orderId) {
-      router.push(`/suivi/${data.orderId}`);
-    } else {
-      setError("Aucune commande trouvée. Vérifiez le code ou le numéro de téléphone.");
+    setLoading(true);
+    try {
+      // Chercher par code commande ou numéro de téléphone
+      const res = await fetch(`/api/suivi?q=${encodeURIComponent(q)}`);
+      const data = await res.json();
+      if (data.orderId) {
+        router.push(`/suivi/${data.orderId}`);
+      } else {
+        setError("Aucune commande trouvée. Vérifiez le code ou le numéro de téléphone.");
+        setLoading(false);
+      }
+    } catch {
+      setError("Erreur de connexion. Veuillez réessayer.");
+      setLoading(false);
     }
+  }, [router]);
+
+  // Deep-link : /suivi?q=CODE déclenche la recherche automatiquement
+  // (utilisé par le bouton "Suivre ma commande" de la boutique).
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search).get("q");
+    if (q) {
+      setQuery(q);
+      doSearch(q);
+    }
+  }, [doSearch]);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    doSearch(query);
   };
 
   return (
@@ -69,10 +89,10 @@ export default function SuiviPage() {
 
             <button
               type="submit"
-              disabled={!query.trim()}
+              disabled={!query.trim() || loading}
               className="w-full bg-sky-600 hover:bg-sky-700 disabled:opacity-50 text-white font-bold py-3.5 rounded-xl text-base transition shadow-lg shadow-sky-200 active:scale-95"
             >
-              Rechercher ma commande
+              {loading ? "Recherche…" : "Rechercher ma commande"}
             </button>
           </form>
 
