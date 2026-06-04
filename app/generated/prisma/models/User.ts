@@ -269,6 +269,7 @@ export type UserWhereInput = {
   callLogs?: Prisma.CallLogListRelationFilter
   ordersValidated?: Prisma.OrderListRelationFilter
   teamRequestsMade?: Prisma.TeamRequestListRelationFilter
+  resetTokens?: Prisma.PasswordResetTokenListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -294,6 +295,7 @@ export type UserOrderByWithRelationInput = {
   callLogs?: Prisma.CallLogOrderByRelationAggregateInput
   ordersValidated?: Prisma.OrderOrderByRelationAggregateInput
   teamRequestsMade?: Prisma.TeamRequestOrderByRelationAggregateInput
+  resetTokens?: Prisma.PasswordResetTokenOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -322,6 +324,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   callLogs?: Prisma.CallLogListRelationFilter
   ordersValidated?: Prisma.OrderListRelationFilter
   teamRequestsMade?: Prisma.TeamRequestListRelationFilter
+  resetTokens?: Prisma.PasswordResetTokenListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -387,6 +390,7 @@ export type UserCreateInput = {
   callLogs?: Prisma.CallLogCreateNestedManyWithoutAgentInput
   ordersValidated?: Prisma.OrderCreateNestedManyWithoutValidatedByInput
   teamRequestsMade?: Prisma.TeamRequestCreateNestedManyWithoutRequestedByInput
+  resetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -410,6 +414,7 @@ export type UserUncheckedCreateInput = {
   callLogs?: Prisma.CallLogUncheckedCreateNestedManyWithoutAgentInput
   ordersValidated?: Prisma.OrderUncheckedCreateNestedManyWithoutValidatedByInput
   teamRequestsMade?: Prisma.TeamRequestUncheckedCreateNestedManyWithoutRequestedByInput
+  resetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -433,6 +438,7 @@ export type UserUpdateInput = {
   callLogs?: Prisma.CallLogUpdateManyWithoutAgentNestedInput
   ordersValidated?: Prisma.OrderUpdateManyWithoutValidatedByNestedInput
   teamRequestsMade?: Prisma.TeamRequestUpdateManyWithoutRequestedByNestedInput
+  resetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -456,6 +462,7 @@ export type UserUncheckedUpdateInput = {
   callLogs?: Prisma.CallLogUncheckedUpdateManyWithoutAgentNestedInput
   ordersValidated?: Prisma.OrderUncheckedUpdateManyWithoutValidatedByNestedInput
   teamRequestsMade?: Prisma.TeamRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+  resetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -564,6 +571,11 @@ export type UserMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
 }
 
+export type UserScalarRelationFilter = {
+  is?: Prisma.UserWhereInput
+  isNot?: Prisma.UserWhereInput
+}
+
 export type UserListRelationFilter = {
   every?: Prisma.UserWhereInput
   some?: Prisma.UserWhereInput
@@ -577,11 +589,6 @@ export type UserOrderByRelationAggregateInput = {
 export type UserNullableScalarRelationFilter = {
   is?: Prisma.UserWhereInput | null
   isNot?: Prisma.UserWhereInput | null
-}
-
-export type UserScalarRelationFilter = {
-  is?: Prisma.UserWhereInput
-  isNot?: Prisma.UserWhereInput
 }
 
 export type StringFieldUpdateOperationsInput = {
@@ -598,6 +605,20 @@ export type BoolFieldUpdateOperationsInput = {
 
 export type DateTimeFieldUpdateOperationsInput = {
   set?: Date | string
+}
+
+export type UserCreateNestedOneWithoutResetTokensInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutResetTokensInput, Prisma.UserUncheckedCreateWithoutResetTokensInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutResetTokensInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutResetTokensNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutResetTokensInput, Prisma.UserUncheckedCreateWithoutResetTokensInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutResetTokensInput
+  upsert?: Prisma.UserUpsertWithoutResetTokensInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutResetTokensInput, Prisma.UserUpdateWithoutResetTokensInput>, Prisma.UserUncheckedUpdateWithoutResetTokensInput>
 }
 
 export type UserCreateNestedManyWithoutOwnedBoutiqueInput = {
@@ -760,6 +781,114 @@ export type UserUpdateOneRequiredWithoutTeamRequestsMadeNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutTeamRequestsMadeInput, Prisma.UserUpdateWithoutTeamRequestsMadeInput>, Prisma.UserUncheckedUpdateWithoutTeamRequestsMadeInput>
 }
 
+export type UserCreateWithoutResetTokensInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  firstName: string
+  lastName: string
+  phone?: string | null
+  role?: string
+  active?: boolean
+  avatarUrl?: string | null
+  isSuperAdmin?: boolean
+  subZone?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  assignedCity?: Prisma.CityCreateNestedOneWithoutAssignedLivreursInput
+  ownedBoutique?: Prisma.BoutiqueCreateNestedOneWithoutOwnersInput
+  ordersAssigned?: Prisma.OrderCreateNestedManyWithoutAssignedAgentInput
+  deliveries?: Prisma.DeliveryCreateNestedManyWithoutLivreurInput
+  callLogs?: Prisma.CallLogCreateNestedManyWithoutAgentInput
+  ordersValidated?: Prisma.OrderCreateNestedManyWithoutValidatedByInput
+  teamRequestsMade?: Prisma.TeamRequestCreateNestedManyWithoutRequestedByInput
+}
+
+export type UserUncheckedCreateWithoutResetTokensInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  firstName: string
+  lastName: string
+  phone?: string | null
+  role?: string
+  active?: boolean
+  avatarUrl?: string | null
+  isSuperAdmin?: boolean
+  assignedCityId?: string | null
+  subZone?: string | null
+  boutiqueId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  ordersAssigned?: Prisma.OrderUncheckedCreateNestedManyWithoutAssignedAgentInput
+  deliveries?: Prisma.DeliveryUncheckedCreateNestedManyWithoutLivreurInput
+  callLogs?: Prisma.CallLogUncheckedCreateNestedManyWithoutAgentInput
+  ordersValidated?: Prisma.OrderUncheckedCreateNestedManyWithoutValidatedByInput
+  teamRequestsMade?: Prisma.TeamRequestUncheckedCreateNestedManyWithoutRequestedByInput
+}
+
+export type UserCreateOrConnectWithoutResetTokensInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutResetTokensInput, Prisma.UserUncheckedCreateWithoutResetTokensInput>
+}
+
+export type UserUpsertWithoutResetTokensInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutResetTokensInput, Prisma.UserUncheckedUpdateWithoutResetTokensInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutResetTokensInput, Prisma.UserUncheckedCreateWithoutResetTokensInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutResetTokensInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutResetTokensInput, Prisma.UserUncheckedUpdateWithoutResetTokensInput>
+}
+
+export type UserUpdateWithoutResetTokensInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  subZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assignedCity?: Prisma.CityUpdateOneWithoutAssignedLivreursNestedInput
+  ownedBoutique?: Prisma.BoutiqueUpdateOneWithoutOwnersNestedInput
+  ordersAssigned?: Prisma.OrderUpdateManyWithoutAssignedAgentNestedInput
+  deliveries?: Prisma.DeliveryUpdateManyWithoutLivreurNestedInput
+  callLogs?: Prisma.CallLogUpdateManyWithoutAgentNestedInput
+  ordersValidated?: Prisma.OrderUpdateManyWithoutValidatedByNestedInput
+  teamRequestsMade?: Prisma.TeamRequestUpdateManyWithoutRequestedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutResetTokensInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  assignedCityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  boutiqueId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ordersAssigned?: Prisma.OrderUncheckedUpdateManyWithoutAssignedAgentNestedInput
+  deliveries?: Prisma.DeliveryUncheckedUpdateManyWithoutLivreurNestedInput
+  callLogs?: Prisma.CallLogUncheckedUpdateManyWithoutAgentNestedInput
+  ordersValidated?: Prisma.OrderUncheckedUpdateManyWithoutValidatedByNestedInput
+  teamRequestsMade?: Prisma.TeamRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+}
+
 export type UserCreateWithoutOwnedBoutiqueInput = {
   id?: string
   email: string
@@ -780,6 +909,7 @@ export type UserCreateWithoutOwnedBoutiqueInput = {
   callLogs?: Prisma.CallLogCreateNestedManyWithoutAgentInput
   ordersValidated?: Prisma.OrderCreateNestedManyWithoutValidatedByInput
   teamRequestsMade?: Prisma.TeamRequestCreateNestedManyWithoutRequestedByInput
+  resetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutOwnedBoutiqueInput = {
@@ -802,6 +932,7 @@ export type UserUncheckedCreateWithoutOwnedBoutiqueInput = {
   callLogs?: Prisma.CallLogUncheckedCreateNestedManyWithoutAgentInput
   ordersValidated?: Prisma.OrderUncheckedCreateNestedManyWithoutValidatedByInput
   teamRequestsMade?: Prisma.TeamRequestUncheckedCreateNestedManyWithoutRequestedByInput
+  resetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutOwnedBoutiqueInput = {
@@ -811,6 +942,7 @@ export type UserCreateOrConnectWithoutOwnedBoutiqueInput = {
 
 export type UserCreateManyOwnedBoutiqueInputEnvelope = {
   data: Prisma.UserCreateManyOwnedBoutiqueInput | Prisma.UserCreateManyOwnedBoutiqueInput[]
+  skipDuplicates?: boolean
 }
 
 export type UserUpsertWithWhereUniqueWithoutOwnedBoutiqueInput = {
@@ -870,6 +1002,7 @@ export type UserCreateWithoutAssignedCityInput = {
   callLogs?: Prisma.CallLogCreateNestedManyWithoutAgentInput
   ordersValidated?: Prisma.OrderCreateNestedManyWithoutValidatedByInput
   teamRequestsMade?: Prisma.TeamRequestCreateNestedManyWithoutRequestedByInput
+  resetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAssignedCityInput = {
@@ -892,6 +1025,7 @@ export type UserUncheckedCreateWithoutAssignedCityInput = {
   callLogs?: Prisma.CallLogUncheckedCreateNestedManyWithoutAgentInput
   ordersValidated?: Prisma.OrderUncheckedCreateNestedManyWithoutValidatedByInput
   teamRequestsMade?: Prisma.TeamRequestUncheckedCreateNestedManyWithoutRequestedByInput
+  resetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAssignedCityInput = {
@@ -901,6 +1035,7 @@ export type UserCreateOrConnectWithoutAssignedCityInput = {
 
 export type UserCreateManyAssignedCityInputEnvelope = {
   data: Prisma.UserCreateManyAssignedCityInput | Prisma.UserCreateManyAssignedCityInput[]
+  skipDuplicates?: boolean
 }
 
 export type UserUpsertWithWhereUniqueWithoutAssignedCityInput = {
@@ -939,6 +1074,7 @@ export type UserCreateWithoutOrdersAssignedInput = {
   callLogs?: Prisma.CallLogCreateNestedManyWithoutAgentInput
   ordersValidated?: Prisma.OrderCreateNestedManyWithoutValidatedByInput
   teamRequestsMade?: Prisma.TeamRequestCreateNestedManyWithoutRequestedByInput
+  resetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutOrdersAssignedInput = {
@@ -961,6 +1097,7 @@ export type UserUncheckedCreateWithoutOrdersAssignedInput = {
   callLogs?: Prisma.CallLogUncheckedCreateNestedManyWithoutAgentInput
   ordersValidated?: Prisma.OrderUncheckedCreateNestedManyWithoutValidatedByInput
   teamRequestsMade?: Prisma.TeamRequestUncheckedCreateNestedManyWithoutRequestedByInput
+  resetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutOrdersAssignedInput = {
@@ -988,6 +1125,7 @@ export type UserCreateWithoutOrdersValidatedInput = {
   deliveries?: Prisma.DeliveryCreateNestedManyWithoutLivreurInput
   callLogs?: Prisma.CallLogCreateNestedManyWithoutAgentInput
   teamRequestsMade?: Prisma.TeamRequestCreateNestedManyWithoutRequestedByInput
+  resetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutOrdersValidatedInput = {
@@ -1010,6 +1148,7 @@ export type UserUncheckedCreateWithoutOrdersValidatedInput = {
   deliveries?: Prisma.DeliveryUncheckedCreateNestedManyWithoutLivreurInput
   callLogs?: Prisma.CallLogUncheckedCreateNestedManyWithoutAgentInput
   teamRequestsMade?: Prisma.TeamRequestUncheckedCreateNestedManyWithoutRequestedByInput
+  resetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutOrdersValidatedInput = {
@@ -1048,6 +1187,7 @@ export type UserUpdateWithoutOrdersAssignedInput = {
   callLogs?: Prisma.CallLogUpdateManyWithoutAgentNestedInput
   ordersValidated?: Prisma.OrderUpdateManyWithoutValidatedByNestedInput
   teamRequestsMade?: Prisma.TeamRequestUpdateManyWithoutRequestedByNestedInput
+  resetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOrdersAssignedInput = {
@@ -1070,6 +1210,7 @@ export type UserUncheckedUpdateWithoutOrdersAssignedInput = {
   callLogs?: Prisma.CallLogUncheckedUpdateManyWithoutAgentNestedInput
   ordersValidated?: Prisma.OrderUncheckedUpdateManyWithoutValidatedByNestedInput
   teamRequestsMade?: Prisma.TeamRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+  resetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutOrdersValidatedInput = {
@@ -1103,6 +1244,7 @@ export type UserUpdateWithoutOrdersValidatedInput = {
   deliveries?: Prisma.DeliveryUpdateManyWithoutLivreurNestedInput
   callLogs?: Prisma.CallLogUpdateManyWithoutAgentNestedInput
   teamRequestsMade?: Prisma.TeamRequestUpdateManyWithoutRequestedByNestedInput
+  resetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOrdersValidatedInput = {
@@ -1125,6 +1267,7 @@ export type UserUncheckedUpdateWithoutOrdersValidatedInput = {
   deliveries?: Prisma.DeliveryUncheckedUpdateManyWithoutLivreurNestedInput
   callLogs?: Prisma.CallLogUncheckedUpdateManyWithoutAgentNestedInput
   teamRequestsMade?: Prisma.TeamRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+  resetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutCallLogsInput = {
@@ -1147,6 +1290,7 @@ export type UserCreateWithoutCallLogsInput = {
   deliveries?: Prisma.DeliveryCreateNestedManyWithoutLivreurInput
   ordersValidated?: Prisma.OrderCreateNestedManyWithoutValidatedByInput
   teamRequestsMade?: Prisma.TeamRequestCreateNestedManyWithoutRequestedByInput
+  resetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCallLogsInput = {
@@ -1169,6 +1313,7 @@ export type UserUncheckedCreateWithoutCallLogsInput = {
   deliveries?: Prisma.DeliveryUncheckedCreateNestedManyWithoutLivreurInput
   ordersValidated?: Prisma.OrderUncheckedCreateNestedManyWithoutValidatedByInput
   teamRequestsMade?: Prisma.TeamRequestUncheckedCreateNestedManyWithoutRequestedByInput
+  resetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCallLogsInput = {
@@ -1207,6 +1352,7 @@ export type UserUpdateWithoutCallLogsInput = {
   deliveries?: Prisma.DeliveryUpdateManyWithoutLivreurNestedInput
   ordersValidated?: Prisma.OrderUpdateManyWithoutValidatedByNestedInput
   teamRequestsMade?: Prisma.TeamRequestUpdateManyWithoutRequestedByNestedInput
+  resetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCallLogsInput = {
@@ -1229,6 +1375,7 @@ export type UserUncheckedUpdateWithoutCallLogsInput = {
   deliveries?: Prisma.DeliveryUncheckedUpdateManyWithoutLivreurNestedInput
   ordersValidated?: Prisma.OrderUncheckedUpdateManyWithoutValidatedByNestedInput
   teamRequestsMade?: Prisma.TeamRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+  resetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutDeliveriesInput = {
@@ -1251,6 +1398,7 @@ export type UserCreateWithoutDeliveriesInput = {
   callLogs?: Prisma.CallLogCreateNestedManyWithoutAgentInput
   ordersValidated?: Prisma.OrderCreateNestedManyWithoutValidatedByInput
   teamRequestsMade?: Prisma.TeamRequestCreateNestedManyWithoutRequestedByInput
+  resetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutDeliveriesInput = {
@@ -1273,6 +1421,7 @@ export type UserUncheckedCreateWithoutDeliveriesInput = {
   callLogs?: Prisma.CallLogUncheckedCreateNestedManyWithoutAgentInput
   ordersValidated?: Prisma.OrderUncheckedCreateNestedManyWithoutValidatedByInput
   teamRequestsMade?: Prisma.TeamRequestUncheckedCreateNestedManyWithoutRequestedByInput
+  resetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutDeliveriesInput = {
@@ -1311,6 +1460,7 @@ export type UserUpdateWithoutDeliveriesInput = {
   callLogs?: Prisma.CallLogUpdateManyWithoutAgentNestedInput
   ordersValidated?: Prisma.OrderUpdateManyWithoutValidatedByNestedInput
   teamRequestsMade?: Prisma.TeamRequestUpdateManyWithoutRequestedByNestedInput
+  resetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDeliveriesInput = {
@@ -1333,6 +1483,7 @@ export type UserUncheckedUpdateWithoutDeliveriesInput = {
   callLogs?: Prisma.CallLogUncheckedUpdateManyWithoutAgentNestedInput
   ordersValidated?: Prisma.OrderUncheckedUpdateManyWithoutValidatedByNestedInput
   teamRequestsMade?: Prisma.TeamRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+  resetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutTeamRequestsMadeInput = {
@@ -1355,6 +1506,7 @@ export type UserCreateWithoutTeamRequestsMadeInput = {
   deliveries?: Prisma.DeliveryCreateNestedManyWithoutLivreurInput
   callLogs?: Prisma.CallLogCreateNestedManyWithoutAgentInput
   ordersValidated?: Prisma.OrderCreateNestedManyWithoutValidatedByInput
+  resetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutTeamRequestsMadeInput = {
@@ -1377,6 +1529,7 @@ export type UserUncheckedCreateWithoutTeamRequestsMadeInput = {
   deliveries?: Prisma.DeliveryUncheckedCreateNestedManyWithoutLivreurInput
   callLogs?: Prisma.CallLogUncheckedCreateNestedManyWithoutAgentInput
   ordersValidated?: Prisma.OrderUncheckedCreateNestedManyWithoutValidatedByInput
+  resetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutTeamRequestsMadeInput = {
@@ -1415,6 +1568,7 @@ export type UserUpdateWithoutTeamRequestsMadeInput = {
   deliveries?: Prisma.DeliveryUpdateManyWithoutLivreurNestedInput
   callLogs?: Prisma.CallLogUpdateManyWithoutAgentNestedInput
   ordersValidated?: Prisma.OrderUpdateManyWithoutValidatedByNestedInput
+  resetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutTeamRequestsMadeInput = {
@@ -1437,6 +1591,7 @@ export type UserUncheckedUpdateWithoutTeamRequestsMadeInput = {
   deliveries?: Prisma.DeliveryUncheckedUpdateManyWithoutLivreurNestedInput
   callLogs?: Prisma.CallLogUncheckedUpdateManyWithoutAgentNestedInput
   ordersValidated?: Prisma.OrderUncheckedUpdateManyWithoutValidatedByNestedInput
+  resetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyOwnedBoutiqueInput = {
@@ -1476,6 +1631,7 @@ export type UserUpdateWithoutOwnedBoutiqueInput = {
   callLogs?: Prisma.CallLogUpdateManyWithoutAgentNestedInput
   ordersValidated?: Prisma.OrderUpdateManyWithoutValidatedByNestedInput
   teamRequestsMade?: Prisma.TeamRequestUpdateManyWithoutRequestedByNestedInput
+  resetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOwnedBoutiqueInput = {
@@ -1498,6 +1654,7 @@ export type UserUncheckedUpdateWithoutOwnedBoutiqueInput = {
   callLogs?: Prisma.CallLogUncheckedUpdateManyWithoutAgentNestedInput
   ordersValidated?: Prisma.OrderUncheckedUpdateManyWithoutValidatedByNestedInput
   teamRequestsMade?: Prisma.TeamRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+  resetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateManyWithoutOwnedBoutiqueInput = {
@@ -1554,6 +1711,7 @@ export type UserUpdateWithoutAssignedCityInput = {
   callLogs?: Prisma.CallLogUpdateManyWithoutAgentNestedInput
   ordersValidated?: Prisma.OrderUpdateManyWithoutValidatedByNestedInput
   teamRequestsMade?: Prisma.TeamRequestUpdateManyWithoutRequestedByNestedInput
+  resetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAssignedCityInput = {
@@ -1576,6 +1734,7 @@ export type UserUncheckedUpdateWithoutAssignedCityInput = {
   callLogs?: Prisma.CallLogUncheckedUpdateManyWithoutAgentNestedInput
   ordersValidated?: Prisma.OrderUncheckedUpdateManyWithoutValidatedByNestedInput
   teamRequestsMade?: Prisma.TeamRequestUncheckedUpdateManyWithoutRequestedByNestedInput
+  resetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateManyWithoutAssignedCityInput = {
@@ -1606,6 +1765,7 @@ export type UserCountOutputType = {
   callLogs: number
   ordersValidated: number
   teamRequestsMade: number
+  resetTokens: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1614,6 +1774,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   callLogs?: boolean | UserCountOutputTypeCountCallLogsArgs
   ordersValidated?: boolean | UserCountOutputTypeCountOrdersValidatedArgs
   teamRequestsMade?: boolean | UserCountOutputTypeCountTeamRequestsMadeArgs
+  resetTokens?: boolean | UserCountOutputTypeCountResetTokensArgs
 }
 
 /**
@@ -1661,6 +1822,13 @@ export type UserCountOutputTypeCountTeamRequestsMadeArgs<ExtArgs extends runtime
   where?: Prisma.TeamRequestWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountResetTokensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PasswordResetTokenWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1685,6 +1853,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   callLogs?: boolean | Prisma.User$callLogsArgs<ExtArgs>
   ordersValidated?: boolean | Prisma.User$ordersValidatedArgs<ExtArgs>
   teamRequestsMade?: boolean | Prisma.User$teamRequestsMadeArgs<ExtArgs>
+  resetTokens?: boolean | Prisma.User$resetTokensArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -1755,6 +1924,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   callLogs?: boolean | Prisma.User$callLogsArgs<ExtArgs>
   ordersValidated?: boolean | Prisma.User$ordersValidatedArgs<ExtArgs>
   teamRequestsMade?: boolean | Prisma.User$teamRequestsMadeArgs<ExtArgs>
+  resetTokens?: boolean | Prisma.User$resetTokensArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1776,6 +1946,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     callLogs: Prisma.$CallLogPayload<ExtArgs>[]
     ordersValidated: Prisma.$OrderPayload<ExtArgs>[]
     teamRequestsMade: Prisma.$TeamRequestPayload<ExtArgs>[]
+    resetTokens: Prisma.$PasswordResetTokenPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2194,6 +2365,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   callLogs<T extends Prisma.User$callLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$callLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CallLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   ordersValidated<T extends Prisma.User$ordersValidatedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$ordersValidatedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   teamRequestsMade<T extends Prisma.User$teamRequestsMadeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$teamRequestsMadeArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TeamRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  resetTokens<T extends Prisma.User$resetTokensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$resetTokensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PasswordResetTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2472,6 +2644,7 @@ export type UserCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * The data used to create many Users.
    */
   data: Prisma.UserCreateManyInput | Prisma.UserCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -2490,6 +2663,7 @@ export type UserCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions
    * The data used to create many Users.
    */
   data: Prisma.UserCreateManyInput | Prisma.UserCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */
@@ -2792,6 +2966,30 @@ export type User$teamRequestsMadeArgs<ExtArgs extends runtime.Types.Extensions.I
   take?: number
   skip?: number
   distinct?: Prisma.TeamRequestScalarFieldEnum | Prisma.TeamRequestScalarFieldEnum[]
+}
+
+/**
+ * User.resetTokens
+ */
+export type User$resetTokensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PasswordResetToken
+   */
+  select?: Prisma.PasswordResetTokenSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PasswordResetToken
+   */
+  omit?: Prisma.PasswordResetTokenOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PasswordResetTokenInclude<ExtArgs> | null
+  where?: Prisma.PasswordResetTokenWhereInput
+  orderBy?: Prisma.PasswordResetTokenOrderByWithRelationInput | Prisma.PasswordResetTokenOrderByWithRelationInput[]
+  cursor?: Prisma.PasswordResetTokenWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PasswordResetTokenScalarFieldEnum | Prisma.PasswordResetTokenScalarFieldEnum[]
 }
 
 /**

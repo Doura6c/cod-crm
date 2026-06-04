@@ -123,6 +123,15 @@ export default async function LoginPage({
               </button>
             </form>
 
+            <div className="mt-5 text-center">
+              <a
+                href="/mot-de-passe-oublie"
+                className="text-sm text-sky-600 hover:text-sky-700 hover:underline font-medium"
+              >
+                Mot de passe oublié ?
+              </a>
+            </div>
+
           </div>
         </div>
       </div>

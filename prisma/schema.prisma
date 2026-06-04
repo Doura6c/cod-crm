@@ -32,6 +32,20 @@ model User {
   callLogs         CallLog[]
   ordersValidated  Order[]       @relation("ValidatedBy")
   teamRequestsMade TeamRequest[] @relation("RequestsMade")
+  resetTokens      PasswordResetToken[]
+}
+
+// ============ RÉINITIALISATION MOT DE PASSE ============
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  tokenHash String    @unique // SHA-256 du token envoyé par email (jamais stocké en clair)
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
 }
 
 // ============ BOUTIQUES (SELLERS) ============

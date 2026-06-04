@@ -801,6 +801,7 @@ export type DeliveryCreateOrConnectWithoutLivreurInput = {
 
 export type DeliveryCreateManyLivreurInputEnvelope = {
   data: Prisma.DeliveryCreateManyLivreurInput | Prisma.DeliveryCreateManyLivreurInput[]
+  skipDuplicates?: boolean
 }
 
 export type DeliveryUpsertWithWhereUniqueWithoutLivreurInput = {
@@ -887,6 +888,7 @@ export type DeliveryCreateOrConnectWithoutCityInput = {
 
 export type DeliveryCreateManyCityInputEnvelope = {
   data: Prisma.DeliveryCreateManyCityInput | Prisma.DeliveryCreateManyCityInput[]
+  skipDuplicates?: boolean
 }
 
 export type DeliveryUpsertWithWhereUniqueWithoutCityInput = {
@@ -1959,6 +1961,7 @@ export type DeliveryCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * The data used to create many Deliveries.
    */
   data: Prisma.DeliveryCreateManyInput | Prisma.DeliveryCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1977,6 +1980,7 @@ export type DeliveryCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extens
    * The data used to create many Deliveries.
    */
   data: Prisma.DeliveryCreateManyInput | Prisma.DeliveryCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

@@ -7,12 +7,17 @@ export const authConfig: NextAuthConfig = {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
       const isOnLogin = nextUrl.pathname === "/login";
+      // Pages publiques accessibles sans session (login + parcours mot de passe oublié)
+      const isPublicPage =
+        isOnLogin ||
+        nextUrl.pathname === "/mot-de-passe-oublie" ||
+        nextUrl.pathname === "/reinitialiser-mot-de-passe";
       const isPublicApi =
         nextUrl.pathname.startsWith("/api/webhook") ||
         nextUrl.pathname.startsWith("/api/auth");
 
       if (isPublicApi) return true;
-      if (!isLoggedIn && !isOnLogin) return false;
+      if (!isLoggedIn && !isPublicPage) return false;
       if (isOnLogin && isLoggedIn) {
         const role = (auth?.user as any)?.role;
         // Rediriger les boutique owners vers leur espace dédié

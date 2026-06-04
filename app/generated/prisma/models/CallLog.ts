@@ -448,6 +448,7 @@ export type CallLogCreateOrConnectWithoutAgentInput = {
 
 export type CallLogCreateManyAgentInputEnvelope = {
   data: Prisma.CallLogCreateManyAgentInput | Prisma.CallLogCreateManyAgentInput[]
+  skipDuplicates?: boolean
 }
 
 export type CallLogUpsertWithWhereUniqueWithoutAgentInput = {
@@ -501,6 +502,7 @@ export type CallLogCreateOrConnectWithoutOrderInput = {
 
 export type CallLogCreateManyOrderInputEnvelope = {
   data: Prisma.CallLogCreateManyOrderInput | Prisma.CallLogCreateManyOrderInput[]
+  skipDuplicates?: boolean
 }
 
 export type CallLogUpsertWithWhereUniqueWithoutOrderInput = {
@@ -1319,6 +1321,7 @@ export type CallLogCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * The data used to create many CallLogs.
    */
   data: Prisma.CallLogCreateManyInput | Prisma.CallLogCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1337,6 +1340,7 @@ export type CallLogCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensi
    * The data used to create many CallLogs.
    */
   data: Prisma.CallLogCreateManyInput | Prisma.CallLogCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */
