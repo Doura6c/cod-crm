@@ -11,6 +11,17 @@ export async function GET(req: Request) {
 
   if (q.length < 2) return NextResponse.json({ orders: [], customers: [] });
 
+  // Normalisation téléphone : on retire espaces, "+", indicatif 224 et 0 initial
+  // pour matcher quel que soit le format saisi (+224 628…, 00224…, 0628…, 628…).
+  const phoneCore = q.replace(/\D/g, "").replace(/^224/, "").replace(/^0/, "");
+  const phoneOr =
+    phoneCore.length >= 5
+      ? [
+          { customer: { phone: { contains: phoneCore } } },
+          { customer: { phone: { contains: q.replace(/\D/g, "") } } },
+        ]
+      : [];
+
   const [orders, customers] = await Promise.all([
     prisma.order.findMany({
       where: {
@@ -18,6 +29,7 @@ export async function GET(req: Request) {
           { code: { contains: q } },
           { customer: { fullName: { contains: q } } },
           { customer: { phone: { contains: q } } },
+          ...phoneOr,
           { notes: { contains: q } },
         ],
       },
@@ -33,6 +45,7 @@ export async function GET(req: Request) {
         OR: [
           { fullName: { contains: q } },
           { phone: { contains: q } },
+          ...(phoneCore.length >= 5 ? [{ phone: { contains: phoneCore } }] : []),
         ],
       },
       include: { city: { select: { name: true } } },

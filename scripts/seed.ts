@@ -25,8 +25,15 @@ function orderCode() {
 async function main() {
   console.log("🌱 Seeding database...");
 
-  // Admin
-  const passwordHash = await bcrypt.hash("password123", 10);
+  // Admin — mot de passe fourni via SEED_PASSWORD (jamais de défaut connu en dur)
+  const seedPassword = process.env.SEED_PASSWORD;
+  if (!seedPassword || seedPassword.length < 8) {
+    throw new Error(
+      "SEED_PASSWORD manquant ou trop court (min. 8 caractères). " +
+        'Exemple : SEED_PASSWORD="motDePasseFort" npm run db:seed'
+    );
+  }
+  const passwordHash = await bcrypt.hash(seedPassword, 10);
   const admin = await prisma.user.upsert({
     where: { email: "admin@codcrm.gn" },
     create: {
