@@ -7,6 +7,7 @@ import bcrypt from "bcryptjs";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { clean, isEmail, isValidRole } from "@/lib/validate";
+import { sendOnboardingGuide } from "@/lib/onboarding-email";
 
 export async function createUserAction(formData: FormData): Promise<void> {
   const session = await auth();
@@ -57,6 +58,13 @@ export async function createUserAction(formData: FormData): Promise<void> {
       ...(newRole === "BOUTIQUE_OWNER" && boutiqueId ? { boutiqueId } : {}),
     },
   });
+
+  // Envoi du guide d'onboarding (PDF du profil) — non bloquant pour la création
+  try {
+    await sendOnboardingGuide({ firstName, lastName, email, role: newRole });
+  } catch (err) {
+    console.error("[createUserAction] envoi guide onboarding échoué :", err);
+  }
 
   revalidatePath("/equipe");
   redirect("/equipe?created=1");

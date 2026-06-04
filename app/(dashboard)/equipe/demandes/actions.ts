@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
+import { sendOnboardingGuide } from "@/lib/onboarding-email";
 
 // ── Superviseur : soumettre une demande de création d'agent ──────────────────
 export async function requestCreateAgentAction(formData: FormData): Promise<void> {
@@ -98,6 +99,18 @@ export async function approveTeamRequestAction(requestId: string): Promise<{ err
         passwordHash,
       },
     });
+
+    // Envoi du guide d'onboarding (PDF Agent) — non bloquant pour l'approbation
+    try {
+      await sendOnboardingGuide({
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        role: "AGENT",
+      });
+    } catch (err) {
+      console.error("[approveTeamRequestAction] envoi guide onboarding échoué :", err);
+    }
   } else if (req.type === "DELETE_AGENT") {
     if (req.targetUserId) {
       await prisma.user.update({
