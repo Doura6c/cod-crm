@@ -83,3 +83,39 @@ export async function updateCollaboratorAction(formData: FormData): Promise<void
   revalidatePath(`/equipe/${userId}/edit`);
   redirect(`/equipe?success=${userId}`);
 }
+
+export async function deleteCollaboratorAction(formData: FormData): Promise<void> {
+  const session = await auth();
+  const role = (session?.user as any)?.role;
+  const sessionUserId = (session?.user as any)?.id;
+  if (role !== "ADMIN") redirect("/equipe");
+
+  const userId = String(formData.get("userId") ?? "").trim();
+  if (!userId) redirect("/equipe");
+
+  const target = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { id: true, isSuperAdmin: true },
+  });
+  if (!target) redirect("/equipe");
+
+  // Garde-fous : on ne supprime jamais un super-admin ni son propre compte.
+  if (target.isSuperAdmin) redirect(`/equipe/${userId}/edit?error=delete-superadmin`);
+  if (target.id === sessionUserId) redirect(`/equipe/${userId}/edit?error=delete-self`);
+
+  // Suppression FK-safe : on détache les commandes/livraisons (relations optionnelles)
+  // et on supprime les enregistrements dont la FK vers l'utilisateur est obligatoire.
+  await prisma.$transaction([
+    prisma.order.updateMany({ where: { assignedAgentId: userId }, data: { assignedAgentId: null } }),
+    prisma.order.updateMany({ where: { validatedById: userId }, data: { validatedById: null } }),
+    prisma.delivery.updateMany({ where: { livreurId: userId }, data: { livreurId: null } }),
+    prisma.callLog.deleteMany({ where: { agentId: userId } }),
+    prisma.teamRequest.deleteMany({ where: { requestedById: userId } }),
+    prisma.notification.deleteMany({ where: { userId } }),
+    prisma.passwordResetToken.deleteMany({ where: { userId } }),
+    prisma.user.delete({ where: { id: userId } }),
+  ]);
+
+  revalidatePath("/equipe");
+  redirect("/equipe?deleted=1");
+}

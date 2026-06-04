@@ -29,14 +29,14 @@ type BoutiqueOwnerUser = BaseUser & {
 export default async function EquipePage({
   searchParams,
 }: {
-  searchParams: Promise<{ success?: string; created?: string }>;
+  searchParams: Promise<{ success?: string; created?: string; deleted?: string }>;
 }) {
   const session = await auth();
   const sessionRole = (session?.user as any)?.role;
   const sessionIsSuperAdmin = (session?.user as any)?.isSuperAdmin === true;
   if (!can(sessionRole, "VIEW_TEAM")) redirect("/");
 
-  const { success, created } = await searchParams;
+  const { success, created, deleted } = await searchParams;
   const isAdmin = sessionRole === "ADMIN";
 
   // Requête 1 : tous les users sauf BOUTIQUE_OWNER
@@ -224,9 +224,9 @@ export default async function EquipePage({
       />
 
       <div className="p-6">
-        {(success || created) && (
+        {(success || created || deleted) && (
           <div className="mb-6 bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm px-4 py-3 rounded-xl">
-            ✅ {created ? "Collaborateur créé avec succès." : "Collaborateur mis à jour avec succès."}
+            ✅ {deleted ? "Membre supprimé avec succès." : created ? "Collaborateur créé avec succès." : "Collaborateur mis à jour avec succès."}
           </div>
         )}
 

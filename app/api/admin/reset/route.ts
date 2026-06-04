@@ -24,6 +24,7 @@ export async function GET() {
     livraisons,
     notifications,
     teamRequests,
+    utilisateurs,
   ] = await Promise.all([
     prisma.order.count(),
     prisma.orderItem.count(),
@@ -37,6 +38,8 @@ export async function GET() {
     prisma.delivery.count(),
     prisma.notification.count(),
     prisma.teamRequest.count(),
+    // Utilisateurs supprimables = tous sauf les super-admins
+    prisma.user.count({ where: { isSuperAdmin: false } }),
   ]);
 
   return NextResponse.json({
@@ -45,6 +48,7 @@ export async function GET() {
     produits: { products: produits, movements: stockMovements },
     boutiques: { boutiques },
     livraisons: { deliveries: livraisons },
+    utilisateurs: { users: utilisateurs },
     autres: { notifications, teamRequests },
   });
 }
@@ -73,12 +77,13 @@ export async function DELETE(req: Request) {
   }
 
   const body = await req.json();
-  const { commandes, clients, produits, boutiques, livraisons } = body as {
+  const { commandes, clients, produits, boutiques, livraisons, utilisateurs } = body as {
     commandes?: boolean;
     clients?: boolean;
     produits?: boolean;
     boutiques?: boolean;
     livraisons?: boolean;
+    utilisateurs?: boolean;
   };
 
   const deleted: Record<string, number> = {};
@@ -121,6 +126,28 @@ export async function DELETE(req: Request) {
     if (boutiques) {
       const r = await prisma.boutique.deleteMany({});
       deleted.boutiques = r.count;
+    }
+
+    // Utilisateurs : tous SAUF les super-admins et le compte courant.
+    // On détache d'abord les FK optionnelles, on supprime les FK obligatoires,
+    // puis les comptes eux-mêmes.
+    if (utilisateurs) {
+      const toDelete = await prisma.user.findMany({
+        where: { isSuperAdmin: false, id: { not: user.id } },
+        select: { id: true },
+      });
+      const ids = toDelete.map((u) => u.id);
+      if (ids.length > 0) {
+        await prisma.order.updateMany({ where: { assignedAgentId: { in: ids } }, data: { assignedAgentId: null } });
+        await prisma.order.updateMany({ where: { validatedById: { in: ids } }, data: { validatedById: null } });
+        await prisma.delivery.updateMany({ where: { livreurId: { in: ids } }, data: { livreurId: null } });
+        await prisma.callLog.deleteMany({ where: { agentId: { in: ids } } });
+        await prisma.teamRequest.deleteMany({ where: { requestedById: { in: ids } } });
+        await prisma.notification.deleteMany({ where: { userId: { in: ids } } });
+        await prisma.passwordResetToken.deleteMany({ where: { userId: { in: ids } } });
+      }
+      const r = await prisma.user.deleteMany({ where: { isSuperAdmin: false, id: { not: user.id } } });
+      deleted.utilisateurs = r.count;
     }
 
     // Toujours nettoyer notifications + team requests

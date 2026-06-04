@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { PageHeader } from "@/components/PageHeader";
 import { updateCollaboratorAction } from "./actions";
+import { DeleteMemberButton } from "./DeleteMemberButton";
 import { ArrowLeft, UserCog } from "lucide-react";
 import Link from "next/link";
 
@@ -25,6 +26,7 @@ export default async function EditCollaboratorPage({
 }) {
   const session = await auth();
   const sessionRole = (session?.user as any)?.role;
+  const sessionUserId = (session?.user as any)?.id;
   if (sessionRole !== "ADMIN") redirect("/equipe");
 
   const { id } = await params;
@@ -42,9 +44,14 @@ export default async function EditCollaboratorPage({
   const errors: Record<string, string> = {
     missing: "Tous les champs obligatoires doivent être remplis.",
     "email-exists": "Cet email est déjà utilisé par un autre compte.",
-    "password-short": "Le mot de passe doit contenir au moins 6 caractères.",
+    "password-short": "Le mot de passe doit contenir au moins 8 caractères.",
     "boutique-required": "Un Client Boutique doit être rattaché à une boutique.",
+    "delete-superadmin": "Impossible de supprimer un compte super-administrateur.",
+    "delete-self": "Vous ne pouvez pas supprimer votre propre compte.",
+    "forbidden-role": "Rôle invalide.",
   };
+
+  const canDelete = !user.isSuperAdmin && user.id !== sessionUserId;
 
   return (
     <div>
@@ -144,7 +151,7 @@ export default async function EditCollaboratorPage({
                 className="input font-mono"
                 placeholder="Laisser vide pour ne pas modifier"
               />
-              <p className="text-xs text-slate-400 mt-1">Laissez vide pour conserver le mot de passe actuel. Min. 6 caractères.</p>
+              <p className="text-xs text-slate-400 mt-1">Laissez vide pour conserver le mot de passe actuel. Min. 8 caractères.</p>
             </div>
 
             {/* Boutique associée — clients boutique. Toujours rendu pour conserver le lien si rôle inchangé */}
@@ -201,6 +208,15 @@ export default async function EditCollaboratorPage({
               </Link>
             </div>
           </form>
+
+          {canDelete && (
+            <div className="px-6 py-5 border-t border-red-100 dark:border-red-900/30 bg-red-50/40 dark:bg-red-900/10">
+              <p className="text-xs font-bold text-red-700 dark:text-red-400 uppercase tracking-wide mb-3">
+                Zone dangereuse
+              </p>
+              <DeleteMemberButton userId={user.id} fullName={`${user.firstName} ${user.lastName}`} />
+            </div>
+          )}
         </div>
       </div>
     </div>

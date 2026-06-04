@@ -8,6 +8,7 @@ type Counts = {
   produits: { products: number; movements: number };
   boutiques: { boutiques: number };
   livraisons: { deliveries: number };
+  utilisateurs: { users: number };
   autres: { notifications: number; teamRequests: number };
 } | null;
 
@@ -17,6 +18,7 @@ type Selection = {
   produits: boolean;
   boutiques: boolean;
   livraisons: boolean;
+  utilisateurs: boolean;
 };
 
 type Step = "idle" | "loading_counts" | "select" | "confirm" | "deleting" | "done" | "error";
@@ -73,19 +75,23 @@ const BADGE_MAP: Record<string, string> = {
 export default function ResetDataButton() {
   const [step, setStep] = useState<Step>("idle");
   const [counts, setCounts] = useState<Counts>(null);
+  // Les utilisateurs ne sont JAMAIS sélectionnés par défaut (action très destructrice).
   const [selection, setSelection] = useState<Selection>({
     commandes: true, clients: true, produits: true, boutiques: true, livraisons: true,
+    utilisateurs: false,
   });
   const [confirmText, setConfirmText] = useState("");
   const [resultMsg, setResultMsg] = useState("");
   const [error, setError] = useState("");
 
-  const allSelected = Object.values(selection).every(Boolean);
+  // "Tout sélectionner" ne concerne que les données métier, pas les utilisateurs.
+  const DATA_KEYS: (keyof Selection)[] = ["commandes", "clients", "produits", "boutiques", "livraisons"];
+  const allSelected = DATA_KEYS.every((k) => selection[k]);
   const anySelected = Object.values(selection).some(Boolean);
 
   function toggleAll() {
     const next = !allSelected;
-    setSelection({ commandes: next, clients: next, produits: next, boutiques: next, livraisons: next });
+    setSelection((s) => ({ ...s, commandes: next, clients: next, produits: next, boutiques: next, livraisons: next }));
   }
 
   async function loadCounts() {
@@ -239,6 +245,35 @@ export default function ResetDataButton() {
           ))}
         </div>
 
+        {/* Option séparée et très dangereuse : purge des comptes utilisateurs */}
+        <label
+          className={`flex items-start gap-3 p-3.5 rounded-xl border-2 cursor-pointer transition ${
+            selection.utilisateurs ? "border-red-400 bg-red-50" : "border-dashed border-red-200 bg-white"
+          }`}
+        >
+          <input
+            type="checkbox"
+            checked={selection.utilisateurs}
+            onChange={() => setSelection((s) => ({ ...s, utilisateurs: !s.utilisateurs }))}
+            className="mt-0.5 w-4 h-4 accent-red-600 shrink-0"
+          />
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-sm text-red-800">Utilisateurs (sauf super-admin)</span>
+              {counts && (
+                <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-red-100 text-red-700">
+                  {counts.utilisateurs.users} enreg.
+                </span>
+              )}
+            </div>
+            <p className="text-xs text-red-600 mt-0.5">
+              Supprime <strong>tous les comptes</strong> (agents, superviseurs, livreurs, clients boutique…)
+              sauf les super-admins et votre propre compte. À utiliser pour repartir propre avant
+              mise en production.
+            </p>
+          </div>
+        </label>
+
         <div className="flex items-center gap-3 pt-2">
           <button
             onClick={() => setStep("confirm")}
@@ -260,7 +295,10 @@ export default function ResetDataButton() {
 
   // ── ÉTAPE 2 : confirmation par saisie ──
   if (step === "confirm") {
-    const selectedLabels = LABELS.filter((l) => selection[l.key]).map((l) => l.label);
+    const selectedLabels = [
+      ...LABELS.filter((l) => selection[l.key]).map((l) => l.label),
+      ...(selection.utilisateurs ? ["Utilisateurs (sauf super-admin)"] : []),
+    ];
 
     return (
       <div className="space-y-4">
