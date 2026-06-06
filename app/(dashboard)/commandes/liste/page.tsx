@@ -344,6 +344,14 @@ export default async function ListePage({
                         <td className="px-3 py-3">
                           <div className="font-mono text-xs font-bold text-sky-700">{o.code}</div>
                           <div className="text-xs text-slate-500 mt-0.5">{o.boutique.name}</div>
+                          {o.isDuplicate && (
+                            <div
+                              className="inline-flex items-center gap-1 mt-1 px-1.5 py-0.5 rounded bg-orange-100 text-orange-700 text-[10px] font-bold border border-orange-200"
+                              title={o.duplicateOfCode ? `Doublon possible de ${o.duplicateOfCode} — exclu des stats` : "Doublon possible — exclu des stats"}
+                            >
+                              ⚠️ Doublon{o.duplicateOfCode ? ` de ${o.duplicateOfCode}` : ""}
+                            </div>
+                          )}
                           {o.callCount > 0 && (
                             <div className="flex items-center gap-0.5 text-xs text-slate-500 mt-0.5">
                               <Phone className="w-2.5 h-2.5" /> {o.callCount} appel{o.callCount > 1 ? "s" : ""}

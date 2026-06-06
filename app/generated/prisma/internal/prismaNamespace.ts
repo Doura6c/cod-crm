@@ -1925,6 +1925,8 @@ export const OrderScalarFieldEnum = {
   deliveryPaidByClient: 'deliveryPaidByClient',
   source: 'source',
   externalRef: 'externalRef',
+  isDuplicate: 'isDuplicate',
+  duplicateOfCode: 'duplicateOfCode',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

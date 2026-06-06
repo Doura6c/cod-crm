@@ -172,6 +172,10 @@ model Order {
   source           String   @default("MANUAL") // MANUAL, WEBHOOK, IMPORT
   externalRef      String?  // ID externe boutique
 
+  // ── Détection de doublons (bug Afrishop) ──
+  isDuplicate      Boolean  @default(false) // commande détectée comme doublon → exclue des stats
+  duplicateOfCode  String?  // code de la commande d'origine si doublon
+
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
@@ -180,9 +184,13 @@ model Order {
   invoice   Invoice?
   callLogs  CallLog[]
 
+  // Garantit l'unicité de la référence externe par boutique (anti-doublon webhook).
+  // En Postgres, les NULL sont distincts → les commandes sans externalRef ne sont pas bloquées.
+  @@unique([boutiqueId, externalRef])
   @@index([status])
   @@index([boutiqueId])
   @@index([createdAt])
+  @@index([isDuplicate])
 }
 
 model OrderItem {

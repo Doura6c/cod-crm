@@ -240,37 +240,68 @@ export async function POST(req: Request) {
       })
     );
 
-    const order = await prisma.order.create({
-      data: {
-        code: generateOrderCode(),
-        boutiqueId: boutique.id,
-        customerId: cust.id,
-        cityId,
-        totalAmount: subtotal + Number(deliveryFee ?? 0),
-        deliveryFee: Number(deliveryFee ?? 0),
-        notes,
-        source: (source && typeof source === 'string') ? source.trim().slice(0, 50) : "WEBHOOK",
-        externalRef,
-        status: "NOUVEAU",
-        items: { create: orderItemsData },
-      },
-      include: { items: true },
-    });
+    // Si un doublon "actif" existe (même téléphone, commande en cours), on crée
+    // quand même la commande mais on la marque isDuplicate=true : elle est exclue
+    // des stats et signalée au superviseur, qui tranche (vrai re-commande vs doublon).
+    const isDup = !!activeDuplicate;
+
+    let order;
+    try {
+      order = await prisma.order.create({
+        data: {
+          code: generateOrderCode(),
+          boutiqueId: boutique.id,
+          customerId: cust.id,
+          cityId,
+          totalAmount: subtotal + Number(deliveryFee ?? 0),
+          deliveryFee: Number(deliveryFee ?? 0),
+          notes,
+          source: (source && typeof source === 'string') ? source.trim().slice(0, 50) : "WEBHOOK",
+          externalRef,
+          status: "NOUVEAU",
+          isDuplicate: isDup,
+          duplicateOfCode: activeDuplicate?.code ?? null,
+          items: { create: orderItemsData },
+        },
+        include: { items: true },
+      });
+    } catch (e: any) {
+      // P2002 = violation de contrainte unique (boutiqueId, externalRef).
+      // Cas d'une 2e requête simultanée (retry webhook) : la 1re a déjà créé la
+      // commande. On renvoie l'existante → idempotence garantie, aucun doublon.
+      if (e?.code === "P2002" && externalRef) {
+        const existing = await prisma.order.findFirst({
+          where: { boutiqueId: boutique.id, externalRef },
+        });
+        if (existing) {
+          return NextResponse.json(
+            { ok: true, order: existing, duplicate: true },
+            { headers: cors(origin) }
+          );
+        }
+      }
+      throw e;
+    }
 
     // Notifier tous les ADMIN et MANAGER actifs de la nouvelle commande
     const productNames = orderItemsData.length > 0
       ? items.slice(0, 2).map((it: any) => it.name ?? it.sku ?? "Produit").join(", ")
       : "Commande";
     await notifyRole(["ADMIN", "MANAGER"], {
-      type: "NEW_ORDER",
-      title: `Nouvelle commande — ${boutique.name}`,
-      message: `${customer.fullName ?? "Client"} (${customer.phone}) — ${productNames} — ${formatGNF(subtotal + Number(deliveryFee ?? 0))} GNF`,
+      type: isDup ? "DUPLICATE_ORDER" : "NEW_ORDER",
+      title: isDup
+        ? `⚠️ Doublon possible — ${boutique.name}`
+        : `Nouvelle commande — ${boutique.name}`,
+      message: isDup
+        ? `${customer.fullName ?? "Client"} (${customer.phone}) a déjà une commande active ${activeDuplicate?.code} (${activeDuplicate?.status}). Nouvelle commande ${order.code} marquée comme doublon — à vérifier.`
+        : `${customer.fullName ?? "Client"} (${customer.phone}) — ${productNames} — ${formatGNF(subtotal + Number(deliveryFee ?? 0))} GNF`,
       data: { orderId: order.id, orderCode: order.code },
     }).catch(() => {});
 
     return NextResponse.json({
       ok: true,
       order,
+      duplicateFlagged: isDup || undefined,
       warning: activeDuplicate
         ? `Ce client a déjà une commande active : ${activeDuplicate.code} (${activeDuplicate.status})`
         : undefined,

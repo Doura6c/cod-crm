@@ -58,6 +58,8 @@ export type OrderMinAggregateOutputType = {
   deliveryPaidByClient: boolean | null
   source: string | null
   externalRef: string | null
+  isDuplicate: boolean | null
+  duplicateOfCode: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -82,6 +84,8 @@ export type OrderMaxAggregateOutputType = {
   deliveryPaidByClient: boolean | null
   source: string | null
   externalRef: string | null
+  isDuplicate: boolean | null
+  duplicateOfCode: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -106,6 +110,8 @@ export type OrderCountAggregateOutputType = {
   deliveryPaidByClient: number
   source: number
   externalRef: number
+  isDuplicate: number
+  duplicateOfCode: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -144,6 +150,8 @@ export type OrderMinAggregateInputType = {
   deliveryPaidByClient?: true
   source?: true
   externalRef?: true
+  isDuplicate?: true
+  duplicateOfCode?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -168,6 +176,8 @@ export type OrderMaxAggregateInputType = {
   deliveryPaidByClient?: true
   source?: true
   externalRef?: true
+  isDuplicate?: true
+  duplicateOfCode?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -192,6 +202,8 @@ export type OrderCountAggregateInputType = {
   deliveryPaidByClient?: true
   source?: true
   externalRef?: true
+  isDuplicate?: true
+  duplicateOfCode?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -303,6 +315,8 @@ export type OrderGroupByOutputType = {
   deliveryPaidByClient: boolean
   source: string
   externalRef: string | null
+  isDuplicate: boolean
+  duplicateOfCode: string | null
   createdAt: Date
   updatedAt: Date
   _count: OrderCountAggregateOutputType | null
@@ -350,6 +364,8 @@ export type OrderWhereInput = {
   deliveryPaidByClient?: Prisma.BoolFilter<"Order"> | boolean
   source?: Prisma.StringFilter<"Order"> | string
   externalRef?: Prisma.StringNullableFilter<"Order"> | string | null
+  isDuplicate?: Prisma.BoolFilter<"Order"> | boolean
+  duplicateOfCode?: Prisma.StringNullableFilter<"Order"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   boutique?: Prisma.XOR<Prisma.BoutiqueScalarRelationFilter, Prisma.BoutiqueWhereInput>
@@ -383,6 +399,8 @@ export type OrderOrderByWithRelationInput = {
   deliveryPaidByClient?: Prisma.SortOrder
   source?: Prisma.SortOrder
   externalRef?: Prisma.SortOrderInput | Prisma.SortOrder
+  isDuplicate?: Prisma.SortOrder
+  duplicateOfCode?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   boutique?: Prisma.BoutiqueOrderByWithRelationInput
@@ -399,6 +417,7 @@ export type OrderOrderByWithRelationInput = {
 export type OrderWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   code?: string
+  boutiqueId_externalRef?: Prisma.OrderBoutiqueIdExternalRefCompoundUniqueInput
   AND?: Prisma.OrderWhereInput | Prisma.OrderWhereInput[]
   OR?: Prisma.OrderWhereInput[]
   NOT?: Prisma.OrderWhereInput | Prisma.OrderWhereInput[]
@@ -419,6 +438,8 @@ export type OrderWhereUniqueInput = Prisma.AtLeast<{
   deliveryPaidByClient?: Prisma.BoolFilter<"Order"> | boolean
   source?: Prisma.StringFilter<"Order"> | string
   externalRef?: Prisma.StringNullableFilter<"Order"> | string | null
+  isDuplicate?: Prisma.BoolFilter<"Order"> | boolean
+  duplicateOfCode?: Prisma.StringNullableFilter<"Order"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   boutique?: Prisma.XOR<Prisma.BoutiqueScalarRelationFilter, Prisma.BoutiqueWhereInput>
@@ -430,7 +451,7 @@ export type OrderWhereUniqueInput = Prisma.AtLeast<{
   delivery?: Prisma.XOR<Prisma.DeliveryNullableScalarRelationFilter, Prisma.DeliveryWhereInput> | null
   invoice?: Prisma.XOR<Prisma.InvoiceNullableScalarRelationFilter, Prisma.InvoiceWhereInput> | null
   callLogs?: Prisma.CallLogListRelationFilter
-}, "id" | "code">
+}, "id" | "code" | "boutiqueId_externalRef">
 
 export type OrderOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -452,6 +473,8 @@ export type OrderOrderByWithAggregationInput = {
   deliveryPaidByClient?: Prisma.SortOrder
   source?: Prisma.SortOrder
   externalRef?: Prisma.SortOrderInput | Prisma.SortOrder
+  isDuplicate?: Prisma.SortOrder
+  duplicateOfCode?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.OrderCountOrderByAggregateInput
@@ -484,6 +507,8 @@ export type OrderScalarWhereWithAggregatesInput = {
   deliveryPaidByClient?: Prisma.BoolWithAggregatesFilter<"Order"> | boolean
   source?: Prisma.StringWithAggregatesFilter<"Order"> | string
   externalRef?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
+  isDuplicate?: Prisma.BoolWithAggregatesFilter<"Order"> | boolean
+  duplicateOfCode?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Order"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Order"> | Date | string
 }
@@ -503,6 +528,8 @@ export type OrderCreateInput = {
   deliveryPaidByClient?: boolean
   source?: string
   externalRef?: string | null
+  isDuplicate?: boolean
+  duplicateOfCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   boutique: Prisma.BoutiqueCreateNestedOneWithoutOrdersInput
@@ -536,6 +563,8 @@ export type OrderUncheckedCreateInput = {
   deliveryPaidByClient?: boolean
   source?: string
   externalRef?: string | null
+  isDuplicate?: boolean
+  duplicateOfCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   items?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput
@@ -559,6 +588,8 @@ export type OrderUpdateInput = {
   deliveryPaidByClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   source?: Prisma.StringFieldUpdateOperationsInput | string
   externalRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isDuplicate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  duplicateOfCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   boutique?: Prisma.BoutiqueUpdateOneRequiredWithoutOrdersNestedInput
@@ -592,6 +623,8 @@ export type OrderUncheckedUpdateInput = {
   deliveryPaidByClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   source?: Prisma.StringFieldUpdateOperationsInput | string
   externalRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isDuplicate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  duplicateOfCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   items?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput
@@ -620,6 +653,8 @@ export type OrderCreateManyInput = {
   deliveryPaidByClient?: boolean
   source?: string
   externalRef?: string | null
+  isDuplicate?: boolean
+  duplicateOfCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -639,6 +674,8 @@ export type OrderUpdateManyMutationInput = {
   deliveryPaidByClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   source?: Prisma.StringFieldUpdateOperationsInput | string
   externalRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isDuplicate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  duplicateOfCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -663,6 +700,8 @@ export type OrderUncheckedUpdateManyInput = {
   deliveryPaidByClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   source?: Prisma.StringFieldUpdateOperationsInput | string
   externalRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isDuplicate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  duplicateOfCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -675,6 +714,11 @@ export type OrderListRelationFilter = {
 
 export type OrderOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type OrderBoutiqueIdExternalRefCompoundUniqueInput = {
+  boutiqueId: string
+  externalRef: string
 }
 
 export type OrderCountOrderByAggregateInput = {
@@ -697,6 +741,8 @@ export type OrderCountOrderByAggregateInput = {
   deliveryPaidByClient?: Prisma.SortOrder
   source?: Prisma.SortOrder
   externalRef?: Prisma.SortOrder
+  isDuplicate?: Prisma.SortOrder
+  duplicateOfCode?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -727,6 +773,8 @@ export type OrderMaxOrderByAggregateInput = {
   deliveryPaidByClient?: Prisma.SortOrder
   source?: Prisma.SortOrder
   externalRef?: Prisma.SortOrder
+  isDuplicate?: Prisma.SortOrder
+  duplicateOfCode?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -751,6 +799,8 @@ export type OrderMinOrderByAggregateInput = {
   deliveryPaidByClient?: Prisma.SortOrder
   source?: Prisma.SortOrder
   externalRef?: Prisma.SortOrder
+  isDuplicate?: Prisma.SortOrder
+  duplicateOfCode?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -1047,6 +1097,8 @@ export type OrderCreateWithoutAssignedAgentInput = {
   deliveryPaidByClient?: boolean
   source?: string
   externalRef?: string | null
+  isDuplicate?: boolean
+  duplicateOfCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   boutique: Prisma.BoutiqueCreateNestedOneWithoutOrdersInput
@@ -1078,6 +1130,8 @@ export type OrderUncheckedCreateWithoutAssignedAgentInput = {
   deliveryPaidByClient?: boolean
   source?: string
   externalRef?: string | null
+  isDuplicate?: boolean
+  duplicateOfCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   items?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput
@@ -1111,6 +1165,8 @@ export type OrderCreateWithoutValidatedByInput = {
   deliveryPaidByClient?: boolean
   source?: string
   externalRef?: string | null
+  isDuplicate?: boolean
+  duplicateOfCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   boutique: Prisma.BoutiqueCreateNestedOneWithoutOrdersInput
@@ -1142,6 +1198,8 @@ export type OrderUncheckedCreateWithoutValidatedByInput = {
   deliveryPaidByClient?: boolean
   source?: string
   externalRef?: string | null
+  isDuplicate?: boolean
+  duplicateOfCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   items?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput
@@ -1199,6 +1257,8 @@ export type OrderScalarWhereInput = {
   deliveryPaidByClient?: Prisma.BoolFilter<"Order"> | boolean
   source?: Prisma.StringFilter<"Order"> | string
   externalRef?: Prisma.StringNullableFilter<"Order"> | string | null
+  isDuplicate?: Prisma.BoolFilter<"Order"> | boolean
+  duplicateOfCode?: Prisma.StringNullableFilter<"Order"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Order"> | Date | string
 }
@@ -1234,6 +1294,8 @@ export type OrderCreateWithoutBoutiqueInput = {
   deliveryPaidByClient?: boolean
   source?: string
   externalRef?: string | null
+  isDuplicate?: boolean
+  duplicateOfCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   customer: Prisma.CustomerCreateNestedOneWithoutOrdersInput
@@ -1265,6 +1327,8 @@ export type OrderUncheckedCreateWithoutBoutiqueInput = {
   deliveryPaidByClient?: boolean
   source?: string
   externalRef?: string | null
+  isDuplicate?: boolean
+  duplicateOfCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   items?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput
@@ -1314,6 +1378,8 @@ export type OrderCreateWithoutCustomerInput = {
   deliveryPaidByClient?: boolean
   source?: string
   externalRef?: string | null
+  isDuplicate?: boolean
+  duplicateOfCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   boutique: Prisma.BoutiqueCreateNestedOneWithoutOrdersInput
@@ -1345,6 +1411,8 @@ export type OrderUncheckedCreateWithoutCustomerInput = {
   deliveryPaidByClient?: boolean
   source?: string
   externalRef?: string | null
+  isDuplicate?: boolean
+  duplicateOfCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   items?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput
@@ -1394,6 +1462,8 @@ export type OrderCreateWithoutCityInput = {
   deliveryPaidByClient?: boolean
   source?: string
   externalRef?: string | null
+  isDuplicate?: boolean
+  duplicateOfCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   boutique: Prisma.BoutiqueCreateNestedOneWithoutOrdersInput
@@ -1425,6 +1495,8 @@ export type OrderUncheckedCreateWithoutCityInput = {
   deliveryPaidByClient?: boolean
   source?: string
   externalRef?: string | null
+  isDuplicate?: boolean
+  duplicateOfCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   items?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput
@@ -1474,6 +1546,8 @@ export type OrderCreateWithoutItemsInput = {
   deliveryPaidByClient?: boolean
   source?: string
   externalRef?: string | null
+  isDuplicate?: boolean
+  duplicateOfCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   boutique: Prisma.BoutiqueCreateNestedOneWithoutOrdersInput
@@ -1506,6 +1580,8 @@ export type OrderUncheckedCreateWithoutItemsInput = {
   deliveryPaidByClient?: boolean
   source?: string
   externalRef?: string | null
+  isDuplicate?: boolean
+  duplicateOfCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   delivery?: Prisma.DeliveryUncheckedCreateNestedOneWithoutOrderInput
@@ -1544,6 +1620,8 @@ export type OrderUpdateWithoutItemsInput = {
   deliveryPaidByClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   source?: Prisma.StringFieldUpdateOperationsInput | string
   externalRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isDuplicate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  duplicateOfCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   boutique?: Prisma.BoutiqueUpdateOneRequiredWithoutOrdersNestedInput
@@ -1576,6 +1654,8 @@ export type OrderUncheckedUpdateWithoutItemsInput = {
   deliveryPaidByClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   source?: Prisma.StringFieldUpdateOperationsInput | string
   externalRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isDuplicate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  duplicateOfCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   delivery?: Prisma.DeliveryUncheckedUpdateOneWithoutOrderNestedInput
@@ -1598,6 +1678,8 @@ export type OrderCreateWithoutCallLogsInput = {
   deliveryPaidByClient?: boolean
   source?: string
   externalRef?: string | null
+  isDuplicate?: boolean
+  duplicateOfCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   boutique: Prisma.BoutiqueCreateNestedOneWithoutOrdersInput
@@ -1630,6 +1712,8 @@ export type OrderUncheckedCreateWithoutCallLogsInput = {
   deliveryPaidByClient?: boolean
   source?: string
   externalRef?: string | null
+  isDuplicate?: boolean
+  duplicateOfCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   items?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput
@@ -1668,6 +1752,8 @@ export type OrderUpdateWithoutCallLogsInput = {
   deliveryPaidByClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   source?: Prisma.StringFieldUpdateOperationsInput | string
   externalRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isDuplicate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  duplicateOfCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   boutique?: Prisma.BoutiqueUpdateOneRequiredWithoutOrdersNestedInput
@@ -1700,6 +1786,8 @@ export type OrderUncheckedUpdateWithoutCallLogsInput = {
   deliveryPaidByClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   source?: Prisma.StringFieldUpdateOperationsInput | string
   externalRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isDuplicate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  duplicateOfCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   items?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput
@@ -1722,6 +1810,8 @@ export type OrderCreateWithoutDeliveryInput = {
   deliveryPaidByClient?: boolean
   source?: string
   externalRef?: string | null
+  isDuplicate?: boolean
+  duplicateOfCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   boutique: Prisma.BoutiqueCreateNestedOneWithoutOrdersInput
@@ -1754,6 +1844,8 @@ export type OrderUncheckedCreateWithoutDeliveryInput = {
   deliveryPaidByClient?: boolean
   source?: string
   externalRef?: string | null
+  isDuplicate?: boolean
+  duplicateOfCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   items?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput
@@ -1792,6 +1884,8 @@ export type OrderUpdateWithoutDeliveryInput = {
   deliveryPaidByClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   source?: Prisma.StringFieldUpdateOperationsInput | string
   externalRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isDuplicate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  duplicateOfCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   boutique?: Prisma.BoutiqueUpdateOneRequiredWithoutOrdersNestedInput
@@ -1824,6 +1918,8 @@ export type OrderUncheckedUpdateWithoutDeliveryInput = {
   deliveryPaidByClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   source?: Prisma.StringFieldUpdateOperationsInput | string
   externalRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isDuplicate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  duplicateOfCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   items?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput
@@ -1846,6 +1942,8 @@ export type OrderCreateWithoutInvoiceInput = {
   deliveryPaidByClient?: boolean
   source?: string
   externalRef?: string | null
+  isDuplicate?: boolean
+  duplicateOfCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   boutique: Prisma.BoutiqueCreateNestedOneWithoutOrdersInput
@@ -1878,6 +1976,8 @@ export type OrderUncheckedCreateWithoutInvoiceInput = {
   deliveryPaidByClient?: boolean
   source?: string
   externalRef?: string | null
+  isDuplicate?: boolean
+  duplicateOfCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   items?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput
@@ -1916,6 +2016,8 @@ export type OrderUpdateWithoutInvoiceInput = {
   deliveryPaidByClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   source?: Prisma.StringFieldUpdateOperationsInput | string
   externalRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isDuplicate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  duplicateOfCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   boutique?: Prisma.BoutiqueUpdateOneRequiredWithoutOrdersNestedInput
@@ -1948,6 +2050,8 @@ export type OrderUncheckedUpdateWithoutInvoiceInput = {
   deliveryPaidByClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   source?: Prisma.StringFieldUpdateOperationsInput | string
   externalRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isDuplicate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  duplicateOfCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   items?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput
@@ -1974,6 +2078,8 @@ export type OrderCreateManyAssignedAgentInput = {
   deliveryPaidByClient?: boolean
   source?: string
   externalRef?: string | null
+  isDuplicate?: boolean
+  duplicateOfCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1997,6 +2103,8 @@ export type OrderCreateManyValidatedByInput = {
   deliveryPaidByClient?: boolean
   source?: string
   externalRef?: string | null
+  isDuplicate?: boolean
+  duplicateOfCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -2016,6 +2124,8 @@ export type OrderUpdateWithoutAssignedAgentInput = {
   deliveryPaidByClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   source?: Prisma.StringFieldUpdateOperationsInput | string
   externalRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isDuplicate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  duplicateOfCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   boutique?: Prisma.BoutiqueUpdateOneRequiredWithoutOrdersNestedInput
@@ -2047,6 +2157,8 @@ export type OrderUncheckedUpdateWithoutAssignedAgentInput = {
   deliveryPaidByClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   source?: Prisma.StringFieldUpdateOperationsInput | string
   externalRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isDuplicate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  duplicateOfCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   items?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput
@@ -2074,6 +2186,8 @@ export type OrderUncheckedUpdateManyWithoutAssignedAgentInput = {
   deliveryPaidByClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   source?: Prisma.StringFieldUpdateOperationsInput | string
   externalRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isDuplicate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  duplicateOfCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -2093,6 +2207,8 @@ export type OrderUpdateWithoutValidatedByInput = {
   deliveryPaidByClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   source?: Prisma.StringFieldUpdateOperationsInput | string
   externalRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isDuplicate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  duplicateOfCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   boutique?: Prisma.BoutiqueUpdateOneRequiredWithoutOrdersNestedInput
@@ -2124,6 +2240,8 @@ export type OrderUncheckedUpdateWithoutValidatedByInput = {
   deliveryPaidByClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   source?: Prisma.StringFieldUpdateOperationsInput | string
   externalRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isDuplicate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  duplicateOfCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   items?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput
@@ -2151,6 +2269,8 @@ export type OrderUncheckedUpdateManyWithoutValidatedByInput = {
   deliveryPaidByClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   source?: Prisma.StringFieldUpdateOperationsInput | string
   externalRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isDuplicate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  duplicateOfCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -2174,6 +2294,8 @@ export type OrderCreateManyBoutiqueInput = {
   deliveryPaidByClient?: boolean
   source?: string
   externalRef?: string | null
+  isDuplicate?: boolean
+  duplicateOfCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -2193,6 +2315,8 @@ export type OrderUpdateWithoutBoutiqueInput = {
   deliveryPaidByClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   source?: Prisma.StringFieldUpdateOperationsInput | string
   externalRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isDuplicate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  duplicateOfCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   customer?: Prisma.CustomerUpdateOneRequiredWithoutOrdersNestedInput
@@ -2224,6 +2348,8 @@ export type OrderUncheckedUpdateWithoutBoutiqueInput = {
   deliveryPaidByClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   source?: Prisma.StringFieldUpdateOperationsInput | string
   externalRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isDuplicate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  duplicateOfCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   items?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput
@@ -2251,6 +2377,8 @@ export type OrderUncheckedUpdateManyWithoutBoutiqueInput = {
   deliveryPaidByClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   source?: Prisma.StringFieldUpdateOperationsInput | string
   externalRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isDuplicate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  duplicateOfCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -2274,6 +2402,8 @@ export type OrderCreateManyCustomerInput = {
   deliveryPaidByClient?: boolean
   source?: string
   externalRef?: string | null
+  isDuplicate?: boolean
+  duplicateOfCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -2293,6 +2423,8 @@ export type OrderUpdateWithoutCustomerInput = {
   deliveryPaidByClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   source?: Prisma.StringFieldUpdateOperationsInput | string
   externalRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isDuplicate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  duplicateOfCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   boutique?: Prisma.BoutiqueUpdateOneRequiredWithoutOrdersNestedInput
@@ -2324,6 +2456,8 @@ export type OrderUncheckedUpdateWithoutCustomerInput = {
   deliveryPaidByClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   source?: Prisma.StringFieldUpdateOperationsInput | string
   externalRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isDuplicate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  duplicateOfCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   items?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput
@@ -2351,6 +2485,8 @@ export type OrderUncheckedUpdateManyWithoutCustomerInput = {
   deliveryPaidByClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   source?: Prisma.StringFieldUpdateOperationsInput | string
   externalRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isDuplicate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  duplicateOfCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -2374,6 +2510,8 @@ export type OrderCreateManyCityInput = {
   deliveryPaidByClient?: boolean
   source?: string
   externalRef?: string | null
+  isDuplicate?: boolean
+  duplicateOfCode?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -2393,6 +2531,8 @@ export type OrderUpdateWithoutCityInput = {
   deliveryPaidByClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   source?: Prisma.StringFieldUpdateOperationsInput | string
   externalRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isDuplicate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  duplicateOfCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   boutique?: Prisma.BoutiqueUpdateOneRequiredWithoutOrdersNestedInput
@@ -2424,6 +2564,8 @@ export type OrderUncheckedUpdateWithoutCityInput = {
   deliveryPaidByClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   source?: Prisma.StringFieldUpdateOperationsInput | string
   externalRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isDuplicate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  duplicateOfCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   items?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput
@@ -2451,6 +2593,8 @@ export type OrderUncheckedUpdateManyWithoutCityInput = {
   deliveryPaidByClient?: Prisma.BoolFieldUpdateOperationsInput | boolean
   source?: Prisma.StringFieldUpdateOperationsInput | string
   externalRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isDuplicate?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  duplicateOfCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -2515,6 +2659,8 @@ export type OrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   deliveryPaidByClient?: boolean
   source?: boolean
   externalRef?: boolean
+  isDuplicate?: boolean
+  duplicateOfCode?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   boutique?: boolean | Prisma.BoutiqueDefaultArgs<ExtArgs>
@@ -2549,6 +2695,8 @@ export type OrderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   deliveryPaidByClient?: boolean
   source?: boolean
   externalRef?: boolean
+  isDuplicate?: boolean
+  duplicateOfCode?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   boutique?: boolean | Prisma.BoutiqueDefaultArgs<ExtArgs>
@@ -2578,6 +2726,8 @@ export type OrderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   deliveryPaidByClient?: boolean
   source?: boolean
   externalRef?: boolean
+  isDuplicate?: boolean
+  duplicateOfCode?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   boutique?: boolean | Prisma.BoutiqueDefaultArgs<ExtArgs>
@@ -2607,11 +2757,13 @@ export type OrderSelectScalar = {
   deliveryPaidByClient?: boolean
   source?: boolean
   externalRef?: boolean
+  isDuplicate?: boolean
+  duplicateOfCode?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "boutiqueId" | "customerId" | "cityId" | "status" | "subStatus" | "totalAmount" | "deliveryFee" | "callCount" | "notes" | "reportDate" | "deliveryScheduledAt" | "assignedAgentId" | "validatedById" | "validatedAt" | "deliveryPaidByClient" | "source" | "externalRef" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
+export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "code" | "boutiqueId" | "customerId" | "cityId" | "status" | "subStatus" | "totalAmount" | "deliveryFee" | "callCount" | "notes" | "reportDate" | "deliveryScheduledAt" | "assignedAgentId" | "validatedById" | "validatedAt" | "deliveryPaidByClient" | "source" | "externalRef" | "isDuplicate" | "duplicateOfCode" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
 export type OrderInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   boutique?: boolean | Prisma.BoutiqueDefaultArgs<ExtArgs>
   customer?: boolean | Prisma.CustomerDefaultArgs<ExtArgs>
@@ -2672,6 +2824,8 @@ export type $OrderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     deliveryPaidByClient: boolean
     source: string
     externalRef: string | null
+    isDuplicate: boolean
+    duplicateOfCode: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["order"]>
@@ -3125,6 +3279,8 @@ export interface OrderFieldRefs {
   readonly deliveryPaidByClient: Prisma.FieldRef<"Order", 'Boolean'>
   readonly source: Prisma.FieldRef<"Order", 'String'>
   readonly externalRef: Prisma.FieldRef<"Order", 'String'>
+  readonly isDuplicate: Prisma.FieldRef<"Order", 'Boolean'>
+  readonly duplicateOfCode: Prisma.FieldRef<"Order", 'String'>
   readonly createdAt: Prisma.FieldRef<"Order", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Order", 'DateTime'>
 }
