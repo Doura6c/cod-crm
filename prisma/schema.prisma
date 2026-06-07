@@ -355,3 +355,26 @@ model AuditLog {
   @@index([action])
   @@index([createdAt])
 }
+
+// ============ JOURNAL D'INGESTION WEBHOOK ============
+// Trace chaque commande reçue via /api/webhook/order : utile pour diagnostiquer
+// les doublons Afrishop et auditer le flux entrant boutique → CRM.
+model WebhookLog {
+  id           String   @id @default(cuid())
+  boutiqueId   String?  // null si la clé webhook n'a pas été reconnue
+  boutiqueName String?
+  externalRef  String?  // référence commande côté boutique
+  phone        String?  // téléphone du client (si présent dans le payload)
+  outcome      String   // CREATED, DUPLICATE_EXTERNAL_REF, DUPLICATE_ACTIVE_FLAGGED, BLACKLISTED, ERROR
+  orderCode    String?  // code de la commande créée ou existante
+  statusCode   Int      // code HTTP renvoyé
+  bodySize     Int      @default(0) // taille du payload reçu (octets)
+  ip           String?  // IP source (x-forwarded-for)
+  error        String?  // message d'erreur si outcome=ERROR
+  createdAt    DateTime @default(now())
+
+  @@index([boutiqueId])
+  @@index([externalRef])
+  @@index([outcome])
+  @@index([createdAt])
+}

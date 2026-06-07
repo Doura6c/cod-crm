@@ -8,6 +8,43 @@ import { notifyRole } from "@/lib/notifications";
 const MAX_BODY_BYTES = 100 * 1024;
 
 /**
+ * Enregistre une trace d'ingestion webhook (best-effort, n'échoue jamais).
+ * Permet d'auditer le flux entrant boutique → CRM et de diagnostiquer les
+ * doublons Afrishop sans ralentir la réponse au client.
+ */
+async function logWebhook(entry: {
+  boutiqueId?: string | null;
+  boutiqueName?: string | null;
+  externalRef?: string | null;
+  phone?: string | null;
+  outcome: string;
+  orderCode?: string | null;
+  statusCode: number;
+  bodySize?: number;
+  ip?: string | null;
+  error?: string | null;
+}): Promise<void> {
+  try {
+    await prisma.webhookLog.create({
+      data: {
+        boutiqueId: entry.boutiqueId ?? null,
+        boutiqueName: entry.boutiqueName ?? null,
+        externalRef: entry.externalRef ?? null,
+        phone: entry.phone ?? null,
+        outcome: entry.outcome,
+        orderCode: entry.orderCode ?? null,
+        statusCode: entry.statusCode,
+        bodySize: entry.bodySize ?? 0,
+        ip: entry.ip ?? null,
+        error: entry.error ? String(entry.error).slice(0, 500) : null,
+      },
+    });
+  } catch {
+    // journalisation best-effort : on n'interrompt jamais le flux principal
+  }
+}
+
+/**
  * Endpoint public — appelé par les boutiques e-commerce des clients.
  *
  * POST /api/webhook/order
@@ -56,6 +93,13 @@ export async function OPTIONS(req: Request) {
 
 export async function POST(req: Request) {
   const origin = req.headers.get("origin");
+  // Contexte hoisté pour la journalisation (utilisable dans le bloc catch).
+  const ipForLog = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? null;
+  let logBoutiqueId: string | null = null;
+  let logBoutiqueName: string | null = null;
+  let logExternalRef: string | null = null;
+  let logPhone: string | null = null;
+  let logBodySize = 0;
   try {
     // Origin allowlist : bloque les appels navigateur d'origines non autorisées.
     // Un appel sans Origin (serveur-à-serveur via proxy) est autorisé (protégé par la clé).
@@ -78,6 +122,8 @@ export async function POST(req: Request) {
     if (!boutique || !boutique.active) {
       return NextResponse.json({ error: "Boutique inconnue ou inactive" }, { status: 401, headers: cors(origin) });
     }
+    logBoutiqueId = boutique.id;
+    logBoutiqueName = boutique.name;
 
     // Rate-limiting par boutique : max 300 commandes / 15 min (anti-spam / DoS)
     if (await isRateLimited(`webhook:${boutique.id}`, 300, 15 * 60 * 1000)) {
@@ -97,6 +143,7 @@ export async function POST(req: Request) {
     }
 
     const rawBody = await req.text();
+    logBodySize = rawBody.length;
     if (rawBody.length > MAX_BODY_BYTES) {
       return NextResponse.json(
         { error: "Payload trop volumineux" },
@@ -110,6 +157,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "JSON invalide" }, { status: 400, headers: cors(origin) });
     }
     const { externalRef, items, deliveryFee = 0, notes, source } = body;
+    logExternalRef = externalRef ?? null;
+    logPhone = body.customer?.phone ?? null;
 
     // Support deux formats : customer.city OU top-level cityName/address
     const customer = {
@@ -132,6 +181,12 @@ export async function POST(req: Request) {
         where: { boutiqueId: boutique.id, externalRef },
       });
       if (existing) {
+        await logWebhook({
+          boutiqueId: logBoutiqueId, boutiqueName: logBoutiqueName,
+          externalRef: logExternalRef, phone: logPhone,
+          outcome: "DUPLICATE_EXTERNAL_REF", orderCode: existing.code,
+          statusCode: 200, bodySize: logBodySize, ip: ipForLog,
+        });
         return NextResponse.json({ ok: true, order: existing, duplicate: true });
       }
     }
@@ -142,6 +197,11 @@ export async function POST(req: Request) {
       select: { blacklisted: true, blacklistReason: true },
     });
     if (existingCustCheck?.blacklisted) {
+      await logWebhook({
+        boutiqueId: logBoutiqueId, boutiqueName: logBoutiqueName,
+        externalRef: logExternalRef, phone: logPhone,
+        outcome: "BLACKLISTED", statusCode: 403, bodySize: logBodySize, ip: ipForLog,
+      });
       return NextResponse.json({
         error: "Client blacklisté",
         reason: existingCustCheck.blacklistReason ?? "Client sur liste noire",
@@ -274,6 +334,12 @@ export async function POST(req: Request) {
           where: { boutiqueId: boutique.id, externalRef },
         });
         if (existing) {
+          await logWebhook({
+            boutiqueId: logBoutiqueId, boutiqueName: logBoutiqueName,
+            externalRef: logExternalRef, phone: logPhone,
+            outcome: "DUPLICATE_EXTERNAL_REF", orderCode: existing.code,
+            statusCode: 200, bodySize: logBodySize, ip: ipForLog,
+          });
           return NextResponse.json(
             { ok: true, order: existing, duplicate: true },
             { headers: cors(origin) }
@@ -298,6 +364,13 @@ export async function POST(req: Request) {
       data: { orderId: order.id, orderCode: order.code },
     }).catch(() => {});
 
+    await logWebhook({
+      boutiqueId: logBoutiqueId, boutiqueName: logBoutiqueName,
+      externalRef: logExternalRef, phone: logPhone,
+      outcome: isDup ? "DUPLICATE_ACTIVE_FLAGGED" : "CREATED",
+      orderCode: order.code, statusCode: 201, bodySize: logBodySize, ip: ipForLog,
+    });
+
     return NextResponse.json({
       ok: true,
       order,
@@ -309,6 +382,12 @@ export async function POST(req: Request) {
   } catch (err: any) {
     // Ne jamais exposer les détails d'erreur internes en production
     console.error("[webhook] error:", err);
+    await logWebhook({
+      boutiqueId: logBoutiqueId, boutiqueName: logBoutiqueName,
+      externalRef: logExternalRef, phone: logPhone,
+      outcome: "ERROR", statusCode: 500, bodySize: logBodySize, ip: ipForLog,
+      error: err?.message ?? "Erreur serveur",
+    });
     const isDev = process.env.NODE_ENV !== "production";
     return NextResponse.json(
       { error: isDev ? (err.message ?? "Erreur serveur") : "Erreur interne du serveur" },

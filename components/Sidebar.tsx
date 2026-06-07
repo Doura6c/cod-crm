@@ -25,6 +25,7 @@ import {
   Medal,
   Menu,
   X,
+  Webhook,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -129,6 +130,7 @@ export function Sidebar({
       ],
     },
     { href: "/boutiques", label: "Boutiques", icon: FileText, roles: ["ADMIN", "MANAGER"] },
+    { href: "/webhooks", label: "Journal Webhook", icon: Webhook, roles: ["ADMIN", "MANAGER"] },
     { href: "/notifications", label: "Notifications", icon: Bell, badge: notificationCount || undefined, roles: ["ADMIN", "MANAGER", "AGENT", "LIVREUR"] },
     { href: "/parametres", label: "Paramètres", icon: Settings, roles: ["ADMIN"] },
   ];
