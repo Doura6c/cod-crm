@@ -31,16 +31,21 @@ const STATUS_TABS = [
 export default async function ListePage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string; q?: string; agentId?: string; livreurId?: string; city?: string; boutiqueId?: string; period?: string; from?: string; to?: string; day?: string; }>;
+  searchParams: Promise<{ status?: string; q?: string; agentId?: string; livreurId?: string; city?: string; boutiqueId?: string; period?: string; from?: string; to?: string; day?: string; page?: string; }>;
 }) {
   const session = await auth();
   const role = (session?.user as any)?.role;
   const userId = (session?.user as any)?.id;
   if (!can(role, "VIEW_ORDERS")) redirect("/");
 
-  const { status = "all", q = "", agentId = "", livreurId = "", city = "", boutiqueId = "", period = "all", from = "", to = "", day = "" } = await searchParams;
+  const { status = "all", q = "", agentId = "", livreurId = "", city = "", boutiqueId = "", period = "all", from = "", to = "", day = "", page = "1" } = await searchParams;
 
   const isAgent = role === "AGENT";
+
+  // Pagination : 50 commandes par page (évite que les commandes anciennes
+  // deviennent invisibles avec un fort volume — ex. Afrishop 50+/jour).
+  const PAGE_SIZE = 50;
+  const currentPage = Math.max(1, parseInt(page, 10) || 1);
 
   const { start: periodStart, end: periodEnd, label: periodLabel } = getPeriodRange(period, from, to, day);
 
@@ -67,7 +72,7 @@ export default async function ListePage({
     ];
   }
 
-  const [orders, boutiques, agents, livreurs, counts] = await Promise.all([
+  const [orders, totalFiltered, boutiques, agents, livreurs, counts, filteredAgg] = await Promise.all([
     prisma.order.findMany({
       where: whereBase as any,
       include: {
@@ -84,8 +89,11 @@ export default async function ListePage({
         invoice: { select: { reference: true, status: true } },
       },
       orderBy: { createdAt: "desc" },
-      take: 200,
+      skip: (currentPage - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
     }),
+    // Total filtré (pour la pagination ET des KPI exacts, indépendants de la page)
+    prisma.order.count({ where: whereBase as any }),
     prisma.boutique.findMany({ select: { id: true, name: true } }),
     prisma.user.findMany({
       where: { role: "AGENT", active: true },
@@ -101,6 +109,13 @@ export default async function ListePage({
       where: isAgent ? { assignedAgentId: userId } : {},
       _count: { id: true },
     }),
+    // Agrégat par statut sur le filtre courant → KPI fiables malgré la pagination
+    prisma.order.groupBy({
+      by: ["status"],
+      where: whereBase as any,
+      _count: { id: true },
+      _sum: { totalAmount: true },
+    }),
   ]);
 
   const countMap: Record<string, number> = { all: 0 };
@@ -109,11 +124,15 @@ export default async function ListePage({
     countMap.all = (countMap.all || 0) + c._count.id;
   });
 
-  // Stats
-  const totalCA = orders.reduce((s, o) => s + o.totalAmount, 0);
-  const confirmedCount = orders.filter((o) => ["CONFIRME", "EN_LIVRAISON", "LIVRE"].includes(o.status)).length;
-  const livrésCount = orders.filter((o) => o.status === "LIVRE").length;
-  const tauxConfirmation = orders.length > 0 ? Math.round((confirmedCount / orders.length) * 100) : 0;
+  // Stats — calculées sur TOUT le filtre (pas seulement la page affichée)
+  const totalCA = filteredAgg.reduce((s, g) => s + (g._sum.totalAmount ?? 0), 0);
+  const confirmedCount = filteredAgg
+    .filter((g) => ["CONFIRME", "EN_LIVRAISON", "LIVRE"].includes(g.status))
+    .reduce((s, g) => s + g._count.id, 0);
+  const livrésCount = filteredAgg.find((g) => g.status === "LIVRE")?._count.id ?? 0;
+  const tauxConfirmation = totalFiltered > 0 ? Math.round((confirmedCount / totalFiltered) * 100) : 0;
+
+  const totalPages = Math.max(1, Math.ceil(totalFiltered / PAGE_SIZE));
 
   function buildHref(params: Record<string, string>) {
     const base = { status, q, agentId, livreurId, city, boutiqueId, period, from, to, day, ...params };
@@ -131,7 +150,7 @@ export default async function ListePage({
         title={isAgent ? "Mes commandes" : "Gestion des commandes"}
         badges={[
           { label: periodLabel, color: "bg-sky-600 text-white" },
-          { label: `${orders.length} commandes`, color: "bg-slate-700 text-white" },
+          { label: `${totalFiltered} commandes`, color: "bg-slate-700 text-white" },
           ...(livrésCount > 0 ? [{ label: `${livrésCount} livrées`, color: "bg-emerald-600 text-white" }] : []),
         ]}
         actions={
@@ -436,8 +455,25 @@ export default async function ListePage({
             </div>
           )}
           {orders.length > 0 && (
-            <div className="px-5 py-3 border-t border-slate-100 bg-slate-50 flex items-center justify-between text-xs text-slate-500">
-              <span>{orders.length} commande{orders.length > 1 ? "s" : ""} affichée{orders.length > 1 ? "s" : ""}</span>
+            <div className="px-5 py-3 border-t border-slate-100 bg-slate-50 flex items-center justify-between gap-3 text-xs text-slate-500 flex-wrap">
+              <span>
+                {(currentPage - 1) * PAGE_SIZE + 1}–{(currentPage - 1) * PAGE_SIZE + orders.length} sur {totalFiltered}
+              </span>
+              {totalPages > 1 && (
+                <div className="flex items-center gap-1">
+                  {currentPage > 1 ? (
+                    <Link href={buildHref({ page: String(currentPage - 1) })} className="px-3 py-1.5 rounded-md bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 font-semibold">← Précédent</Link>
+                  ) : (
+                    <span className="px-3 py-1.5 rounded-md bg-slate-100 border border-slate-200 text-slate-300 font-semibold cursor-not-allowed">← Précédent</span>
+                  )}
+                  <span className="px-3 py-1.5 font-semibold text-slate-600">Page {currentPage} / {totalPages}</span>
+                  {currentPage < totalPages ? (
+                    <Link href={buildHref({ page: String(currentPage + 1) })} className="px-3 py-1.5 rounded-md bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 font-semibold">Suivant →</Link>
+                  ) : (
+                    <span className="px-3 py-1.5 rounded-md bg-slate-100 border border-slate-200 text-slate-300 font-semibold cursor-not-allowed">Suivant →</span>
+                  )}
+                </div>
+              )}
               <span className="font-semibold text-slate-700">CA: {formatGNF(totalCA)}</span>
             </div>
           )}

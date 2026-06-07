@@ -18,15 +18,32 @@ const OUTCOME_OPTIONS = [
   { value: "CANCELLED",   label: "🚫 Annulé — le client ne veut plus" },
 ];
 
+// Motifs d'annulation proposés à l'agent (obligatoire si "Annulé")
+const CANCEL_REASONS = [
+  "Client ne veut plus le produit",
+  "Prix trop élevé",
+  "Commande en double",
+  "Délai de livraison trop long",
+  "Client injoignable définitivement",
+  "Produit en rupture de stock",
+  "Mauvais numéro / erreur de commande",
+  "Autre (préciser en note)",
+];
+
 export function CallLogForm({ orderId, requireMessageSent = false }: Props) {
   const [outcome, setOutcome] = useState("ANSWERED");
   const [messageSent, setMessageSent] = useState(false);
+  const [cancelReason, setCancelReason] = useState("");
 
   const isConfirmed = outcome === "CONFIRMED";
   const isReported  = outcome === "REPORTED";
+  const isCancelled = outcome === "CANCELLED";
 
-  // Le bouton Valider est bloqué si confirmé ET que le message n'a pas encore été envoyé
-  const canSubmit = !(isConfirmed && requireMessageSent) || messageSent;
+  // Le bouton Valider est bloqué si confirmé ET que le message n'a pas encore été envoyé,
+  // OU si annulé sans motif sélectionné.
+  const canSubmit =
+    (!(isConfirmed && requireMessageSent) || messageSent) &&
+    (!isCancelled || cancelReason !== "");
 
   return (
     <form action={logCallAction} className="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-4 space-y-3">
@@ -41,7 +58,7 @@ export function CallLogForm({ orderId, requireMessageSent = false }: Props) {
           name="outcome"
           required
           value={outcome}
-          onChange={(e) => { setOutcome(e.target.value); setMessageSent(false); }}
+          onChange={(e) => { setOutcome(e.target.value); setMessageSent(false); setCancelReason(""); }}
           className="input"
         >
           {OUTCOME_OPTIONS.map((opt) => (
@@ -49,6 +66,30 @@ export function CallLogForm({ orderId, requireMessageSent = false }: Props) {
           ))}
         </select>
       </div>
+
+      {/* Motif d'annulation — obligatoire si annulé */}
+      {isCancelled && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-3">
+          <label className="block text-xs font-semibold text-red-700 mb-1">
+            🚫 Motif de l&apos;annulation (obligatoire)
+          </label>
+          <select
+            name="cancelReason"
+            required
+            value={cancelReason}
+            onChange={(e) => setCancelReason(e.target.value)}
+            className="input border-red-300 focus:ring-red-400"
+          >
+            <option value="">— Choisir un motif —</option>
+            {CANCEL_REASONS.map((r) => (
+              <option key={r} value={r}>{r}</option>
+            ))}
+          </select>
+          <p className="text-xs text-red-600 mt-1">
+            Le motif est enregistré pour le suivi qualité et les statistiques.
+          </p>
+        </div>
+      )}
 
       {/* Date de rappel — si reporté */}
       {isReported && (
@@ -132,7 +173,9 @@ export function CallLogForm({ orderId, requireMessageSent = false }: Props) {
 
       {!canSubmit && (
         <p className="text-xs text-red-600 text-center font-semibold">
-          Envoyez d&apos;abord le message WhatsApp ou SMS au client (voir ci-dessus ↑)
+          {isCancelled && cancelReason === ""
+            ? "Choisissez d'abord le motif de l'annulation (voir ci-dessus ↑)"
+            : "Envoyez d'abord le message WhatsApp ou SMS au client (voir ci-dessus ↑)"}
         </p>
       )}
     </form>

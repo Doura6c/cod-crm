@@ -10,6 +10,22 @@ import { createNotification, notifyRole } from "@/lib/notifications";
 const ALLOWED_OUTCOMES = ["ANSWERED", "NO_ANSWER", "BUSY", "REPORTED", "CONFIRMED", "CANCELLED", "INJOIGNABLE"];
 
 /**
+ * Construit la note d'un appel en combinant le motif structuré (cancelReason)
+ * et la note libre (note). Pour une annulation, le motif est obligatoire :
+ * la fonction renvoie une chaîne vide si rien n'est fourni, ce qui permet à
+ * l'appelant de refuser l'enregistrement.
+ */
+function buildCallNote(formData: FormData, outcome: string): string | null {
+  const freeNote = String(formData.get("note") ?? "").trim();
+  const cancelReason = String(formData.get("cancelReason") ?? "").trim();
+  if (outcome === "CANCELLED") {
+    const combined = [cancelReason, freeNote].filter(Boolean).join(" — ");
+    return combined || null;
+  }
+  return freeNote || null;
+}
+
+/**
  * Logger un appel sur une commande, et selon le résultat changer le statut
  */
 export async function logCallAction(formData: FormData): Promise<void> {
@@ -22,12 +38,17 @@ export async function logCallAction(formData: FormData): Promise<void> {
 
   const orderId = String(formData.get("orderId") ?? "");
   const outcome = String(formData.get("outcome") ?? "");
-  const note = String(formData.get("note") ?? "").trim() || null;
   const reportDate = String(formData.get("reportDate") ?? "");
   const deliveryScheduledAt = String(formData.get("deliveryScheduledAt") ?? "");
 
   if (!orderId || !ALLOWED_OUTCOMES.includes(outcome)) {
     redirect(`/commandes/${orderId}?error=invalid`);
+  }
+
+  // Motif obligatoire à l'annulation : on combine le motif structuré + la note libre.
+  const note = buildCallNote(formData, outcome);
+  if (outcome === "CANCELLED" && !note) {
+    redirect(`/commandes/${orderId}?error=motif_requis`);
   }
 
   const order = await prisma.order.findUnique({ where: { id: orderId } });
@@ -263,12 +284,17 @@ export async function expressCallAction(
 
   const orderId = String(formData.get("orderId") ?? "");
   const outcome = String(formData.get("outcome") ?? "");
-  const note = String(formData.get("note") ?? "").trim() || null;
+  const note = buildCallNote(formData, outcome);
   const reportDate = String(formData.get("reportDate") ?? "");
   const deliveryScheduledAt = String(formData.get("deliveryScheduledAt") ?? "");
 
   if (!orderId || !ALLOWED_OUTCOMES.includes(outcome)) {
     return { ok: false, error: "Données invalides" };
+  }
+
+  // Motif obligatoire à l'annulation
+  if (outcome === "CANCELLED" && !note) {
+    return { ok: false, error: "Motif d'annulation obligatoire" };
   }
 
   const order = await prisma.order.findUnique({ where: { id: orderId } });
@@ -359,6 +385,18 @@ export async function updateOrderStatusAction(formData: FormData): Promise<void>
   ];
   if (!orderId || !VALID_STATUSES.includes(status)) {
     redirect(`/commandes/${orderId}?error=invalid_status`);
+  }
+
+  // BUG-5 : la confirmation doit passer par logCallAction (décrémente le stock
+  // et trace l'agent). On interdit donc le passage direct en CONFIRME ici, ce
+  // qui éviterait la mise à jour du stock et le mouvement de stock associé.
+  if (status === "CONFIRME") {
+    redirect(`/commandes/${orderId}?error=use_call_confirm`);
+  }
+
+  // Motif obligatoire pour une annulation manuelle
+  if (status === "ANNULE" && !notes) {
+    redirect(`/commandes/${orderId}?error=motif_requis`);
   }
 
   await prisma.order.update({

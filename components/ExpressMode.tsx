@@ -31,6 +31,17 @@ const OUTCOMES = [
   { value: "CANCELLED",   label: "Annulé",         emoji: "🚫", color: "bg-slate-500 hover:bg-slate-600",   key: "x", needsExtra: false },
 ];
 
+const CANCEL_REASONS = [
+  "Client ne veut plus le produit",
+  "Prix trop élevé",
+  "Commande en double",
+  "Délai de livraison trop long",
+  "Client injoignable définitivement",
+  "Produit en rupture de stock",
+  "Mauvais numéro / erreur de commande",
+  "Autre (préciser en note)",
+];
+
 function toIntl(phone: string): string {
   let p = phone.replace(/[^\d]/g, "");
   if (!p.startsWith("224") && p.length >= 8) p = "224" + p;
@@ -59,6 +70,7 @@ export function ExpressMode({ orders: initialOrders }: Props) {
   const [reportDate, setReportDate] = useState("");
   const [deliveryAt, setDeliveryAt] = useState("");
   const [messageSent, setMessageSent] = useState(false);
+  const [cancelReason, setCancelReason] = useState("");
   const [feedback, setFeedback] = useState<{ type: "ok" | "err"; msg: string } | null>(null);
   const [done, setDone] = useState<string[]>([]);
   const [isPending, startTransition] = useTransition();
@@ -93,7 +105,7 @@ export function ExpressMode({ orders: initialOrders }: Props) {
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [idx, outcome, note, reportDate, deliveryAt, messageSent]);
+  }, [idx, outcome, note, reportDate, deliveryAt, messageSent, cancelReason]);
 
   function reset() {
     setOutcome(null);
@@ -101,6 +113,7 @@ export function ExpressMode({ orders: initialOrders }: Props) {
     setReportDate("");
     setDeliveryAt("");
     setMessageSent(false);
+    setCancelReason("");
     setFeedback(null);
   }
 
@@ -114,6 +127,7 @@ export function ExpressMode({ orders: initialOrders }: Props) {
   function canSubmit(): boolean {
     if (!outcome) return false;
     if (outcome === "CONFIRMED" && !messageSent) return false;
+    if (outcome === "CANCELLED" && cancelReason === "") return false;
     return true;
   }
 
@@ -124,6 +138,7 @@ export function ExpressMode({ orders: initialOrders }: Props) {
       fd.append("orderId", current.id);
       fd.append("outcome", outcome);
       fd.append("note", note.trim());
+      if (cancelReason) fd.append("cancelReason", cancelReason);
       if (reportDate) fd.append("reportDate", reportDate);
       if (deliveryAt) fd.append("deliveryScheduledAt", deliveryAt);
 
@@ -373,6 +388,25 @@ export function ExpressMode({ orders: initialOrders }: Props) {
               </div>
             )}
 
+            {/* Motif d'annulation — obligatoire si annulé */}
+            {outcome === "CANCELLED" && (
+              <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-xl">
+                <label className="block text-xs font-semibold text-red-700 mb-1">
+                  🚫 Motif de l&apos;annulation (obligatoire)
+                </label>
+                <select
+                  value={cancelReason}
+                  onChange={(e) => setCancelReason(e.target.value)}
+                  className="input border-red-300"
+                >
+                  <option value="">— Choisir un motif —</option>
+                  {CANCEL_REASONS.map((r) => (
+                    <option key={r} value={r}>{r}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+
             {/* Note */}
             <div className="mt-3">
               <textarea
@@ -412,6 +446,12 @@ export function ExpressMode({ orders: initialOrders }: Props) {
             {outcome === "CONFIRMED" && !messageSent && (
               <p className="text-xs text-red-600 text-center mt-2 font-semibold">
                 Cliquez d&apos;abord WhatsApp ou SMS ↑ puis cochez la case
+              </p>
+            )}
+
+            {outcome === "CANCELLED" && cancelReason === "" && (
+              <p className="text-xs text-red-600 text-center mt-2 font-semibold">
+                Choisissez d&apos;abord le motif de l&apos;annulation ↑
               </p>
             )}
           </div>
