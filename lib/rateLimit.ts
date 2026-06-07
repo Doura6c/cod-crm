@@ -23,6 +23,29 @@ function memResetRateLimit(key: string) {
   memStore.delete(key);
 }
 
+// ─── Upstash Redis REST (production serverless — recommandé) ────────────────
+// Le client REST (HTTP) n'ouvre pas de connexion TCP par requête : idéal pour
+// Vercel / serverless. Activé dès que UPSTASH_REDIS_REST_URL + TOKEN sont définis.
+
+let upstashClient: any = null;
+let upstashTried = false;
+
+async function getUpstash(): Promise<any | null> {
+  if (upstashClient) return upstashClient;
+  if (upstashTried) return null;
+  upstashTried = true;
+  const url = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (!url || !token) return null;
+  try {
+    const { Redis } = await import("@upstash/redis");
+    upstashClient = new Redis({ url, token });
+    return upstashClient;
+  } catch {
+    return null;
+  }
+}
+
 // ─── Redis distribué (production) ───────────────────────────────────────────
 
 async function redisIsRateLimited(
@@ -71,9 +94,31 @@ export async function isRateLimited(
   limit: number,
   windowMs = 15 * 60 * 1000
 ): Promise<boolean> {
+  // 1) Upstash REST si configuré (rapide en serverless)
+  const up = await getUpstash();
+  if (up) {
+    try {
+      const k = `rl:${key}`;
+      const count: number = await up.incr(k);
+      if (count === 1) await up.pexpire(k, windowMs);
+      return count > limit;
+    } catch {
+      // bascule vers Redis TCP / mémoire en cas d'erreur réseau
+    }
+  }
+  // 2) Redis TCP (REDIS_URL) sinon mémoire
   return redisIsRateLimited(key, limit, windowMs);
 }
 
 export async function resetRateLimit(key: string): Promise<void> {
+  const up = await getUpstash();
+  if (up) {
+    try {
+      await up.del(`rl:${key}`);
+      return;
+    } catch {
+      // bascule ci-dessous
+    }
+  }
   return redisResetRateLimit(key);
 }
