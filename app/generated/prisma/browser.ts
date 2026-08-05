@@ -107,3 +107,8 @@ export type Setting = Prisma.SettingModel
  * 
  */
 export type AuditLog = Prisma.AuditLogModel
+/**
+ * Model WebhookLog
+ * 
+ */
+export type WebhookLog = Prisma.WebhookLogModel

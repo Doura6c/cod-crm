@@ -68,7 +68,8 @@ export const ModelName = {
   Notification: 'Notification',
   TeamRequest: 'TeamRequest',
   Setting: 'Setting',
-  AuditLog: 'AuditLog'
+  AuditLog: 'AuditLog',
+  WebhookLog: 'WebhookLog'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -130,6 +131,11 @@ export const BoutiqueScalarFieldEnum = {
   website: 'website',
   webhookKey: 'webhookKey',
   active: 'active',
+  sheetUrl: 'sheetUrl',
+  sheetSyncEnabled: 'sheetSyncEnabled',
+  sheetLastSyncAt: 'sheetLastSyncAt',
+  sheetLastError: 'sheetLastError',
+  sheetImportedCount: 'sheetImportedCount',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -386,6 +392,24 @@ export const AuditLogScalarFieldEnum = {
 } as const
 
 export type AuditLogScalarFieldEnum = (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum]
+
+
+export const WebhookLogScalarFieldEnum = {
+  id: 'id',
+  boutiqueId: 'boutiqueId',
+  boutiqueName: 'boutiqueName',
+  externalRef: 'externalRef',
+  phone: 'phone',
+  outcome: 'outcome',
+  orderCode: 'orderCode',
+  statusCode: 'statusCode',
+  bodySize: 'bodySize',
+  ip: 'ip',
+  error: 'error',
+  createdAt: 'createdAt'
+} as const
+
+export type WebhookLogScalarFieldEnum = (typeof WebhookLogScalarFieldEnum)[keyof typeof WebhookLogScalarFieldEnum]
 
 
 export const SortOrder = {

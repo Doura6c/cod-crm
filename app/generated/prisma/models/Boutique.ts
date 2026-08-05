@@ -20,8 +20,18 @@ export type BoutiqueModel = runtime.Types.Result.DefaultSelection<Prisma.$Boutiq
 
 export type AggregateBoutique = {
   _count: BoutiqueCountAggregateOutputType | null
+  _avg: BoutiqueAvgAggregateOutputType | null
+  _sum: BoutiqueSumAggregateOutputType | null
   _min: BoutiqueMinAggregateOutputType | null
   _max: BoutiqueMaxAggregateOutputType | null
+}
+
+export type BoutiqueAvgAggregateOutputType = {
+  sheetImportedCount: number | null
+}
+
+export type BoutiqueSumAggregateOutputType = {
+  sheetImportedCount: number | null
 }
 
 export type BoutiqueMinAggregateOutputType = {
@@ -34,6 +44,11 @@ export type BoutiqueMinAggregateOutputType = {
   website: string | null
   webhookKey: string | null
   active: boolean | null
+  sheetUrl: string | null
+  sheetSyncEnabled: boolean | null
+  sheetLastSyncAt: Date | null
+  sheetLastError: string | null
+  sheetImportedCount: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -48,6 +63,11 @@ export type BoutiqueMaxAggregateOutputType = {
   website: string | null
   webhookKey: string | null
   active: boolean | null
+  sheetUrl: string | null
+  sheetSyncEnabled: boolean | null
+  sheetLastSyncAt: Date | null
+  sheetLastError: string | null
+  sheetImportedCount: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -62,11 +82,24 @@ export type BoutiqueCountAggregateOutputType = {
   website: number
   webhookKey: number
   active: number
+  sheetUrl: number
+  sheetSyncEnabled: number
+  sheetLastSyncAt: number
+  sheetLastError: number
+  sheetImportedCount: number
   createdAt: number
   updatedAt: number
   _all: number
 }
 
+
+export type BoutiqueAvgAggregateInputType = {
+  sheetImportedCount?: true
+}
+
+export type BoutiqueSumAggregateInputType = {
+  sheetImportedCount?: true
+}
 
 export type BoutiqueMinAggregateInputType = {
   id?: true
@@ -78,6 +111,11 @@ export type BoutiqueMinAggregateInputType = {
   website?: true
   webhookKey?: true
   active?: true
+  sheetUrl?: true
+  sheetSyncEnabled?: true
+  sheetLastSyncAt?: true
+  sheetLastError?: true
+  sheetImportedCount?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -92,6 +130,11 @@ export type BoutiqueMaxAggregateInputType = {
   website?: true
   webhookKey?: true
   active?: true
+  sheetUrl?: true
+  sheetSyncEnabled?: true
+  sheetLastSyncAt?: true
+  sheetLastError?: true
+  sheetImportedCount?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -106,6 +149,11 @@ export type BoutiqueCountAggregateInputType = {
   website?: true
   webhookKey?: true
   active?: true
+  sheetUrl?: true
+  sheetSyncEnabled?: true
+  sheetLastSyncAt?: true
+  sheetLastError?: true
+  sheetImportedCount?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -149,6 +197,18 @@ export type BoutiqueAggregateArgs<ExtArgs extends runtime.Types.Extensions.Inter
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: BoutiqueAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: BoutiqueSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: BoutiqueMinAggregateInputType
@@ -179,6 +239,8 @@ export type BoutiqueGroupByArgs<ExtArgs extends runtime.Types.Extensions.Interna
   take?: number
   skip?: number
   _count?: BoutiqueCountAggregateInputType | true
+  _avg?: BoutiqueAvgAggregateInputType
+  _sum?: BoutiqueSumAggregateInputType
   _min?: BoutiqueMinAggregateInputType
   _max?: BoutiqueMaxAggregateInputType
 }
@@ -193,9 +255,16 @@ export type BoutiqueGroupByOutputType = {
   website: string | null
   webhookKey: string
   active: boolean
+  sheetUrl: string | null
+  sheetSyncEnabled: boolean
+  sheetLastSyncAt: Date | null
+  sheetLastError: string | null
+  sheetImportedCount: number
   createdAt: Date
   updatedAt: Date
   _count: BoutiqueCountAggregateOutputType | null
+  _avg: BoutiqueAvgAggregateOutputType | null
+  _sum: BoutiqueSumAggregateOutputType | null
   _min: BoutiqueMinAggregateOutputType | null
   _max: BoutiqueMaxAggregateOutputType | null
 }
@@ -228,6 +297,11 @@ export type BoutiqueWhereInput = {
   website?: Prisma.StringNullableFilter<"Boutique"> | string | null
   webhookKey?: Prisma.StringFilter<"Boutique"> | string
   active?: Prisma.BoolFilter<"Boutique"> | boolean
+  sheetUrl?: Prisma.StringNullableFilter<"Boutique"> | string | null
+  sheetSyncEnabled?: Prisma.BoolFilter<"Boutique"> | boolean
+  sheetLastSyncAt?: Prisma.DateTimeNullableFilter<"Boutique"> | Date | string | null
+  sheetLastError?: Prisma.StringNullableFilter<"Boutique"> | string | null
+  sheetImportedCount?: Prisma.IntFilter<"Boutique"> | number
   createdAt?: Prisma.DateTimeFilter<"Boutique"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Boutique"> | Date | string
   orders?: Prisma.OrderListRelationFilter
@@ -246,6 +320,11 @@ export type BoutiqueOrderByWithRelationInput = {
   website?: Prisma.SortOrderInput | Prisma.SortOrder
   webhookKey?: Prisma.SortOrder
   active?: Prisma.SortOrder
+  sheetUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  sheetSyncEnabled?: Prisma.SortOrder
+  sheetLastSyncAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  sheetLastError?: Prisma.SortOrderInput | Prisma.SortOrder
+  sheetImportedCount?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   orders?: Prisma.OrderOrderByRelationAggregateInput
@@ -267,6 +346,11 @@ export type BoutiqueWhereUniqueInput = Prisma.AtLeast<{
   sellerEmail?: Prisma.StringNullableFilter<"Boutique"> | string | null
   website?: Prisma.StringNullableFilter<"Boutique"> | string | null
   active?: Prisma.BoolFilter<"Boutique"> | boolean
+  sheetUrl?: Prisma.StringNullableFilter<"Boutique"> | string | null
+  sheetSyncEnabled?: Prisma.BoolFilter<"Boutique"> | boolean
+  sheetLastSyncAt?: Prisma.DateTimeNullableFilter<"Boutique"> | Date | string | null
+  sheetLastError?: Prisma.StringNullableFilter<"Boutique"> | string | null
+  sheetImportedCount?: Prisma.IntFilter<"Boutique"> | number
   createdAt?: Prisma.DateTimeFilter<"Boutique"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Boutique"> | Date | string
   orders?: Prisma.OrderListRelationFilter
@@ -285,11 +369,18 @@ export type BoutiqueOrderByWithAggregationInput = {
   website?: Prisma.SortOrderInput | Prisma.SortOrder
   webhookKey?: Prisma.SortOrder
   active?: Prisma.SortOrder
+  sheetUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  sheetSyncEnabled?: Prisma.SortOrder
+  sheetLastSyncAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  sheetLastError?: Prisma.SortOrderInput | Prisma.SortOrder
+  sheetImportedCount?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.BoutiqueCountOrderByAggregateInput
+  _avg?: Prisma.BoutiqueAvgOrderByAggregateInput
   _max?: Prisma.BoutiqueMaxOrderByAggregateInput
   _min?: Prisma.BoutiqueMinOrderByAggregateInput
+  _sum?: Prisma.BoutiqueSumOrderByAggregateInput
 }
 
 export type BoutiqueScalarWhereWithAggregatesInput = {
@@ -305,6 +396,11 @@ export type BoutiqueScalarWhereWithAggregatesInput = {
   website?: Prisma.StringNullableWithAggregatesFilter<"Boutique"> | string | null
   webhookKey?: Prisma.StringWithAggregatesFilter<"Boutique"> | string
   active?: Prisma.BoolWithAggregatesFilter<"Boutique"> | boolean
+  sheetUrl?: Prisma.StringNullableWithAggregatesFilter<"Boutique"> | string | null
+  sheetSyncEnabled?: Prisma.BoolWithAggregatesFilter<"Boutique"> | boolean
+  sheetLastSyncAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Boutique"> | Date | string | null
+  sheetLastError?: Prisma.StringNullableWithAggregatesFilter<"Boutique"> | string | null
+  sheetImportedCount?: Prisma.IntWithAggregatesFilter<"Boutique"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Boutique"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Boutique"> | Date | string
 }
@@ -319,6 +415,11 @@ export type BoutiqueCreateInput = {
   website?: string | null
   webhookKey: string
   active?: boolean
+  sheetUrl?: string | null
+  sheetSyncEnabled?: boolean
+  sheetLastSyncAt?: Date | string | null
+  sheetLastError?: string | null
+  sheetImportedCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   orders?: Prisma.OrderCreateNestedManyWithoutBoutiqueInput
@@ -337,6 +438,11 @@ export type BoutiqueUncheckedCreateInput = {
   website?: string | null
   webhookKey: string
   active?: boolean
+  sheetUrl?: string | null
+  sheetSyncEnabled?: boolean
+  sheetLastSyncAt?: Date | string | null
+  sheetLastError?: string | null
+  sheetImportedCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutBoutiqueInput
@@ -355,6 +461,11 @@ export type BoutiqueUpdateInput = {
   website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   webhookKey?: Prisma.StringFieldUpdateOperationsInput | string
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sheetUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sheetSyncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sheetLastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sheetLastError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sheetImportedCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   orders?: Prisma.OrderUpdateManyWithoutBoutiqueNestedInput
@@ -373,6 +484,11 @@ export type BoutiqueUncheckedUpdateInput = {
   website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   webhookKey?: Prisma.StringFieldUpdateOperationsInput | string
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sheetUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sheetSyncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sheetLastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sheetLastError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sheetImportedCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   orders?: Prisma.OrderUncheckedUpdateManyWithoutBoutiqueNestedInput
@@ -391,6 +507,11 @@ export type BoutiqueCreateManyInput = {
   website?: string | null
   webhookKey: string
   active?: boolean
+  sheetUrl?: string | null
+  sheetSyncEnabled?: boolean
+  sheetLastSyncAt?: Date | string | null
+  sheetLastError?: string | null
+  sheetImportedCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -405,6 +526,11 @@ export type BoutiqueUpdateManyMutationInput = {
   website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   webhookKey?: Prisma.StringFieldUpdateOperationsInput | string
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sheetUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sheetSyncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sheetLastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sheetLastError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sheetImportedCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -419,6 +545,11 @@ export type BoutiqueUncheckedUpdateManyInput = {
   website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   webhookKey?: Prisma.StringFieldUpdateOperationsInput | string
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sheetUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sheetSyncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sheetLastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sheetLastError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sheetImportedCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -438,8 +569,17 @@ export type BoutiqueCountOrderByAggregateInput = {
   website?: Prisma.SortOrder
   webhookKey?: Prisma.SortOrder
   active?: Prisma.SortOrder
+  sheetUrl?: Prisma.SortOrder
+  sheetSyncEnabled?: Prisma.SortOrder
+  sheetLastSyncAt?: Prisma.SortOrder
+  sheetLastError?: Prisma.SortOrder
+  sheetImportedCount?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type BoutiqueAvgOrderByAggregateInput = {
+  sheetImportedCount?: Prisma.SortOrder
 }
 
 export type BoutiqueMaxOrderByAggregateInput = {
@@ -452,6 +592,11 @@ export type BoutiqueMaxOrderByAggregateInput = {
   website?: Prisma.SortOrder
   webhookKey?: Prisma.SortOrder
   active?: Prisma.SortOrder
+  sheetUrl?: Prisma.SortOrder
+  sheetSyncEnabled?: Prisma.SortOrder
+  sheetLastSyncAt?: Prisma.SortOrder
+  sheetLastError?: Prisma.SortOrder
+  sheetImportedCount?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -466,8 +611,17 @@ export type BoutiqueMinOrderByAggregateInput = {
   website?: Prisma.SortOrder
   webhookKey?: Prisma.SortOrder
   active?: Prisma.SortOrder
+  sheetUrl?: Prisma.SortOrder
+  sheetSyncEnabled?: Prisma.SortOrder
+  sheetLastSyncAt?: Prisma.SortOrder
+  sheetLastError?: Prisma.SortOrder
+  sheetImportedCount?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type BoutiqueSumOrderByAggregateInput = {
+  sheetImportedCount?: Prisma.SortOrder
 }
 
 export type BoutiqueScalarRelationFilter = {
@@ -489,6 +643,14 @@ export type BoutiqueUpdateOneWithoutOwnersNestedInput = {
   delete?: Prisma.BoutiqueWhereInput | boolean
   connect?: Prisma.BoutiqueWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.BoutiqueUpdateToOneWithWhereWithoutOwnersInput, Prisma.BoutiqueUpdateWithoutOwnersInput>, Prisma.BoutiqueUncheckedUpdateWithoutOwnersInput>
+}
+
+export type IntFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
 }
 
 export type BoutiqueCreateNestedOneWithoutProductsInput = {
@@ -545,6 +707,11 @@ export type BoutiqueCreateWithoutOwnersInput = {
   website?: string | null
   webhookKey: string
   active?: boolean
+  sheetUrl?: string | null
+  sheetSyncEnabled?: boolean
+  sheetLastSyncAt?: Date | string | null
+  sheetLastError?: string | null
+  sheetImportedCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   orders?: Prisma.OrderCreateNestedManyWithoutBoutiqueInput
@@ -562,6 +729,11 @@ export type BoutiqueUncheckedCreateWithoutOwnersInput = {
   website?: string | null
   webhookKey: string
   active?: boolean
+  sheetUrl?: string | null
+  sheetSyncEnabled?: boolean
+  sheetLastSyncAt?: Date | string | null
+  sheetLastError?: string | null
+  sheetImportedCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutBoutiqueInput
@@ -595,6 +767,11 @@ export type BoutiqueUpdateWithoutOwnersInput = {
   website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   webhookKey?: Prisma.StringFieldUpdateOperationsInput | string
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sheetUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sheetSyncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sheetLastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sheetLastError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sheetImportedCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   orders?: Prisma.OrderUpdateManyWithoutBoutiqueNestedInput
@@ -612,6 +789,11 @@ export type BoutiqueUncheckedUpdateWithoutOwnersInput = {
   website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   webhookKey?: Prisma.StringFieldUpdateOperationsInput | string
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sheetUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sheetSyncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sheetLastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sheetLastError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sheetImportedCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   orders?: Prisma.OrderUncheckedUpdateManyWithoutBoutiqueNestedInput
@@ -629,6 +811,11 @@ export type BoutiqueCreateWithoutProductsInput = {
   website?: string | null
   webhookKey: string
   active?: boolean
+  sheetUrl?: string | null
+  sheetSyncEnabled?: boolean
+  sheetLastSyncAt?: Date | string | null
+  sheetLastError?: string | null
+  sheetImportedCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   orders?: Prisma.OrderCreateNestedManyWithoutBoutiqueInput
@@ -646,6 +833,11 @@ export type BoutiqueUncheckedCreateWithoutProductsInput = {
   website?: string | null
   webhookKey: string
   active?: boolean
+  sheetUrl?: string | null
+  sheetSyncEnabled?: boolean
+  sheetLastSyncAt?: Date | string | null
+  sheetLastError?: string | null
+  sheetImportedCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutBoutiqueInput
@@ -679,6 +871,11 @@ export type BoutiqueUpdateWithoutProductsInput = {
   website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   webhookKey?: Prisma.StringFieldUpdateOperationsInput | string
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sheetUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sheetSyncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sheetLastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sheetLastError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sheetImportedCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   orders?: Prisma.OrderUpdateManyWithoutBoutiqueNestedInput
@@ -696,6 +893,11 @@ export type BoutiqueUncheckedUpdateWithoutProductsInput = {
   website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   webhookKey?: Prisma.StringFieldUpdateOperationsInput | string
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sheetUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sheetSyncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sheetLastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sheetLastError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sheetImportedCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   orders?: Prisma.OrderUncheckedUpdateManyWithoutBoutiqueNestedInput
@@ -713,6 +915,11 @@ export type BoutiqueCreateWithoutOrdersInput = {
   website?: string | null
   webhookKey: string
   active?: boolean
+  sheetUrl?: string | null
+  sheetSyncEnabled?: boolean
+  sheetLastSyncAt?: Date | string | null
+  sheetLastError?: string | null
+  sheetImportedCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   products?: Prisma.ProductCreateNestedManyWithoutBoutiqueInput
@@ -730,6 +937,11 @@ export type BoutiqueUncheckedCreateWithoutOrdersInput = {
   website?: string | null
   webhookKey: string
   active?: boolean
+  sheetUrl?: string | null
+  sheetSyncEnabled?: boolean
+  sheetLastSyncAt?: Date | string | null
+  sheetLastError?: string | null
+  sheetImportedCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   products?: Prisma.ProductUncheckedCreateNestedManyWithoutBoutiqueInput
@@ -763,6 +975,11 @@ export type BoutiqueUpdateWithoutOrdersInput = {
   website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   webhookKey?: Prisma.StringFieldUpdateOperationsInput | string
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sheetUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sheetSyncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sheetLastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sheetLastError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sheetImportedCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   products?: Prisma.ProductUpdateManyWithoutBoutiqueNestedInput
@@ -780,6 +997,11 @@ export type BoutiqueUncheckedUpdateWithoutOrdersInput = {
   website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   webhookKey?: Prisma.StringFieldUpdateOperationsInput | string
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sheetUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sheetSyncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sheetLastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sheetLastError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sheetImportedCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   products?: Prisma.ProductUncheckedUpdateManyWithoutBoutiqueNestedInput
@@ -797,6 +1019,11 @@ export type BoutiqueCreateWithoutMerchantInvoicesInput = {
   website?: string | null
   webhookKey: string
   active?: boolean
+  sheetUrl?: string | null
+  sheetSyncEnabled?: boolean
+  sheetLastSyncAt?: Date | string | null
+  sheetLastError?: string | null
+  sheetImportedCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   orders?: Prisma.OrderCreateNestedManyWithoutBoutiqueInput
@@ -814,6 +1041,11 @@ export type BoutiqueUncheckedCreateWithoutMerchantInvoicesInput = {
   website?: string | null
   webhookKey: string
   active?: boolean
+  sheetUrl?: string | null
+  sheetSyncEnabled?: boolean
+  sheetLastSyncAt?: Date | string | null
+  sheetLastError?: string | null
+  sheetImportedCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutBoutiqueInput
@@ -847,6 +1079,11 @@ export type BoutiqueUpdateWithoutMerchantInvoicesInput = {
   website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   webhookKey?: Prisma.StringFieldUpdateOperationsInput | string
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sheetUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sheetSyncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sheetLastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sheetLastError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sheetImportedCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   orders?: Prisma.OrderUpdateManyWithoutBoutiqueNestedInput
@@ -864,6 +1101,11 @@ export type BoutiqueUncheckedUpdateWithoutMerchantInvoicesInput = {
   website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   webhookKey?: Prisma.StringFieldUpdateOperationsInput | string
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sheetUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sheetSyncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sheetLastSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sheetLastError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sheetImportedCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   orders?: Prisma.OrderUncheckedUpdateManyWithoutBoutiqueNestedInput
@@ -939,6 +1181,11 @@ export type BoutiqueSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   website?: boolean
   webhookKey?: boolean
   active?: boolean
+  sheetUrl?: boolean
+  sheetSyncEnabled?: boolean
+  sheetLastSyncAt?: boolean
+  sheetLastError?: boolean
+  sheetImportedCount?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   orders?: boolean | Prisma.Boutique$ordersArgs<ExtArgs>
@@ -958,6 +1205,11 @@ export type BoutiqueSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   website?: boolean
   webhookKey?: boolean
   active?: boolean
+  sheetUrl?: boolean
+  sheetSyncEnabled?: boolean
+  sheetLastSyncAt?: boolean
+  sheetLastError?: boolean
+  sheetImportedCount?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["boutique"]>
@@ -972,6 +1224,11 @@ export type BoutiqueSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   website?: boolean
   webhookKey?: boolean
   active?: boolean
+  sheetUrl?: boolean
+  sheetSyncEnabled?: boolean
+  sheetLastSyncAt?: boolean
+  sheetLastError?: boolean
+  sheetImportedCount?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["boutique"]>
@@ -986,11 +1243,16 @@ export type BoutiqueSelectScalar = {
   website?: boolean
   webhookKey?: boolean
   active?: boolean
+  sheetUrl?: boolean
+  sheetSyncEnabled?: boolean
+  sheetLastSyncAt?: boolean
+  sheetLastError?: boolean
+  sheetImportedCount?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type BoutiqueOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "sellerName" | "sellerPhone" | "sellerEmail" | "website" | "webhookKey" | "active" | "createdAt" | "updatedAt", ExtArgs["result"]["boutique"]>
+export type BoutiqueOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "sellerName" | "sellerPhone" | "sellerEmail" | "website" | "webhookKey" | "active" | "sheetUrl" | "sheetSyncEnabled" | "sheetLastSyncAt" | "sheetLastError" | "sheetImportedCount" | "createdAt" | "updatedAt", ExtArgs["result"]["boutique"]>
 export type BoutiqueInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   orders?: boolean | Prisma.Boutique$ordersArgs<ExtArgs>
   products?: boolean | Prisma.Boutique$productsArgs<ExtArgs>
@@ -1019,6 +1281,11 @@ export type $BoutiquePayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     website: string | null
     webhookKey: string
     active: boolean
+    sheetUrl: string | null
+    sheetSyncEnabled: boolean
+    sheetLastSyncAt: Date | null
+    sheetLastError: string | null
+    sheetImportedCount: number
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["boutique"]>
@@ -1457,6 +1724,11 @@ export interface BoutiqueFieldRefs {
   readonly website: Prisma.FieldRef<"Boutique", 'String'>
   readonly webhookKey: Prisma.FieldRef<"Boutique", 'String'>
   readonly active: Prisma.FieldRef<"Boutique", 'Boolean'>
+  readonly sheetUrl: Prisma.FieldRef<"Boutique", 'String'>
+  readonly sheetSyncEnabled: Prisma.FieldRef<"Boutique", 'Boolean'>
+  readonly sheetLastSyncAt: Prisma.FieldRef<"Boutique", 'DateTime'>
+  readonly sheetLastError: Prisma.FieldRef<"Boutique", 'String'>
+  readonly sheetImportedCount: Prisma.FieldRef<"Boutique", 'Int'>
   readonly createdAt: Prisma.FieldRef<"Boutique", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Boutique", 'DateTime'>
 }

@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { PageHeader } from "@/components/PageHeader";
 import { CheckCircle2, Copy, ExternalLink, Globe, Key, ArrowLeft, Download } from "lucide-react";
 import { SendGuideButton } from "./SendGuideButton";
+import { SheetConnect } from "./SheetConnect";
 import { RegenerateKeyButton } from "./RegenerateKeyButton";
 import { DeleteBoutiqueButton } from "../DeleteBoutiqueButton";
 
@@ -199,6 +200,16 @@ async function envoyerCommande(commande) {
             </div>
           </div>
         </div>
+
+        {/* Import Google Sheets (connecteur type Rapido) */}
+        <SheetConnect
+          boutiqueId={boutique.id}
+          initialSheetUrl={boutique.sheetUrl}
+          initialSyncEnabled={boutique.sheetSyncEnabled}
+          initialLastSyncAt={boutique.sheetLastSyncAt?.toISOString() ?? null}
+          initialLastError={boutique.sheetLastError}
+          initialImportedCount={boutique.sheetImportedCount}
+        />
 
         {/* Exemple curl */}
         <div className="bg-white border border-slate-200 rounded-lg p-6">

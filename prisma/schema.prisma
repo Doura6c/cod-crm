@@ -59,6 +59,13 @@ model Boutique {
   website     String?
   webhookKey  String   @unique // clé secrète pour l'endpoint webhook
   active      Boolean  @default(true)
+
+  // ── Import Google Sheets (connecteur type Rapido) ──
+  sheetUrl           String?   // URL de la feuille publique (lecteur) fournie par le marchand
+  sheetSyncEnabled   Boolean   @default(false) // sync automatique activée
+  sheetLastSyncAt    DateTime? // dernière synchro réussie
+  sheetLastError     String?   // dernière erreur de synchro (null si OK)
+  sheetImportedCount Int       @default(0) // total de commandes importées depuis la feuille
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
